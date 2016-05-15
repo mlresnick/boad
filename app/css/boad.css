@@ -1,0 +1,239 @@
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+
+  .page-calculator .window {
+    width: 100vmin;
+    height: 15vmin;
+    font-size: 10vmin;
+    background-color: black;
+    color: white;
+    padding-left: 2vmin;
+    padding-right: 2vmin;
+    border: 2px blue solid;
+    border-bottom: none;
+    border-radius: 0;
+    margin-top:1px;
+  }
+
+  .keypad {
+    width: 100vmin;
+    height: 99vmin;
+    font-size: 5vmin;
+  }
+
+  .favorites-list .control {
+    text-align: center;
+    margin-left: -30px;
+    margin-right: 5px;
+    opacity: 0;
+    transition: 0.5s;
+  }
+
+  .favorites-list.list-group a.list-group-item:before {
+    opacity: 0;
+    margin-right: 30px;
+    transition: 0.5s;
+  }
+
+  .favorites-list.list-group.edit a.list-group-item:before {
+    opacity: 1;
+    margin-right: 0;
+    transition: 0.5s;
+  }
+
+  .favorites-list .control.edit {
+    margin-left: 0;
+    opacity: 1;
+    margin-right: 0;
+    transition: 0.5s;
+  }
+
+  .favorites-list .control i {
+    margin-right: 0;
+  }
+
+  .favorites-list .fa-minus-circle {
+    margin-left: -10px;
+  }
+
+  .favorites-list.list-group-item {
+    z-index: -5;
+  }
+
+  .favorites-list .original {
+    display: none;
+  }
+
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+
+  .keypad {
+    height: 90vmin;
+  }
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+  .keypad button:hover {
+    background-color: slategrey;
+  }
+
+  .keypad {
+    height: 71vmin;
+  }
+
+  #footer {
+    display: none;
+  }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+}
+
+.confirm {
+  background-color: lightgray !important;
+}
+
+.error {
+  background-color: red !important;
+}
+
+.favorites,
+#history,
+#settings {
+  display: none;
+}
+
+.favorites-list .fa-minus-circle {
+  color: red;
+  opacity: 1.0;
+}
+
+.favorites-list .control button {
+  background-color: inherit;
+  padding-right: 0;
+}
+
+.favorites-list .control button:hover {
+  opacity: 1;
+}
+
+.favorites-list .control button:focus {
+  outline: none;
+}
+
+.favorites-list .control {
+  padding-left: 0;
+  padding-right: 0;
+}
+/*
+.favorites-list .list-group-item.deleted {
+  transition: transform 1s;*/ /*, height 1s ease 1s;*/
+/*  transform: translate(-200%, -200%);*/
+  /*height: 0;*/
+/*}
+*/
+.keypad {
+  background-color: black;
+}
+
+.keypad button {
+  background-color: black;
+  border-radius: 0;
+  color: white;
+  height: 100%;
+  width: 100%;
+  border-width: 0;
+}
+
+.keypad button:focus {
+  outline: none;
+}
+
+.keypad .dButton {
+  color: cornflowerblue;
+}
+
+.keypad .keepButton {
+  color: orange;
+}
+
+.keypad .rollButton {
+  color: limegreen;
+}
+
+.keypad td {
+  border: 1px blue solid;
+  background-color: black;
+}
+
+.keypad td div {
+  height: 100%;
+}
+
+.keypad td[rowspan="2"] button {
+  padding-top: 18px;
+  padding-bottom: 18px;
+}
+
+.keypad .favoriteButton {
+  color: yellow;
+}
+
+.navbar.navbar-fixed-top {
+  margin-bottom: 0;
+}
+
+.page-calculator,
+.page-favorites,
+.page-history,
+.page-settings {
+  display: none;
+}
+
+.page-calculator.boad-active,
+.page-favorites.boad-active,
+.page-history.boad-active,
+.page-settings.boad-active {
+  display: block;
+}
+
+/* After Edit button has been clicked */
+.favorites-list .control.edit {display: inline-block; }
+.page-favorites.done-btn.edit { display: inline-block; }
+
+.page-favorites.boad-active.edit-btn.edit { display: none; }
+.list-group.bootcards-no-indicators a.list-group-item:before { display: none; }
+
+/* When on another page, before Edit has been clicked, or after Done has been
+  clicked */
+.page-favorites.boad-active.edit-btn { display: inline-block; }
+
+.page-favorites.edit-btn,
+.page-favorites.done-btn { display: none; }
+
+
+.vertical-middle {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+/*csslint ids:false,box-model:false,important:false */
+
+/*
+#favorites .original {
+  display: none;
+}
+
+#favorites .list-group-item-text {
+  font-size: 16px;
+}
+*/

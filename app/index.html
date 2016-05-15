@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="msapplication-tap-highlight" content="no" />
+<meta name="google" content="notranslate" rel="manifest"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+
+<title>B.o.A.D.</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" href="res/icons/favicone.ico" />
+
+<!-- Bootstrap -->
+<!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" /> -->
+<!-- <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" /> -->
+<link rel="stylesheet" href="lib/css/bootstrap.css" />
+<link rel="stylesheet" href="lib/css/font-awesome.css" />
+
+<script>
+  var platform;
+  // TODO - Put someplace more appropriate
+  function loadjscssfile(filename, filetype){
+      if (filetype=="js"){ //if filename is a external JavaScript file
+          var fileref=document.createElement('script')
+          fileref.setAttribute("type","text/javascript")
+          fileref.setAttribute("src", filename)
+      }
+      else if (filetype=="css"){ //if filename is an external CSS file
+          var fileref=document.createElement("link")
+          fileref.setAttribute("rel", "stylesheet")
+          fileref.setAttribute("type", "text/css")
+          fileref.setAttribute("href", filename)
+      }
+      if (typeof fileref !== "undefined") {
+          document.getElementsByTagName("head")[0].appendChild(fileref);
+      }
+  //         var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+  //         var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+  //         alert(w+" w x "+h+" h")
+      // pc 1091x466
+      // fire 533 x 671 (portrait),801x403 (landscape)
+      // iphone 320x440 (portrain), 568x320 (landscape)
+  }
+  var ua = navigator.userAgent;
+  platform = (ua.match(/Android/i) !== null) ? "android"
+             : ((ua.match(/iPhone|iPad|iPod/i) != null) ? "ios"
+               : "desktop");
+  // loadjscssfile("//cdnjs.cloudflare.com/ajax/libs/bootcards/1.1.2/css/bootcards-"+platform+".min.css", "css") ////dynamically load and add this .css file
+  loadjscssfile("lib/css/bootcards-"+platform+".css", "css") ////dynamically load and add this .css file
+  // loadjscssfile("lib/css/bootcards-ios.css", "css") ////dynamically load and add this .css file
+</script>
+
+<!-- Project -->
+<link rel="stylesheet" type="text/css" href="css/boad.css" />
+
+</head>
+
+<body>
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <i class="sr-only">Toggle navigation</i>
+        <i class="icon-bar"></i></i>
+        <i class="icon-bar">&#x200B;</i>
+        <i class="icon-bar">&#x200B;</i>
+      </button>
+    </div>
+
+    <button type="button"
+        class="btn btn-default btn-menu navbar-left offCanvasToggle"
+        data-toggle="offcanvas">
+      <i class="fa fa-lg fa-bars">&#x200B;</i>
+    </button>
+
+    <a id="panel-title" class="navbar-brand no-break-out" href="#">B.o.A.D.</a>
+
+    <button type="button"
+        class="btn btn-default btn-menu navbar-right page-favorites edit-btn"
+        style="font-size: 18px; margin-top: -45px;">Edit</button>
+
+    <button type="button"
+        class="btn btn-default btn-menu navbar-right page-favorites done-btn"
+        style="font-size: 18px; margin-top: -45px;">Done</button>
+
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="boad-active active">
+          <a class="calculator-btn" href="#"><i class="fa fa-calculator">&#x200B;</i> Calculator</a>
+        </li>
+        <li><a class="favorites-btn" href="#"><i class="fa fa-star-o">&#x200B;</i> Favorites</a></li>
+        <li><a class="history-btn" href="#"><i class="fa fa-history">&#x200B;</i> History</a></li>
+        <li><a class="settings-btn" href="#"><i class="fa fa-gear">&#x200B;</i> Settings</a></li>
+        <li><a class="page-favorites edit-btn" href="#"><i class="fa fa-edit">&#x200B;</i> Edit</a></li>
+        <li><a class="page-favorites done-btn" href="#"><i class="fa fa-exclamation-circle">&#x200B;</i> Done</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="offCanvasMenu" class="navmenu offcanvas offcanvas-left">
+  <ul class="nav">
+    <li>
+      <a class="calculator-btn" href="#"><i class="fa fa-lg fa-calculator" data-title="Calculator">&#x200B;</i> Calculator</a>
+    </li>
+    <li><a class="favorites-btn" href="#"><i class="fa fa-lg fa-star-o" data-title="Favorites">&#x200B;</i> Favorites</a></li>
+    <li><a class="history-btn" href="#"><i class="fa fa-lg fa-history" data-title="History">&#x200B;</i> History</a></li>
+    <li><a class="settings-btn" href="#"><i class="fa fa-lg fa-gear" data-title="Settings">&#x200B;</i> Settings</a></li>
+  </ul>
+</div>
+
+<div class="bootcards-container page-calculator boad-active">
+  <div class="panel panel-default bootcards-cards">
+    <input id="window" class="window" type="text" value="" readonly="true"/>
+    <table class="keypad">
+      <tbody>
+        <tr>
+          <td><div><button type="button" class="keepButton" value="k" onclick="keypad.enterNew(this.value);">k</button></div></td>
+          <td><div><button type="button" class="keepButton" value="L" onclick="keypad.enterNew(this.value);">L</button></div></td>
+          <td><div><button type="button" class="keepButton" value="H" onclick="keypad.enterNew(this.value);">H</button></div></td>
+          <td><div><button type="button" class="operationButton" value="x" onclick="keypad.enterNew(this.value);">x</button></div></td>
+        </tr>
+        <tr>
+          <td><div><button type="button" class="dButton" value="d4" onclick="keypad.enterNew(this.value);">d4</button></div></td>
+          <td><div><button type="button" class="dButton" value="d6" onclick="keypad.enterNew(this.value);">d6</button></div></td>
+          <td><div><button type="button" class="dButton" value="d8" onclick="keypad.enterNew(this.value);">d8</button></div></td>
+          <td><div><button type="button" class="dButton" value="d10" onclick="keypad.enterNew(this.value);">d10</button></div></td>
+        </tr>
+        <tr>
+          <td><div><button type="button" class="dButton" value="d12" onclick="keypad.enterNew(this.value);">d12</button></div></td>
+          <td><div><button type="button" class="dButton" value="d20" onclick="keypad.enterNew(this.value);">d20</button></div></td>
+          <td><div><button type="button" class="dButton" value="d%" onclick="keypad.enterNew(this.value);">d%</button></div></td>
+          <td><div><button type="button" class="dButton" value="dx" onclick="keypad.enterNew(this.value);">dx</button></div></td>
+        </tr>
+        <tr>
+          <td><div><button type="button" class="digitButton" value="7" onclick="keypad.enterNew(this.value);">7</button></div></td>
+          <td><div><button type="button" class="digitButton" value="8" onclick="keypad.enterNew(this.value);">8</button></div></td>
+          <td><div><button type="button" class="digitButton" value="9" onclick="keypad.enterNew(this.value);">9</button></div></td>
+          <td><div><button type="button" class="operationButton" value="+" onclick="keypad.enterNew(this.value);">+</button></div></td>
+        </tr>
+        <tr>
+          <td><div><button type="button" class="digitButton" value="4" onclick="keypad.enterNew(this.value);">4</button></div></td>
+          <td><div><button type="button" class="digitButton" value="5" onclick="keypad.enterNew(this.value);">5</button></div></td>
+          <td><div><button type="button" class="digitButton" value="6" onclick="keypad.enterNew(this.value);">6</button></div></td>
+          <td><div><button type="button" class="operationButton" value="-" onclick="keypad.enterNew(this.value);">-</button></div></td>
+        </tr>
+        <tr>
+          <td><div><button type="button" class="digitButton" value="1" onclick="keypad.enterNew(this.value);">1</button></div></td>
+          <td><div><button type="button" class="digitButton" value="2" onclick="keypad.enterNew(this.value);">2</button></div></td>
+          <td><div><button type="button" class="digitButton" value="3" onclick="keypad.enterNew(this.value);">3</button></div></td>
+          <td rowspan="2"><div><button type="button" id="rollButton" class="rollButton" value="roll" onclick="keypad.roll();">Roll</button></div></td>
+        </tr>
+        <tr>
+          <td><div><button type="button" class="clearButton" onclick="keypad.clear();">C</button></div></td>
+          <td><div><button type="button" class="digitButton" value="0" onclick="keypad.enterNew(this.value);">0</button></div></td>
+          <td><div><button type="button" class="deleteButton" onclick="keypad.deleteLast();">⌫</button></div></td>
+        </tr>
+        <tr>
+          <td>
+            <div>
+              <button type="button" id="favoriteButton"
+                      class="favoriteButton"
+                      title="Add this combination to favorites"
+                      onclick="keypad.showFavoriteModal();">
+                <i class="fa fa-star-o">&#x200B;</i>
+              </button>
+            </div>
+          </td>
+          <td><div><button type="button" class="favoriteButton" value="F1" onclick="alert('TODO');">F1</button></div></td>
+          <td><div><button type="button" class="favoriteButton" value="F2" onclick="alert('TODO');">F2</button></div></td>
+          <td><div><button type="button" class="favoriteButton" value="F3" onclick="alert('TODO');">F3</button></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="page-favorites container-fluid bootcards-container">
+  <div class="bootcards-list">
+    <div class="panel panel-default">
+    <div class="list-group favorites-list">
+      <!-- To be filled in at runtime -->
+    </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid bootcards-container page-history">
+  <div class="panel panel-default bootcards-cards">
+    <div class="panel-body">
+      History stuff
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid bootcards-container page-settings">
+  <div class="panel panel-default bootcards-cards">
+    <div class="panel-body">
+      Setting stuff
+    </div>
+  </div>
+</div>
+
+<!-- fixed tabbed footer -->
+<div id="footer" class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <div class="btn-group">
+      <a href="#" class="btn calculator-btn boad-active">
+         <i class="fa fa-2x fa-calculator">&#x200B;</i> Calculator
+      </a>
+      <a href="#" class="btn favorites-btn">
+        <i class="fa fa-2x fa-star-o">&#x200B;</i> Favorites
+      </a>
+      <a href="#" class="btn history-btn">
+        <i class="fa fa-2x fa-history">&#x200B;</i> History
+      </a>
+      <a href="#" class="btn settings-btn">
+        <i class="fa fa-2x fa-gear">&#x200B;</i> Settings
+      </a>
+    </div>
+  </div>
+</div><!--footer-->
+
+<div id="favorite-name-modal" class="modal modal-md fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-close">&#x200B;</i> <!-- times; --></button>
+        <h4 class="modal-title">New Favorite</h4>
+      </div>
+      <div class="modal-body">
+        <h4 id="newFavoriteSpec" class="modal-title"></h4>
+        <div class="form-group">
+            <label for="newFavoriteName" class="control-label">Name</label>
+            <input type="text" name="name" id="newFavoriteName" autofocus="true"
+                   class="form-control" value="">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary"
+                onclick="keypad.saveNewFavorite();" >Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap and Bootcards JS -->
+<!--
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.1.2/js/bootcards.min.js"/>
+-->
+<script src="lib/js/jquery.js"></script>
+<script src="lib/js/bootstrap.js"></script>
+<script src="lib/js/bootcards.js"></script>
+
+<!-- Project -->
+<script src="js/index.js"></script>
+<script src="js/Favorites.js"></script>
+<script src="js/Dice.js"></script>
+<script src="js/Keypad.js"></script>
+
+</body>
+</html>

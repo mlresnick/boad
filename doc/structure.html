@@ -1,0 +1,175 @@
+<style>
+body { font-size: 10pt; }
+
+h2, h3 { margin-bottom: 0px; }
+
+.bootcards {
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+sub {
+  position: relative;
+  top: 0.4em;
+  vertical-align: baseline;
+  font-size: 80%;
+  font-weight: bold;
+}
+
+.android:after,
+.desktop:after,
+.ios:after {
+  position: relative;
+  top: 0.4em;
+  vertical-align: baseline;
+  font-size: 80%;
+  font-weight: bold;
+}
+.android:after             { content: 'a'; }
+.desktop:after             { content: 'd'; }
+.ios:after                 { content: 'i'; }
+.android.desktop:after     { content: 'a,d'; }
+.android.ios:after         { content: 'a,i'; }
+.ios.desktop:after         { content: 'd,i'; }
+.android.ios.desktop:after { content: 'a,d,i'; }
+
+pre { margin-top: 0; }
+</style>
+<pre>
+
+<h2>NAVBAR</h2>
+<h3>OFFCANVAS menu</h3>
+<b>.offcanvas</b><sub>a</sub>
+<b>.offcanvas-list</b><sub>a</sub>
+<b>.offcanvas-left</b><sub>a</sub>
+<b>.offcanvas-left</b>.active<sub>a</sub>
+<b>.offcanvas-list-title</b><sub>a</sub>
+<b>.offcanvaslist-toggle</b><sub>a</sub>
+<b>.offcanvaslist-toggle</b>.active<sub>a</sub>
+.push-right<sub>a</sub>
+.push-right.active-left<sub>a</sub>
+.push-right.active-right<sub>a</sub>
+<h2>BUTTONS</h2>
+.btn<sub>a</sub>
+  i<sub>a</sub>
+.btn<b>.icon-only</b><sub>a</sub>
+  i<sub>a</sub>
+.btn<b>.icononly</b><sub>a</sub>
+  i<sub>a</sub>
+<h2>list-groups</h2>
+.list-group-item<sub>a</sub>
+  .list-group-item-text<sub>a</sub>
+  .list-group-item-heading<sub>a</sub>
+  .row<sub>a</sub>
+    div<sub>a</sub>
+      &gt; .list-group-item-heading<sub>a</sub>
+      &gt; .list-group-item-text<sub>a</sub>
+    img<sub>a</sub>
+    i<sub>a</sub>
+a.list-group-item<sub>a</sub>
+.panel<sub>a</sub>
+  &gt; .list-group<sub>a</sub>
+    .list-group-item<sub>a</sub>
+<h3>List Images</h3>
+<b>.bootcards-list-group-item-content</b><sub>a</sub>
+.list-group.<b>bootcards-no-indicators</b><sub>a</sub>
+  a.list-group-item<sub>a</sub>
+<h3>List &mdash; Subheadings</h3>
+a.list-group-item.<b>bootcards-list-subheading</b>[<b>.collapsed</b>]<sub>a</sub>
+<h2>List &mdash; AZ Picker</h2>
+<h2>List &mdash; Search Form</h2>
+<h2>Footer</h2>
+<b>.bootcards-desktop-footer</b><sub>a</sub>
+<h2>Cards</h2>
+.panel-default<sub>a</sub>
+  .panel-heading<sub>a</sub>
+.panel-body<sub>a</sub>
+.panel-footer<sub>a</sub>
+  small<sub>a</sub>
+.modal-footer<sub>a</sub>
+  small<sub>a</sub>
+.list-group<sub>a</sub>
+  + .panel-footer<sub>a</sub>
+<h3>Form Card</h3>
+<h4>Toggle</h4>
+<h4>Calendar</h4>
+<h3>Table Card</h3>
+<h3>File Card</h3>
+<h3>Chart Card</h3>
+<h3>Summary Card</h3>
+<h3>Rich Text</h3>
+<h2>Allerts and Dialogs</h2>
+.modal-dialog.modal-sm<sub>a</sub>
+<b>.wrapper</b><sub>a</sub>
+<h2>NAVBAR</h2>
+.navbar-header<sub>a</sub>
+.navbar[.collapse]<sub>a</sub>
+.navbar-toggle<sub>a</sub>
+<h2>Grid</h2>
+<h2>Menu</h2>
+.navmenu<sub>a</sub>
+.navmenu<sub>a</sub>
+  li
+.navmenu<sub>a</sub>
+  li.active<sub>a</sub>
+   > a[:hover]<sub>a</sub>
+  li<sub>a</sub>
+    > a:hover<sub>a</sub>
+    [li<sub>a</sub>
+      [li]]<sub>a</sub>
+  i<sub>a</sub>
+  <b>bootcards-parent</b>:not(<b>.collapsed</b>)<sub>a</sub>
+    [.fa-chevron-circle-right]<sub>a</sub>
+<h2>Lists</h2>
+<b>.bootcards-list</b><sub>a</sub>
+  [.panel]<sub>a</sub>
+  [.panel-footer]<sub>a</sub>
+  [.panel-body]<sub>a</sub>
+<h3>List &mdash; Subheadings</h3>
+<h3>List &mdash; Search Form</h3>
+<h2>Cards</h2>
+<h3>Rich Text Card</h3>
+<h2>Footer</h2>
+<b>.bootcards-nofooter</b><sub>a</sub>
+  .navbar-fixed-bottom<sub>a</sub>
+.navbar-fixed-bottom<sub>a</sub>
+  .container<sub>a</sub>
+  .btn-group<sub>a</sub>
+    [.btn]<sub>a</sub>
+  .btn[:hover|:active|:focus]<sub>a</sub>
+    [i]<sub>a</sub>
+  span<sub>a</sub>
+<b>.bootcards-container</b><sub>a</sub>
+  .modal-backdrop<sub>a</sub>
+<h2>Navbar</h2>
+.navbar-fixed-top<sub>a</sub>
+  .container<sub>a</sub>
+  .container-fluid<sub>a</sub>
+  .navbar<sub>a</sub>
+    > .container<sub>a</sub>
+      .navbar-brand<sub>a</sub>
+    > .container-fluid<sub>a</sub>
+      .navbar-brand<sub>a</sub>
+  .navbar-nav[.navbar-right]<sub>a</sub>
+  .btn[.pull-left|,pull-right]<sub>a</sub><sub>a</sub>
+    i<sub>a</sub><sub>a</sub>
+    span<sub>a</sub>
+.panel-default<sub>a</sub>
+  [>] .panel-heading<sub>a</sub>
+.panel-heading<sub>a</sub>
+  .panel-title<sub>a</sub>
+  .btn<sub>a</sub>
+  .btn-goup<sub>a</sub>
+    .btn<sub>a</sub>
+.modal-dialog<sub>a</sub>
+.modal-content<sub>a</sub>
+.modal-header<sub>a</sub>
+  [.btn]<sub>a</sub>
+.modal-title<sub>a</sub>
+.modal-footer<sub>a</sub>
+<h2>Lists</h2><sub>a</sub>
+.list-group-item<sub>a</sub>
+  label<sub>a</sub>
+
+</pre>
+<sub>a</sub><sub>a</sub>
