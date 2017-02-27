@@ -1,0 +1,122 @@
+$android-icon-font-size: 24px;
+$ios-icon-font-size: 30px;
+
+@media only screen and (max-density: 120dpi) {
+  // ldpi
+}
+@media only screen and (max-density: 160dpi) {
+  // mdpi
+}
+@media only screen and (max-density: 213dpi) {
+  // tvdpi
+}
+@media only screen and (max-density: 240dpi) {
+  // hdpi
+}
+@media only screen and (max-density: 320dpi) {
+  // xhdpi
+}
+@media only screen and (max-density: 480dpi) {
+  // xxhdpi
+}
+@media only screen and (max-density: 640dpi) {
+  // xxxhdpi
+}
+@media only screen and (min-width: 320px) {
+  // Custom, iPhone Retina
+}
+@media only screen and (min-width: 480px) {
+  // Extra Small Devices, Phones
+}
+@media only screen and (min-width: 768px) {
+  // Small Devices, Tablets
+  html.xyzzy {
+    width: 480px;
+    height: (480px * 568px / 329px);
+  }
+}
+@media only screen and (min-width: 992px) {
+  // Medium Devices, Desktops
+}
+@media only screen and (min-width: 1200px) {
+  // Large Devices, Wide Screens
+}
+
+html {
+  display: none;
+
+  &:not(.ios):not(.android) {
+    background-color: inherit;
+
+    .navbar .navbar-inner .text-only {
+      display: block;
+    }
+  }
+}
+
+// Hide icons by default
+// Hide anchor element (.icon-only & .text-only) as well as the icons
+// themselves.
+.navbar .navbar-inner {
+  .text-only,
+  .icon-only,
+  i.icon {
+    display: none;
+  }
+}
+
+.toolbar .tab-link i.icon {
+  display: none;
+}
+
+.android {
+  // Turn on android specific icons
+  .navbar .navbar-inner {
+    .icon-only { display: flex; }
+    i.icon:not([class*='ion-ios-']) { display: block; }
+  }
+
+  .toolbar .tab-link {
+    i.icon:not([class*='ion-ios-']) { display: block; }
+  }
+
+  // Tweak the nav bar
+  .navbar i.icon { font-size: $android-icon-font-size; }
+
+  // Tweak the tab bar
+  .tabbar {
+    a.tab-link i.icon { font-size: $android-icon-font-size; }
+    .tab-link-highlight { height: 6px; }
+  }
+
+  .tabbar-labels a.tab-link {
+    padding-top: 6px;
+    .tabbar-label { font-size: 12px; }
+  }
+}
+
+.ios {
+  // Turn on IOS specific icons
+  .navbar .navbar-inner {
+    .icon-only { display: flex; }
+    i.icon[class*='ion-ios-'] { display: block; }
+  }
+
+  .toolbar .tab-link {
+    &:not(.active) i.icon[class*='ion-ios-'][class*='-outline'] {
+      display: block;
+    }
+
+    &.active i.icon[class*='ion-ios-']:not([class*='-outline']) {
+      display: block;
+    }
+  }
+
+  // Tweak the nav bar
+  .navbar i.icon { font-size: $ios-icon-font-size; }
+
+  // Tweak the tab bar
+  .tabbar a.tab-link i.icon { font-size: $ios-icon-font-size; }
+  .tabbar-labels a.tab-link { padding: 0; }
+
+}

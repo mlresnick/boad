@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html class="xyzzy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="stylesheet" href="lib/css/ionicons.css" />
+<link rel="stylesheet" href="css/boad.css" />
+<style>
+// Because the stylesheets don't get loaded until late in the process, there
+// is a flash of the unstyled document before it appears correctly. To avoid
+// this, don't display anything to start. When everything is loaded, it will
+// be displayed,
+html {
+  display: none;
+}
+</style>
+<title>BoAD</title>
+</head>
+<body>
+<div class="views tabs">
+
+  <div id="calculator" class="view view-main tab active">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <!--
+        <div class="left">
+          <a href="#"  class="link">
+            <span>&#x26d4;</span>
+          </a>
+        </div>
+         -->
+        <div class="center" data-i18n="app.name">BoAD</div>
+        <!--
+        <div class="right">
+          <a href="#favorites" class="link icon-only">
+            <span>Favorites</span>
+            <i class="icon ion-chevron-right"></i>
+          </a>
+        </div>
+         -->
+      </div>
+    </div>
+    <div class="pages">
+      <div class="page" data-page="calculator">
+        <div class="page-content">
+          <p>Calculator</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="favorites" class="view tab">
+    <div class="navbar">
+      <div class="navbar-inner">
+          <!--
+          <div class="left">
+            <a href="#calculator" class="link">
+              <i class="icon ion-chevron-left"></i>
+              <span>Calculator</span>
+            </a>
+          </div>
+          -->
+          <div class="center">Favorites</div>
+          <div class="right">
+            <a href="#" class="link text-only">Delete All</a>
+            <a href="#" class="link icon-only">
+              <i class="icon ion-trash-a"></i>
+              <i class="icon ion-ios-trash"></i>
+            </a>
+          </div>
+      </div>
+    </div>
+    <div class="pages">
+      <div class="page" data-page="favorites">
+        <div class="page-content">
+          <p>Favorites</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="history" class="view tab">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <!--
+        <div class="left">
+          <a href="#favorites" class="link">
+            <i class="icon ion-chevron-left"></i>
+            <span>Favorites</span>
+          </a>
+        </div>
+         -->
+        <div class="center">History</div>
+          <div class="right">
+            <a href="#" class="link text-only">Delete All</a>
+            <a href="#" class="link icon-only">
+              <i class="icon ion-trash-a"></i>
+              <i class="icon ion-ios-trash"></i>
+            </a>
+          </div>
+       </div>
+    </div>
+    <div class="pages">
+      <div class="page" data-page="history">
+        <div class="page-content">
+          <p>History</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toolbar toolbar-bottom tabbar tabbar-labels">
+    <div class="toolbar-inner">
+      <a href="#calculator" class="tab-link active">
+        <i class="icon ion-calculator"></i>
+        <i class="icon ion-ios-calculator"></i>
+        <i class="icon ion-ios-calculator-outline"></i>
+        <span class="tabbar-label">Calculator</span>
+      </a>
+      <a href="#favorites" class="tab-link">
+        <i class="icon ion-android-star"></i>
+        <i class="icon ion-ios-star"></i>
+        <i class="icon ion-ios-star-outline"></i>
+        <span class="tabbar-label">Favorites</span>
+      </a>
+      <a href="#history" class="tab-link">
+        <i class="icon ion-clock"></i>
+        <i class="icon ion-ios-clock"></i>
+        <i class="icon ion-ios-clock-outline"></i>
+        <span class="tabbar-label">History</span>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script src="lib/js/framework7.js"></script>
+<script src="js/boad.js"></script>
+</body>
+</html>
