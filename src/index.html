@@ -22,30 +22,63 @@ html {
 <div class="views tabs">
 
   <div id="calculator" class="view view-main tab active">
-    <div class="navbar">
-      <div class="navbar-inner">
-        <!--
-        <div class="left">
-          <a href="#"  class="link">
-            <span>&#x26d4;</span>
-          </a>
-        </div>
-         -->
-        <div class="center" data-i18n="app.name">BoAD</div>
-        <!--
-        <div class="right">
-          <a href="#favorites" class="link icon-only">
-            <span>Favorites</span>
-            <i class="icon ion-chevron-right"></i>
-          </a>
-        </div>
-         -->
-      </div>
-    </div>
     <div class="pages">
-      <div class="page" data-page="calculator">
+      <div class="page navbar-fixed" data-page="calculator">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <!-- <div class="left"><a href="#"  class="link"><span>&#x26d4;</span></a></div> -->
+            <div class="center">BoAD</div>
+            <!-- <div class="right"><a href="#favorites" class="link icon-only"><span>Favorites</span><i class="icon ion-chevron-right"></i></a></div> -->
+          </div>
+        </div>
         <div class="page-content">
-          <p>Calculator</p>
+          <div class="content-block">
+          <div id="window" class="display">display</div>
+          <div class="keypad">
+            <div class="keypad-column">
+              <a href="#" class="key key-keep">k</a>
+              <a href="#" class="key key-d">d4</a>
+              <a href="#" class="key key-d">d12</a>
+              <a href="#" class="key key-digit">7</a>
+              <a href="#" class="key key-digit">4</a>
+              <a href="#" class="key key-digit">1</a>
+              <a href="#" class="key key-clear">C</a>
+              <a href="#" class="key key-favorite key-favorite-set">
+              <i class="icon ion-android-star"></i>
+              <i class="icon ion-ios-star"></i>
+            </a>
+            </div>
+            <div class="keypad-column">
+              <a href="#" class="key key-keep">L</a>
+              <a href="#" class="key key-d">d6</a>
+              <a href="#" class="key key-d">d20</a>
+              <a href="#" class="key key-digit">8</a>
+              <a href="#" class="key key-digit">5</a>
+              <a href="#" class="key key-digit">2</a>
+              <a href="#" class="key key-digit">0</a>
+              <a href="#" class="key key-favorite key-favorite-get">F<span class="variable">x</span></a>
+            </div>
+            <div class="keypad-column">
+              <a href="#" class="key key-keep">H</a>
+              <a href="#" class="key key-d">d8</a>
+              <a href="#" class="key key-d">d%</a>
+              <a href="#" class="key key-digit">9</a>
+              <a href="#" class="key key-digit">6</a>
+              <a href="#" class="key key-digit">3</a>
+              <a href="#" class="key key-delete">⌫</a>
+              <a href="#" class="key key-disabled"></a>
+            </div>
+            <div class="keypad-column">
+              <a href="#" class="key key-operator">x</a>
+              <a href="#" class="key key-d">d10</a>
+              <a href="#" class="key key-d">d<span class="variable">x</span></a>
+              <a href="#" class="key key-operator">+</a>
+              <a href="#" class="key key-operator">&ndash;</a>
+              <a href="#" class="key key-roll">Roll</a>
+              <a href="#" class="key key-disabled"></a>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
     </div>
@@ -54,14 +87,7 @@ html {
   <div id="favorites" class="view tab">
     <div class="navbar">
       <div class="navbar-inner">
-          <!--
-          <div class="left">
-            <a href="#calculator" class="link">
-              <i class="icon ion-chevron-left"></i>
-              <span>Calculator</span>
-            </a>
-          </div>
-          -->
+          <!-- <div class="left"><a href="#calculator" class="link"><i class="icon ion-chevron-left"></i><span>Calculator</span></a></div> -->
           <div class="center">Favorites</div>
           <div class="right">
             <a href="#" class="link text-only">Delete All</a>
@@ -73,9 +99,45 @@ html {
       </div>
     </div>
     <div class="pages">
-      <div class="page" data-page="favorites">
+      <div class="page navbar-fixed" data-page="favorites">
         <div class="page-content">
-          <p>Favorites</p>
+          <div class="list-block">
+            <ul>
+              <li class="swipeout" data-index="1">
+                <div class="swipeout-content item-content">
+                  <div class="item-inner">
+                    <div class="item-title">Character Generation</div>
+                    <div class="item-after">4dxk3x6</div>
+                  </div>
+                </div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                </div>
+              </li>
+              <li class="swipeout" data-index="1">
+                <div class="swipeout-content item-content">
+                  <div class="item-inner">
+                    <div class="item-title">Critical hit</div>
+                    <div class="item-after">d%</div>
+                  </div>
+                </div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                </div>
+              </li>
+              <li class="swipeout" data-index="1">
+                <div class="swipeout-content item-content">
+                  <div class="item-inner">
+                    <div class="item-title">Poison Saving Throw</div>
+                    <div class="item-after">d20+3</div>
+                  </div>
+                </div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -84,14 +146,7 @@ html {
   <div id="history" class="view tab">
     <div class="navbar">
       <div class="navbar-inner">
-        <!--
-        <div class="left">
-          <a href="#favorites" class="link">
-            <i class="icon ion-chevron-left"></i>
-            <span>Favorites</span>
-          </a>
-        </div>
-         -->
+        <!-- <div class="left"><a href="#favorites" class="link"><i class="icon ion-chevron-left"></i><span>Favorites</span></a></div> -->
         <div class="center">History</div>
           <div class="right">
             <a href="#" class="link text-only">Delete All</a>
@@ -103,9 +158,45 @@ html {
        </div>
     </div>
     <div class="pages">
-      <div class="page" data-page="history">
+      <div class="page navbar-fixed" data-page="history">
         <div class="page-content">
-          <p>History</p>
+          <div class="list-block">
+            <ul>
+              <li class="swipeout" data-index="1">
+                <div class="swipeout-content item-content">
+                  <div class="item-inner">
+                    <div class="item-title">4dxk3x6</div>
+                    <div class="item-after">6,9,12,15,18</div>
+                  </div>
+                </div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                </div>
+              </li>
+              <li class="swipeout" data-index="1">
+                <div class="swipeout-content item-content">
+                  <div class="item-inner">
+                    <div class="item-title">d%</div>
+                    <div class="item-after">17</div>
+                  </div>
+                </div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                </div>
+              </li>
+              <li class="swipeout" data-index="1">
+                <div class="swipeout-content item-content">
+                  <div class="item-inner">
+                    <div class="item-title">d20+3</div>
+                    <div class="item-after">13</div>
+                  </div>
+                </div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
