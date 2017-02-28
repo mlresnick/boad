@@ -57,9 +57,9 @@ html {
 
     #calculator .page-content { overflow: hidden; }
 
-    .navbar .navbar-inner .text-only {
-      display: block;
-    }
+    // .navbar .navbar-inner .text-only {
+    //   display: block;
+    // }
 
   }
 
@@ -135,13 +135,15 @@ html {
 // Hide icons by default
 // Hide anchor element (.icon-only & .text-only) as well as the icons
 // themselves.
-.navbar .navbar-inner {
-  .text-only,
-  .icon-only,
-  i.icon {
-    display: none;
-  }
-}
+// .navbar .navbar-inner {
+//   .text-only,
+//   .icon-only,
+//   i.icon {
+//     display: none;
+//   }
+// }
+
+.navbar .navbar-inner .editing { display: none; }
 
 .toolbar .tab-link,
 .key-favorite-set {
