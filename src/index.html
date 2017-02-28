@@ -87,21 +87,31 @@ html {
   <div id="favorites" class="view tab">
     <div class="navbar">
       <div class="navbar-inner">
-          <!-- <div class="left"><a href="#calculator" class="link"><i class="icon ion-chevron-left"></i><span>Calculator</span></a></div> -->
+          <div class="left">
+            <a href="#" class="link text-only">Edit</a>
+            <a href="#" class="link text-only editing">Done</a>
+          </div>
           <div class="center">Favorites</div>
           <div class="right">
+            <a href="#" class="link text-only editing">Delete All</a>
+<!--
+            <a href="#" class="link icon-only">
+              <i class="icon ion-edit"></i>
+              <i class="icon ion-edit ion-ios-edit"></i>
+            </a>
             <a href="#" class="link text-only">Delete All</a>
             <a href="#" class="link icon-only">
               <i class="icon ion-trash-a"></i>
               <i class="icon ion-ios-trash"></i>
             </a>
+-->
           </div>
       </div>
     </div>
     <div class="pages">
       <div class="page navbar-fixed" data-page="favorites">
         <div class="page-content">
-          <div class="list-block">
+          <div class="list-block sortable">
             <ul>
               <li class="swipeout" data-index="1">
                 <div class="swipeout-content item-content">
@@ -113,6 +123,7 @@ html {
                 <div class="swipeout-actions-right">
                   <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
                 </div>
+                <div class="sortable-handler"></div>
               </li>
               <li class="swipeout" data-index="1">
                 <div class="swipeout-content item-content">
@@ -150,10 +161,12 @@ html {
         <div class="center">History</div>
           <div class="right">
             <a href="#" class="link text-only">Delete All</a>
+<!--
             <a href="#" class="link icon-only">
               <i class="icon ion-trash-a"></i>
               <i class="icon ion-ios-trash"></i>
             </a>
+ -->
           </div>
        </div>
     </div>
