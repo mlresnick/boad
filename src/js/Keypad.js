@@ -156,13 +156,11 @@ const Keypad = (() => {
     if (_undoStack.peek().state !== 'roll') {
       const entry = _undoStack.pop();
 
-      // var xoldVal = $('#x-window').val();
       const oldVal = $('#window').html();
 
       if (entry) {
         blink(selector, _confirm, 1, 64);
 
-        // $('#x-window').val(xoldVal.substr(0, xoldVal.length - entry.text.length));
         $('#window').html(oldVal.substr(0, oldVal.length - entry.decoratedText.length));
       }
     }
