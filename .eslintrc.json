@@ -1,0 +1,35 @@
+{
+  "parserOptions": {
+    "sourceType": "script"
+  },
+
+  "env": {
+    "browser": true,
+    "jquery": true
+  },
+
+  "globals": {
+    "Dice": false,
+    "Dom7": false,
+    "Framework7": false,
+    "keypad": false,
+    "rollHistory": false
+  },
+
+  "exported": ["keypad"],
+
+  "extends": "airbnb-base",
+
+  "rules": {
+    "brace-style": [ 2, "stroustrup", { "allowSingleLine": true } ],
+    "comma-dangle": [ 2, { "functions": "never" } ],
+    "func-names": [ 1, "as-needed" ],
+    "linebreak-style": [ 2, "windows" ],
+    "no-plusplus": [ 2, { "allowForLoopAfterthoughts": true } ],
+    "no-restricted-syntax": [ 2, "ForOfStatement" ],
+    "no-underscore-dangle": 0,
+    "no-unused-vars": [ 2, { "varsIgnorePattern": "keypad|rollHistory" } ],
+    "prefer-arrow-callback": [ 2, { "allowNamedFunctions": true } ],
+    "strict": [ 2, "global" ]
+  }
+}
