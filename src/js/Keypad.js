@@ -129,7 +129,7 @@ const Keypad = (() => {
 
     if (times !== 0) {
       setTimeout(() => { blink(elem, clazz, times, speed); }, speed);
-      times -= 0.5;
+      times -= 0.5; // eslint-disable-line no-param-reassign
     }
   }
 
@@ -186,16 +186,12 @@ const Keypad = (() => {
   }
 
   function _enterNew(event) {
-console.log("Clicked", event.target.textContent);
-// console.log('this=' + JSON.stringify(this,null,2));
-// console.log('event=' + JSON.stringify(event,null,2));
-    const text = event.currentTarget.value;
+    const text = event.target.textContent;
     const oldState = _undoStack.peek().state;
     const newState = _getNextState(text);
-    const selector = `.keypad button[value="${text}"]`;
 
     if (newState !== undefined) {
-      blink(selector, _confirm, 1, 64);
+      blink(event.target, _confirm, 1, 64);
       // Are we starting a new die specification?
       if (oldState === 'roll') {
         _clear(false);
@@ -204,13 +200,12 @@ console.log("Clicked", event.target.textContent);
       const decoratedText = `<span class="${displayClass}">${text}</span>`;
       _transitionToState(text, decoratedText);
       // $('#x-window').val($('#x-window').val() + xtext);
+
       $('#window').html($('#window').html() + decoratedText);
     }
     else {
-      blink(selector, _error, 1, 64);
+      blink(event.target, _error, 1, 64);
     }
-    // Deal with remnant color from hover on mobile devices.
-    $(selector).css('background-color', 'black');
   }
 
   function _roll() {
@@ -268,13 +263,13 @@ console.log("Clicked", event.target.textContent);
   }
 
   function _saveNewFavorite() {
-    const name = $('#newFavoriteName').val();
-    if (name !== '') {
-      $('#favorite-name-modal').modal('hide');
-      return false;
-    }
-
-    alert('The name cannot be blank');
+    // const name = $('#newFavoriteName').val();
+    // if (name !== '') {
+    //   $('#favorite-name-modal').modal('hide');
+    //   return false;
+    // }
+    //
+    // alert('The name cannot be blank');
     return false;
   }
 

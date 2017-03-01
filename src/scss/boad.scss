@@ -1,6 +1,9 @@
 $android-icon-font-size: 24px;
 $ios-icon-font-size: 30px;
 
+$background-color-key-error: red;
+$background-color-key-confirm: gray;
+
 @media only screen and (max-density: 120dpi) {
   // ldpi
 }
@@ -169,6 +172,9 @@ html {
 
 .display {
   font-size: 2em;
+
+  height: 1.35em;
+
   padding: {
     right: 3px;
     left: 3px;
@@ -231,3 +237,7 @@ html {
   flex: 2;
   padding-top: 2px;
 }
+
+.confirm { background-color: $background-color-key-confirm; }
+
+.error { background-color: $background-color-key-error; }
