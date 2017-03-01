@@ -1,8 +1,5 @@
 'use strict';
 
-// TODO: replace $$ referencesand consistently use jQuery ($) reference
-const $$ = Dom7;
-
 let boadApp;
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
@@ -17,12 +14,12 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
     platform = 'material';
   }
 
-  $$('head').append(
+  $('head').append(
     isIos
       ? '<meta name="apple-mobile-web-app-status-bar-style" content="black">'
       : '<meta name="theme-color" content="#2196f3">');
 
-  $$('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
+  $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
   <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
 
   keypad.initialize();
@@ -32,5 +29,5 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
 });
 
 window.addEventListener('load', (/* event */) => {
-  $$('html').css('display', 'block');
+  $('html').css('display', 'block');
 });

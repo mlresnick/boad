@@ -1,4 +1,4 @@
-/* global $$ boadApp */
+/* global boadApp */
 /* exported rollHistory */
 
 'use strict';
@@ -31,7 +31,7 @@ const RollHistory = (() => {
 
   function _refreshTab() {
     // var displayList = $('#history .content-block');
-    const displayList = $$('#history .list-block ul');
+    const displayList = $('#history .list-block ul');
     displayList.empty();
     let i = 0;
     _history.forEach((historyEntry) => {
@@ -66,8 +66,8 @@ const RollHistory = (() => {
     // }
   }
 
-  $$('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => {
-    _remove($$(event.target).data('index'));
+  $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => {
+    _remove($(event.target).data('index'));
   });
 
   function _values() { return _history.values(); }
