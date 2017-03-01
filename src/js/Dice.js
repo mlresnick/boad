@@ -42,17 +42,16 @@ const Dice = (() => {
   function _lowHighCount() {
     let result = 0;
     const lowHighCount = _parseResults[_LOW_HIGH_COUNT];
-    // TODO: Either remove if statement or case undefined
-    if (lowHighCount !== undefined) {
-      /* eslint-disable no-multi-spaces */
-      switch (lowHighCount) {
-        case '-':       result = -1; break;
-        case '+':       result =  1; break;
-        case undefined: result =  0; break;
-        default:        result =  Number.parseInt(lowHighCount, 10);
-      }
-      /* eslint-enable no-multi-spaces */
+
+    /* eslint-disable no-multi-spaces */
+    switch (lowHighCount) {
+      case '-':       result = -1; break;
+      case '+':       result =  1; break;
+      case undefined: result =  0; break;
+      default:        result =  Number.parseInt(lowHighCount, 10);
     }
+    /* eslint-enable no-multi-spaces */
+
     return result;
   }
 
