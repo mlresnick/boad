@@ -2,21 +2,22 @@
 
 'use strict';
 
-var gulp    = require('gulp');
-var connect = require('gulp-connect');
-var rm      = require('gulp-rm');
-var sass    = require('gulp-sass');
+const gulp = require('gulp');
+const connect = require('gulp-connect');
+const rm = require('gulp-rm');
+const sass = require('gulp-sass');
+const spawn = require('child_process').spawn;
 
-var debug = require('gulp-debug');
+const debug = require('gulp-debug');
 
-var bowerList = [
+const bowerList = [
   './bower_components/framework7/dist/**/js/framework7.js',
   './bower_components/framework7/dist/**/css/framework7.{ios,material}?(.colors).css',
   './bower_components/Ionicons/**/css/ionicons.css',
   './bower_components/Ionicons/**/fonts/*'
 ];
 
-var buildDependencies = ['html', 'js', 'scss', 'bower' /*, 'svg', 'jquery'*/];
+const buildDependencies = ['html', 'js', 'scss', 'bower'/* , 'svg', 'jquery' */];
 
 function copyGlobs(src, dst) {
   return gulp
@@ -25,16 +26,15 @@ function copyGlobs(src, dst) {
     .pipe(connect.reload());
 }
 
-function run_cmd(cmd, args, callBack) {
-  var spawn = require('child_process').spawn;
-  var child = spawn(cmd, args);
-  var resp = '';
+function runCmd(cmd, args, callBack) {
+  const child = spawn(cmd, args);
+  let resp = '';
 
-  child.stdout.on('data', function(buffer) { resp += buffer.toString(); });
-  child.stdout.on('end', function() { callBack(resp); });
+  child.stdout.on('data', (buffer) => { resp += buffer.toString(); });
+  child.stdout.on('end', () => { callBack(resp); });
 }
 
-gulp.task('webserver', function() {
+gulp.task('webserver', () => {
   connect.server({
     port: 80,
     livereload: true,
@@ -42,28 +42,35 @@ gulp.task('webserver', function() {
   });
 });
 
-gulp.task('getPrivateIP', function() {
-  run_cmd('ipconfig', [], function(result) {
-    var lines = result.split('\n');
-    var sawSection = false;
-    for (var index in lines) {
-      if (lines[index].includes('Wireless LAN adapter Wi-Fi')) {
+gulp.task('getPrivateIP', () => {
+  runCmd('ipconfig', [], (result) => {
+    const lines = result.split('\n');
+    let sawSection = false;
+    lines.forEach((line) => {
+      if (line.includes('Wireless LAN adapter Wi-Fi')) {
         sawSection = true;
       }
-      else if (sawSection && lines[index].includes('IPv4')) {
-        process.stdout.write('Wi-Fi IPv4:' + lines[index].split(':')[1] + '\n');
+      else if (sawSection && line.includes('IPv4')) {
+        process.stdout.write(`Wi-Fi IPv4:${line.split(':')[1]}\n`);
       }
-
-    }
+    });
+    // for (const line of lines) {
+    //   if (line.includes('Wireless LAN adapter Wi-Fi')) {
+    //     sawSection = true;
+    //   }
+    //   else if (sawSection && line.includes('IPv4')) {
+    //     process.stdout.write(`Wi-Fi IPv4:${line.split(':')[1]}\n`);
+    //   }
+    // }
   });
 });
 
-gulp.task('html', function () { return copyGlobs('./src/**/*.html', './app/'); });
-gulp.task('js', function () { return copyGlobs('./src/**/*.js', './app/'); });
-gulp.task('bower', function() { return copyGlobs(bowerList, './app/lib/'); });
-gulp.task('scss', function () {
-  // return copyGlobs('./src/**/*.scss', './app/'); });
-  return gulp
+gulp.task('html', () => copyGlobs('./src/**/*.html', './app/'));
+gulp.task('js', () => copyGlobs('./src/**/*.js', './app/'));
+gulp.task('jquery', () => copyGlobs('./bower_components/jquery/dist/jquery.js', './app/lib/js'));
+gulp.task('bower', () => copyGlobs(bowerList, './app/lib/'));
+gulp.task('scss', () =>
+  gulp
     .src('./src/scss/*.scss')
     .pipe(debug())
     .pipe(
@@ -71,20 +78,17 @@ gulp.task('scss', function () {
       .on('error', sass.logError)
     )
     .pipe(gulp.dest('./app/css/'))
-    .pipe(connect.reload());
-});
+    .pipe(connect.reload())
+);
 
 gulp.task(':build', buildDependencies);
-gulp.task(':clean', function() {
-  return gulp
-    .src(['./app/**/*'], { read: false })
-    .pipe(rm());
-});
+gulp.task(':clean', () => gulp.src(['./app/**/*'], { read: false }).pipe(rm()));
 
-gulp.task('watch', function() {
+gulp.task('watch', () => {
   gulp.watch(['./src/**/*.html'], ['html']);
   gulp.watch(['./src/**/js/**/*.js'], ['js']);
   gulp.watch(['./src/scss/**/*.scss'], ['scss']);
+  gulp.watch(['./bower_components/jquery/dist/jquery.js'], ['jquery']);
   gulp.watch(bowerList, ['bower']);
 });
 

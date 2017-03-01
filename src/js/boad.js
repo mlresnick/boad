@@ -1,18 +1,12 @@
-/* global Framework7 Dom7 */
-
 'use strict';
 
-window.addEventListener('load', function (/*event*/) {
-  var $$ = Dom7;
-  $$('html').css('display', 'block');
-});
+const $$ = Dom7;
 
-document.addEventListener('DOMContentLoaded', function (/*event*/) {
-  var isAndroid = (Framework7.prototype.device.android === true);
-  var isIos = (Framework7.prototype.device.ios === true);
-  var boadApp = new Framework7({ material: isAndroid });
-  var $$ = Dom7;
-  var platform = '';
+document.addEventListener('DOMContentLoaded', (/* event */) => {
+  const isAndroid = (Framework7.prototype.device.android === true);
+  const isIos = (Framework7.prototype.device.ios === true);
+  const boadApp = new Framework7({ material: isAndroid });
+  let platform = '';
   if (isIos) {
     platform = 'ios';
   }
@@ -25,10 +19,14 @@ document.addEventListener('DOMContentLoaded', function (/*event*/) {
       ? '<meta name="apple-mobile-web-app-status-bar-style" content="black">'
       : '<meta name="theme-color" content="#2196f3">');
 
-  $$('head').append(
-    '<link rel="stylesheet" href="lib/css/framework7.' + platform + '.css">' +
-    '<link rel="stylesheet" href="lib/css/framework7.' + platform + '.colors.css">'
-  );
+  $$('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
+  <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
+
+  keypad.initialize();
 
   boadApp.addView('.view-main', { domCache: true });
+});
+
+window.addEventListener('load', (/* event */) => {
+  $$('html').css('display', 'block');
 });
