@@ -1,11 +1,14 @@
 'use strict';
 
+// TODO: replace $$ referencesand consistently use jQuery ($) reference
 const $$ = Dom7;
+
+let boadApp;
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const isAndroid = (Framework7.prototype.device.android === true);
   const isIos = (Framework7.prototype.device.ios === true);
-  const boadApp = new Framework7({ material: isAndroid });
+  boadApp = new Framework7({ material: isAndroid });
   let platform = '';
   if (isIos) {
     platform = 'ios';
@@ -23,6 +26,7 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
 
   keypad.initialize();
+  rollHistory.initialize();
 
   boadApp.addView('.view-main', { domCache: true });
 });

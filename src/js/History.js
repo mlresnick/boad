@@ -1,9 +1,9 @@
-/* global $$ */
+/* global $$ boadApp */
 /* exported rollHistory */
 
 'use strict';
 
-// IDEA: Split view from model...
+// IDEA: Split view from model
 
 const RollHistory = (() => {
   let _instance;
@@ -72,11 +72,40 @@ const RollHistory = (() => {
 
   function _values() { return _history.values(); }
 
+
+  function _initialize() {
+    // Initialize the UI
+    $('#history').on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
+    $('#history').on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
+    $('#history .navbar .delete-all').click(() => {
+      boadApp.confirm('Delete all history?', 'BoAD', () => {
+        _clear();
+        _refreshTab();
+      });
+    });
+
+    // Initialize LocalStorage, if necessary
+    if (localStorage.getItem('history') === null) {
+      localStorage.setItem('history', JSON.stringify([]));
+    }
+
+    // initialize this object.
+    _history = JSON.parse(localStorage.getItem('history'), null, 2);
+    _instance = {
+      add: _add,
+      clear: _clear,
+      initialize: _initialize,
+      refreshTab: _refreshTab,
+      values: _values
+    };
+  }
+
   function _checkInitialization() {
     if (!_instance) {
       _instance = {
         add: _add,
         clear: _clear,
+        initialize: _initialize,
         refreshTab: _refreshTab,
         values: _values
       };

@@ -2,6 +2,10 @@
 
 // IDEA: Maybe split display into two spans - the diespec and the result.
 
+// TODO Adjust state machine so that after a roll...
+// * delete will remove result and last entry in stack
+// * entering a digit or a die will cause the current entry to be deleted and the state
+//   machine will be reset
 const Keypad = (() => {
   let _instance;
   let _dice;
