@@ -4,7 +4,6 @@
 const Favorites = (() => {
   const _FAVORITES = 'favorites';
   let _instance;
-  let _initializationCheckDone = false;
   let _favorites = null;
 
   function _updateStorage() {
@@ -51,33 +50,22 @@ const Favorites = (() => {
     _delete($(event.target).data('index'));
   });
 
-  function _checkInitialization() {
-    if (!_instance) {
-      _instance = {
-        add: _add,
-        delete: _delete,
-        refreshTab: _refreshTab,
-        isInUse: _isInUse
-      };
-    }
-
-    if (!_initializationCheckDone) {
-      if (localStorage.getItem(_FAVORITES) === null) {
-        localStorage.setItem(_FAVORITES, JSON.stringify(new Array(10)));
-      }
-
-      if (_favorites === null) {
-        _favorites = JSON.parse(localStorage.getItem(_FAVORITES));
-      }
-
-      _initializationCheckDone = true;
-    }
-  }
-
   function _getInstance() {
-    _checkInitialization();
     return _instance;
   }
+
+  if (localStorage.getItem(_FAVORITES) === null) {
+    localStorage.setItem(_FAVORITES, JSON.stringify(new Array(10)));
+  }
+
+  _favorites = JSON.parse(localStorage.getItem(_FAVORITES));
+
+  _instance = {
+    add: _add,
+    delete: _delete,
+    refreshTab: _refreshTab,
+    isInUse: _isInUse
+  };
 
   return { getInstance: _getInstance };
 })();

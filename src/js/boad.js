@@ -22,9 +22,6 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
   <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
 
-  keypad.initialize();
-  rollHistory.initialize();
-
   boadApp.addView('.view-main', { domCache: true });
 });
 

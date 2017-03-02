@@ -11,7 +11,7 @@
 
   "globals": {
     "Dice": false,
-    "Dom7": false,
+    "favorites": false,
     "Framework7": false,
     "keypad": false,
     "rollHistory": false
