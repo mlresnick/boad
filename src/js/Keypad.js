@@ -203,9 +203,9 @@ const Keypad = (() => {
     const text = event.target.textContent;
     const oldState = _undoStack.peek().state;
     const newState = _getNextState(text);
+    let signal = _error;
 
     if (newState !== undefined) {
-      blink(event.target, _confirm, 1, 64);
       // Are we starting a new die specification?
       if (oldState === 'roll') {
         _clear(false);
@@ -213,13 +213,13 @@ const Keypad = (() => {
       const displayClass = `display-${_displayClass[_category[text]]}`;
       const decoratedText = `<span class="${displayClass}">${text}</span>`;
       _transitionToState(text, decoratedText);
-      // $('#x-window').val($('#x-window').val() + xtext);
-
       $('#window').html($('#window').html() + decoratedText);
+      signal = _confirm;
     }
-    else {
-      blink(event.target, _error, 1, 64);
-    }
+    // else {
+    //   blink(keyElement, _error, 1, 64);
+    // }
+    blink($(event.target).closest('.key'), signal, 1, 64);
   }
 
   function _roll() {
