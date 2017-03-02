@@ -7,7 +7,6 @@
 
 const RollHistory = (() => {
   let _instance;
-  let _initializationCheckDone = false;
   let _history = null;
 
   function _add(dieSpec, displayText, result) {
@@ -49,21 +48,6 @@ const RollHistory = (() => {
         </li>`
       );
     });
-    // for (var historyEntry of _history) {
-    //   displayList.append(
-    //     '<li class="swipeout" data-index="' + i++ + '">' +
-    //       '<div class="swipeout-content item-content">' +
-    //         '<div class="item-inner">' +
-    //           '<div class="item-title">' + historyEntry.displayText + '</div>' +
-    //           '<div class="item-after">' + historyEntry.result + '</div>' +
-    //         '</div>' +
-    //       '</div>' +
-    //       '<div class="swipeout-actions-right">' +
-    //         '<a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>' +
-    //       '</div>' +
-    //     '</li>'
-    //   );
-    // }
   }
 
   $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => {
@@ -72,62 +56,33 @@ const RollHistory = (() => {
 
   function _values() { return _history.values(); }
 
+  function _getInstance() { return _instance; }
 
-  function _initialize() {
-    // Initialize the UI
-    $('#history').on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
-    $('#history').on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
-    $('#history .navbar .delete-all').click(() => {
-      boadApp.confirm('Delete all history?', 'BoAD', () => {
-        _clear();
-        _refreshTab();
-      });
+  // Initialize the UI
+  $('#history').on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
+  $('#history').on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
+  $('#history .navbar .delete-all').click(() => {
+    boadApp.confirm('Delete all history?', 'BoAD', () => {
+      _clear();
+      _refreshTab();
     });
+  });
 
-    // Initialize LocalStorage, if necessary
-    if (localStorage.getItem('history') === null) {
-      localStorage.setItem('history', JSON.stringify([]));
-    }
-
-    // initialize this object.
-    _history = JSON.parse(localStorage.getItem('history'), null, 2);
-    _instance = {
-      add: _add,
-      clear: _clear,
-      initialize: _initialize,
-      refreshTab: _refreshTab,
-      values: _values
-    };
+  // Initialize LocalStorage, if necessary
+  if (localStorage.getItem('history') === null) {
+    localStorage.setItem('history', JSON.stringify([]));
   }
 
-  function _checkInitialization() {
-    if (!_instance) {
-      _instance = {
-        add: _add,
-        clear: _clear,
-        initialize: _initialize,
-        refreshTab: _refreshTab,
-        values: _values
-      };
-    }
+  // initialize this object.
+  _history = JSON.parse(localStorage.getItem('history'), null, 2);
+  _instance = {
+    add: _add,
+    clear: _clear,
+    refreshTab: _refreshTab,
+    remove: _remove,
+    values: _values
+  };
 
-    if (!_initializationCheckDone) {
-      if (localStorage.getItem('history') === null) {
-        localStorage.setItem('history', JSON.stringify([]));
-      }
-
-      if (_history === null) {
-        _history = JSON.parse(localStorage.getItem('history'), null, 2);
-      }
-
-      _initializationCheckDone = true;
-    }
-  }
-
-  function _getInstance() {
-    _checkInitialization();
-    return _instance;
-  }
   return { getInstance: _getInstance };
 })();
 

@@ -149,14 +149,14 @@ const Keypad = (() => {
     }
   }
 
-  function _initialize() {
-    $('.key-d, .key-digit, .key-favorite:not(.disabled), .key-keep, .key-operation')
-      .click(this.enterNew);
-    $('.key-delete').click(this.deleteLast);
-    $('.key-roll').click(this.roll);
-    $('.key-clear').click(this.clear);
-    $('a[href="#history"]').click(rollHistory.refreshTab);
-  }
+  // function _initialize() {
+  //   $('.key-d, .key-digit, .key-favorite:not(.disabled), .key-keep, .key-operation')
+  //     .click(this.enterNew);
+  //   $('.key-delete').click(this.deleteLast);
+  //   $('.key-roll').click(this.roll);
+  //   $('.key-clear').click(this.clear);
+  //   $('a[href="#history"]').click(rollHistory.refreshTab);
+  // }
 
   function _clear(showConfirm = true) {
     if (showConfirm) {
@@ -289,22 +289,38 @@ const Keypad = (() => {
   }
 
   function _getInstance() {
-    if (!_instance) {
-      _instance = {
-        clear: _clear,
-        deleteLast: _deleteLast,
-        enterNew: _enterNew,
-        initialize: _initialize,
-        roll: _roll,
-        showFavoriteModal: _showFavoriteModal,
-        saveNewFavorite: _saveNewFavorite
-      };
-    }
+    // if (!_instance) {
+    //   _instance = {
+    //     clear: _clear,
+    //     deleteLast: _deleteLast,
+    //     enterNew: _enterNew,
+    //     initialize: _initialize,
+    //     roll: _roll,
+    //     showFavoriteModal: _showFavoriteModal,
+    //     saveNewFavorite: _saveNewFavorite
+    //   };
+    // }
     return _instance;
   }
-  return {
-    getInstance: _getInstance
+
+  $('.key-d, .key-digit, .key-favorite:not(.disabled), .key-keep, .key-operation')
+    .click(_enterNew);
+  $('.key-delete').click(_deleteLast);
+  $('.key-roll').click(_roll);
+  $('.key-clear').click(_clear);
+  $('a[href="#history"]').click(rollHistory.refreshTab);
+
+  _instance = {
+    clear: _clear,
+    deleteLast: _deleteLast,
+    enterNew: _enterNew,
+    // initialize: _initialize,
+    roll: _roll,
+    showFavoriteModal: _showFavoriteModal,
+    saveNewFavorite: _saveNewFavorite
   };
+
+  return { getInstance: _getInstance };
 })();
 
 const keypad = Keypad.getInstance();
