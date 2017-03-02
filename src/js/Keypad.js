@@ -9,7 +9,6 @@
 const Keypad = (() => {
   let _instance;
   let _dice;
-  const _undoStack = [{ text: null, decoratedText: null, state: 'count' }];
 
   /* eslint-disable */
   const _states = {
@@ -71,47 +70,60 @@ const Keypad = (() => {
   // TODO: Reintroduce
   // let _favorites = Favorites.getInstance();
 
-  _undoStack.peek = function _peek() {
-    let result = null;
-    if (this.length) {
-      result = this[this.length - 1];
-    }
+  const UndoStack = (() => {
+    const _stack = [{ text: null, decoratedText: null, state: 'count' }];
 
-    return result;
-  };
 
-  _undoStack.reinit = function _reinit() {
-    this.length = 1;
-  };
-
-  _undoStack.pop = function _pop() {
-    let result = null;
-    if (this.length > 1) {
-      result = Array.prototype.pop.call(this);
-    }
-
-    return result;
-  };
-
-  _undoStack.push = function _push(newText, newDecoratedText, newState) {
-    // newState = newState || this.peek().state;
-    Array.prototype.push.call(
-      this,
-      { text: newText, decoratedText: newDecoratedText, state: (newState || this.peek().state) });
-  };
-
-  _undoStack.toString = function _toString() {
-    let result = '[';
-    if (this.length > 0) {
-      result += JSON.stringify(this[0]);
-      for (let i = 1; i < this.length; i++) {
-        result = `${result}, ${JSON.stringify(this[i])}`;
+    function _peek() {
+      let result = null;
+      if (_stack.length) {
+        result = _stack[_stack.length - 1];
       }
+
+      return result;
     }
 
-    result += ']';
-    return result;
-  };
+    function _reinit() { _stack.length = 1; }
+
+    function _pop() {
+      let result = null;
+      if (_stack.length > 1) {
+        result = Array.prototype.pop.call(_stack);
+      }
+
+      return result;
+    }
+
+    function _push(newText, newDecoratedText, newState) {
+      // newState = newState || _stack.peek().state;
+      Array.prototype.push.call(
+        _stack,
+        { text: newText, decoratedText: newDecoratedText, state: (newState || _stack.peek().state) });
+    }
+
+    function _toString() {
+      let result = '[';
+      if (_stack.length > 0) {
+        result += JSON.stringify(_stack[0]);
+        for (let i = 1; i < _stack.length; i++) {
+          result = `${result}, ${JSON.stringify(_stack[i])}`;
+        }
+      }
+
+      result += ']';
+      return result;
+    }
+
+    return {
+      peek: _peek,
+      pop: _pop,
+      push: _push,
+      reinit: _reinit,
+      toString: _toString
+    };
+  })();
+
+  const _undoStack = UndoStack;
 
   /**
    * TODO replace blink() with CSS3 animation
@@ -265,6 +277,7 @@ const Keypad = (() => {
   }
 
   function _saveNewFavorite() {
+    // TODO Uncomment _saveNewFavorite when needed
     // const name = $('#newFavoriteName').val();
     // if (name !== '') {
     //   $('#favorite-name-modal').modal('hide');
