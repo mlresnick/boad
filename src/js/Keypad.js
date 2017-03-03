@@ -247,7 +247,6 @@ const Keypad = (() => {
   }
 
   function _validateName(name) {
-    console.log(`validatName: name=${JSON.stringify(name, null, 2)}`);
     if (!name) {
       boadApp.alert('Favorite name cannot be blank');
       $('.key-favorite-set').click();

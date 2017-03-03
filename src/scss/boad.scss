@@ -128,34 +128,12 @@ html {
     // Tweak the nav bar
     .navbar i.icon { font-size: $ios-icon-font-size; }
 
-
     // Tweak the tab bar
     .tabbar a.tab-link i.icon { font-size: $ios-icon-font-size; }
     .tabbar-labels a.tab-link { padding: 0; }
   }
 }
 
-// Hide icons by default
-// Hide anchor element (.icon-only & .text-only) as well as the icons
-// themselves.
-// .navbar .navbar-inner {
-//   .text-only,
-//   .icon-only,
-//   i.icon {
-//     display: none;
-//   }
-// }
-// .navbar-inner {
-//   .left,
-//   .right {
-//     .link {
-//       font: {
-//         family: 'Arial Narrow';
-//         size: 19px;
-//       }
-//     }
-//   }
-// }
 .navbar .navbar-inner .editing { display: none; }
 
 .toolbar .tab-link,
