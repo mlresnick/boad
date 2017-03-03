@@ -10,10 +10,13 @@ const Favorites = (() => {
     localStorage.setItem(_FAVORITES, JSON.stringify(_favorites));
   }
 
-  function _add(index, dieSpec, decoratedText) {
-    _favorites[Number.parseInt(index, 10)] = {};
-    _favorites[Number.parseInt(index, 10)].dieSpec = dieSpec;
-    _favorites[Number.parseInt(index, 10)].decoratedText = decoratedText;
+  function _add(n, spec, text) {
+    _favorites.push({
+      name: n,
+      dieSpec: spec,
+      decoratedText: text
+    });
+
     _updateStorage();
   }
 
@@ -28,34 +31,45 @@ const Favorites = (() => {
 
   function _refreshTab() {
     const displayList = $('#favorites .list-block ul');
+    let i = 0;
     displayList.empty();
-    for (let i = 0; i < 10; i++) {
+    _favorites.forEach((favorite) => {
       displayList.append(
-        `<li class="swipeout" data-index="${i}">
-          <div class="swipeout-content item-content">
-            <div class="item-media">${i}</div>
+        `<li data-index="${i += 1}">
+          <div class="item-content">
+            <div class="item-media">
+              <a href="#"><i class="icon ion-minus-circled"></i></a>
+            </div>
             <div class="item-inner">
-              <div class="item-title">${((_favorites[i] !== null) ? _favorites[i].decoratedText : '&nbsp;')}</div>
+              <div class="item-title">${favorite.name} (${favorite.decoratedText})</div>
             </div>
           </div>
-          <div class="swipeout-actions-right">
-            <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-          </div>
+          <div class="sortable-handler"></div>
         </li>`
       );
-    }
+    });
+    $('#favorites .sortable li').on('sortable:sort', (event) => {
+      // TODO: implement
+      console.log(`event=${JSON.stringify(event.detail, null, 2)}`);
+      console.log(`event.detail.startIndex=${event.detail.startIndex}`);
+      console.log(`event.detail.newIndex=${JSON.stringify(event.detail.newIndex, null, 2)}`);
+    });
   }
 
-  $('#favorites ul').on('swipeout:deleted', 'li.swipeout', (event) => {
-    _delete($(event.target).data('index'));
+  function _getInstance() { return _instance; }
+
+  $('#favorites .navbar-inner .left .main').click(() => {
+    $('#favorites').addClass('editing');
+    boadApp.sortableOpen('#favorites .sortable');
   });
 
-  function _getInstance() {
-    return _instance;
-  }
+  $('#favorites .navbar-inner .left .editing').click(() => {
+    $('#favorites').removeClass('editing');
+    boadApp.sortableClose('#favorites .sortable');
+  });
 
   if (localStorage.getItem(_FAVORITES) === null) {
-    localStorage.setItem(_FAVORITES, JSON.stringify(new Array(10)));
+    localStorage.setItem(_FAVORITES, JSON.stringify([]));
   }
 
   _favorites = JSON.parse(localStorage.getItem(_FAVORITES));

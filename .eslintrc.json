@@ -10,6 +10,7 @@
   },
 
   "globals": {
+    "boadApp": true,
     "Dice": false,
     "favorites": false,
     "Framework7": false,
