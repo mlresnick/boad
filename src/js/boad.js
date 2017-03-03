@@ -5,8 +5,10 @@ let boadApp;
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const isAndroid = (Framework7.prototype.device.android === true);
   const isIos = (Framework7.prototype.device.ios === true);
-  boadApp = new Framework7({ material: isAndroid });
   let platform = '';
+
+  boadApp = new Framework7({ material: isAndroid });
+
   if (isIos) {
     platform = 'ios';
   }
@@ -25,6 +27,4 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   boadApp.addView('.view-main', { domCache: true });
 });
 
-window.addEventListener('load', (/* event */) => {
-  $('html').css('display', 'block');
-});
+window.addEventListener('load', (/* event */) => { $('html').css('display', 'block'); });

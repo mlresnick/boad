@@ -44,9 +44,9 @@ html {
               <a href="#" class="key key-digit">1</a>
               <a href="#" class="key key-clear">C</a>
               <a href="#" class="key key-favorite key-favorite-set">
-              <i class="icon ion-android-star"></i>
-              <i class="icon ion-ios-star"></i>
-            </a>
+                <i class="icon ion-android-star"></i>
+                <i class="icon ion-ios-star"></i>
+              </a>
             </div>
             <div class="keypad-column">
               <a href="#" class="key key-keep">L</a>
@@ -88,23 +88,12 @@ html {
     <div class="navbar">
       <div class="navbar-inner">
           <div class="left">
-            <a href="#" class="link text-only">Edit</a>
+            <a href="#" class="link text-only main">Edit</a>
             <a href="#" class="link text-only editing">Done</a>
           </div>
           <div class="center">Favorites</div>
           <div class="right">
             <a href="#" class="link text-only editing">Delete All</a>
-<!--
-            <a href="#" class="link icon-only">
-              <i class="icon ion-edit"></i>
-              <i class="icon ion-edit ion-ios-edit"></i>
-            </a>
-            <a href="#" class="link text-only">Delete All</a>
-            <a href="#" class="link icon-only">
-              <i class="icon ion-trash-a"></i>
-              <i class="icon ion-ios-trash"></i>
-            </a>
--->
           </div>
       </div>
     </div>
@@ -113,40 +102,7 @@ html {
         <div class="page-content">
           <div class="list-block sortable">
             <ul>
-              <li class="swipeout" data-index="1">
-                <div class="swipeout-content item-content">
-                  <div class="item-inner">
-                    <div class="item-title">Character Generation</div>
-                    <div class="item-after">4dxk3x6</div>
-                  </div>
-                </div>
-                <div class="swipeout-actions-right">
-                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-                </div>
-                <div class="sortable-handler"></div>
-              </li>
-              <li class="swipeout" data-index="1">
-                <div class="swipeout-content item-content">
-                  <div class="item-inner">
-                    <div class="item-title">Critical hit</div>
-                    <div class="item-after">d%</div>
-                  </div>
-                </div>
-                <div class="swipeout-actions-right">
-                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-                </div>
-              </li>
-              <li class="swipeout" data-index="1">
-                <div class="swipeout-content item-content">
-                  <div class="item-inner">
-                    <div class="item-title">Poison Saving Throw</div>
-                    <div class="item-after">d20+3</div>
-                  </div>
-                </div>
-                <div class="swipeout-actions-right">
-                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-                </div>
-              </li>
+              <!-- Filled in at runtime -->
             </ul>
           </div>
         </div>
@@ -206,6 +162,7 @@ html {
 <script src="lib/js/jquery.js"></script>
 <script src="js/boad.js"></script>
 <script src="js/Dice.js"></script>
+<script src="js/Favorites.js"></script>
 <script src="js/History.js"></script>
 <script src="js/Keypad.js"></script>
 </body>

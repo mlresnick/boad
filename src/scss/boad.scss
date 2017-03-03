@@ -163,6 +163,47 @@ html {
   i.icon { display: none; }
 }
 
+#favorites {
+  &.editing .navbar .navbar-inner {
+    .editing { display: flex; }
+    .main { display: none; }
+  }
+  .left .editing {margin-left: 0; }
+
+  .item-media {
+    .icon {
+      transition-delay: 0.125s;
+      transition-duration: 0.5s - 0.125s;
+      opacity: 0;
+    }
+
+    a {
+      margin: 0;
+      padding: 0;
+      color: red;
+    }
+  }
+
+  li {
+    left: -40px;
+    transition-delay: 0;
+    transition-duration: 0.5s;
+  }
+
+  &.editing {
+    .item-media .icon {
+      transition-delay: 0.125s;
+      transition-duration: 0.5s - 0.125s;
+      opacity: 1;
+    }
+
+    li {
+      left: 0;
+      transition-delay: 0;
+      transition-duration: 0.5s;
+    }
+  }
+}
 
 #calculator .content-block {
   height: 100%;

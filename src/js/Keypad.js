@@ -149,15 +149,6 @@ const Keypad = (() => {
     }
   }
 
-  // function _initialize() {
-  //   $('.key-d, .key-digit, .key-favorite:not(.disabled), .key-keep, .key-operation')
-  //     .click(this.enterNew);
-  //   $('.key-delete').click(this.deleteLast);
-  //   $('.key-roll').click(this.roll);
-  //   $('.key-clear').click(this.clear);
-  //   $('a[href="#history"]').click(rollHistory.refreshTab);
-  // }
-
   function _clear(showConfirm = true) {
     if (showConfirm) {
       blink('.key-clear', _confirm, 1, 64);
@@ -216,9 +207,7 @@ const Keypad = (() => {
       $('#window').html($('#window').html() + decoratedText);
       signal = _confirm;
     }
-    // else {
-    //   blink(keyElement, _error, 1, 64);
-    // }
+
     blink($(event.target).closest('.key'), signal, 1, 64);
   }
 
@@ -249,66 +238,50 @@ const Keypad = (() => {
       decoratedResult = `<span class="display-result">${result}</span>`;
       displayResult = `<span class="display-result"> ⇒ </span>${decoratedResult}`;
       $('#window').html(currentDisplay + displayResult);
-      // TODO: Figure out if it makes sense to do this.
-      // _undoStack.push(result, decoratedResult, newState);
 
       rollHistory.add(currentText, currentDisplay, decoratedResult);
     }
     else {
-      blink('button[value="roll"]', _error, 1, 64);
+      blink('.key-roll', _error, 1, 64);
     }
   }
 
-  function _showFavoriteModal() {
-    const state = _undoStack.peek().state;
-    const newState = _states[state].roll;
-
-    if (newState !== undefined) {
-      blink('button[value="roll"]', _confirm, 1, 64);
-      $('#newFavoriteSpec').text($('#window').val());
-      $('#newFavoriteName').val('');
-      $('#favorite-name-modal').modal({ show: true });
+  function _validateName(name) {
+    console.log(`validatName: name=${JSON.stringify(name, null, 2)}`);
+    if (!name) {
+      boadApp.alert('Favorite name cannot be blank');
+      $('.key-favorite-set').click();
     }
     else {
-      blink('#favoriteButton', _error, 1, 100);
+      const currentText = $('#window').text();
+      const currentDisplay = $('#window').html();
+      favorites.add(name, currentText, currentDisplay);
     }
-
-    return false;
   }
 
-  function _saveNewFavorite() {
-    // TODO Uncomment _saveNewFavorite when needed
-    // const name = $('#newFavoriteName').val();
-    // if (name !== '') {
-    //   $('#favorite-name-modal').modal('hide');
-    //   return false;
-    // }
-    //
-    // alert('The name cannot be blank');
-    return false;
+  function _addFavorite() {
+    const state = _undoStack.peek().state;
+    const currentDisplay = $('#window').html();
+
+    // If it's ok to roll at this point, it's ok to save a favorite
+    if (_states[state].roll !== undefined) {
+      boadApp.prompt(currentDisplay, 'Name for favorite?', _validateName);
+    }
+    else {
+      blink('.key-favorite-set', _error, 1, 64);
+    }
   }
 
-  function _getInstance() {
-    // if (!_instance) {
-    //   _instance = {
-    //     clear: _clear,
-    //     deleteLast: _deleteLast,
-    //     enterNew: _enterNew,
-    //     initialize: _initialize,
-    //     roll: _roll,
-    //     showFavoriteModal: _showFavoriteModal,
-    //     saveNewFavorite: _saveNewFavorite
-    //   };
-    // }
-    return _instance;
-  }
+  function _getInstance() { return _instance; }
 
-  $('.key-d, .key-digit, .key-favorite:not(.disabled), .key-keep, .key-operation')
+  $('.key-d, .key-digit, .key-keep, .key-operation')
     .click(_enterNew);
   $('.key-delete').click(_deleteLast);
   $('.key-roll').click(_roll);
   $('.key-clear').click(_clear);
+  $('.key-favorite-set').click(_addFavorite);
   $('a[href="#history"]').click(rollHistory.refreshTab);
+  $('a[href="#favorites"]').click(favorites.refreshTab);
 
   _instance = {
     clear: _clear,
@@ -316,8 +289,8 @@ const Keypad = (() => {
     enterNew: _enterNew,
     // initialize: _initialize,
     roll: _roll,
-    showFavoriteModal: _showFavoriteModal,
-    saveNewFavorite: _saveNewFavorite
+    // showFavoriteModal: _showFavoriteModal,
+    addFavorite: _addFavorite
   };
 
   return { getInstance: _getInstance };
