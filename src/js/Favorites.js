@@ -20,8 +20,9 @@ const Favorites = (() => {
     _updateStorage();
   }
 
-  function _delete(index) {
-    _favorites[index] = null;
+  function _delete(name) {
+    const index = _favorites.findIndex(favorite => favorite.name === name);
+    _favorites.splice(index, 1);
     _updateStorage();
   }
 
@@ -29,30 +30,47 @@ const Favorites = (() => {
     return _favorites[index] !== null;
   }
 
+  function _move(oldIndex, newIndex) {
+    const movedValue = _favorites.splice(oldIndex, 1)[0];
+    _favorites.splice(newIndex, 0, movedValue);
+    _updateStorage();
+  }
+
   function _refreshTab() {
     const displayList = $('#favorites .list-block ul');
-    let i = 0;
+
     displayList.empty();
+// TODO: add platform specific minus-circle icons
     _favorites.forEach((favorite) => {
       displayList.append(
-        `<li data-index="${i += 1}">
-          <div class="item-content">
+        `<li class="swipeout" data-name="${favorite.name}">
+          <div class="swipeout-content item-content">
             <div class="item-media">
-              <a href="#"><i class="icon ion-minus-circled"></i></a>
+              <a href="#" class="favorite-delete"><i class="icon ion-minus-circled"></i></a>
             </div>
             <div class="item-inner">
               <div class="item-title">${favorite.name} (${favorite.decoratedText})</div>
             </div>
           </div>
           <div class="sortable-handler"></div>
+          <div class="swipeout-actions-right">
+            <a href="#" class="swipeout-delete">Delete</a>
+          </div>
         </li>`
       );
     });
+
     $('#favorites .sortable li').on('sortable:sort', (event) => {
-      // TODO: implement
-      console.log(`event=${JSON.stringify(event.detail, null, 2)}`);
-      console.log(`event.detail.startIndex=${event.detail.startIndex}`);
-      console.log(`event.detail.newIndex=${JSON.stringify(event.detail.newIndex, null, 2)}`);
+      _move(event.detail.startIndex, event.detail.newIndex);
+    });
+
+    // TODO Make sure favorite names are unique
+    $('#favorites .favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
+
+    $('#favorites li.swipeout').on('swipeout:open', () => { boadApp.sortableClose('#favorites .sortable'); });
+    $('#favorites li.swipeout').on('swipeout:close', () => { boadApp.sortableOpen('#favorites .sortable'); });
+    $('#favorites li.swipeout').on('swipeout:delete', (event) => {
+      _delete($(event.target).data('name'));
     });
   }
 
