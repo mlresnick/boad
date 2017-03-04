@@ -20,14 +20,14 @@ const Favorites = (() => {
     _updateStorage();
   }
 
-  function _delete(name) {
-    const index = _favorites.findIndex(favorite => favorite.name === name);
-    _favorites.splice(index, 1);
-    _updateStorage();
+  function _findIndexByName(name) {
+    return _favorites.findIndex(favorite => favorite.name === name);
   }
 
-  function _isInUse(index) {
-    return _favorites[index] !== null;
+  function _delete(name) {
+    const index = _findIndexByName(name);
+    _favorites.splice(index, 1);
+    _updateStorage();
   }
 
   function _move(oldIndex, newIndex) {
@@ -36,11 +36,13 @@ const Favorites = (() => {
     _updateStorage();
   }
 
+  function _nameInUse(name) { return _findIndexByName(name) !== -1; }
+
   function _refreshTab() {
     const displayList = $('#favorites .list-block ul');
 
     displayList.empty();
-// TODO: add platform specific minus-circle icons
+// TODO: Add platform specific minus-circle icons
     _favorites.forEach((favorite) => {
       displayList.append(
         `<li class="swipeout" data-name="${favorite.name}">
@@ -64,7 +66,6 @@ const Favorites = (() => {
       _move(event.detail.startIndex, event.detail.newIndex);
     });
 
-    // TODO Make sure favorite names are unique
     $('#favorites .favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
 
     $('#favorites li.swipeout').on('swipeout:open', () => { boadApp.sortableClose('#favorites .sortable'); });
@@ -95,8 +96,8 @@ const Favorites = (() => {
   _instance = {
     add: _add,
     delete: _delete,
-    refreshTab: _refreshTab,
-    isInUse: _isInUse
+    nameInUse: _nameInUse,
+    refreshTab: _refreshTab
   };
 
   return { getInstance: _getInstance };

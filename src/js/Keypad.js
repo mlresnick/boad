@@ -2,6 +2,8 @@
 
 // IDEA: Maybe split display into two spans - the diespec and the result.
 
+// FIXME: minus key after die spec should work
+
 // TODO Adjust state machine so that after a roll...
 // * delete will remove result and last entry in stack
 // * entering a digit or a die will cause the current entry to be deleted and the state
@@ -9,6 +11,7 @@
 const Keypad = (() => {
   let _instance;
   let _dice;
+  const _resultSymbol = ' ⇒ ';
 
   /* eslint-disable */
   const _states = {
@@ -67,9 +70,6 @@ const Keypad = (() => {
   const _confirm = 'confirm';
   const _error = 'error';
 
-  // TODO: Reintroduce
-  // let _favorites = Favorites.getInstance();
-
   const UndoStack = (() => {
     const _stack = [{ text: null, decoratedText: null, state: 'count' }];
 
@@ -126,7 +126,7 @@ const Keypad = (() => {
   const _undoStack = UndoStack;
 
   /**
-   * TODO replace blink() with CSS3 animation
+   * TODO Replace blink() with CSS3 animation
    * Purpose: blink a page element
    * Preconditions: the element you want to apply the blink to, the number of times to blink
    * the element (or -1 for infinite times), the speed of the blink
@@ -149,6 +149,10 @@ const Keypad = (() => {
     }
   }
 
+  function _eraseDisplayResult() {
+    $('.display-result').remove();
+  }
+
   function _clear(showConfirm = true) {
     if (showConfirm) {
       blink('.key-clear', _confirm, 1, 64);
@@ -159,21 +163,8 @@ const Keypad = (() => {
   }
 
   function _deleteLast() {
-    const selector = '.key-delete';
-    if (_undoStack.peek().state !== 'roll') {
-      const entry = _undoStack.pop();
-
-      const oldVal = $('#window').html();
-
-      if (entry) {
-        blink(selector, _confirm, 1, 64);
-
-        $('#window').html(oldVal.substr(0, oldVal.length - entry.decoratedText.length));
-      }
-    }
-    else {
-      blink(selector, _error, 1, 64);
-    }
+    _undoStack.pop();
+    $('.display').children().last().remove();
   }
 
   function _getNextState(text) {
@@ -214,57 +205,63 @@ const Keypad = (() => {
   function _roll() {
     let result;
     let decoratedResult;
-    let displayResult;
     const oldState = _undoStack.peek().state;
     const newState = _transitionToState('roll', '');
-    if (newState !== undefined) {
-      blink('button[value="roll"]', _confirm, 1, 64);
-      _dice = Dice;
-      let currentText = $('#window').text();
-      let currentDisplay = $('#window').html();
-      if (oldState === 'roll') {
-        let x = currentDisplay.search(' ⇒ ');
-        if (x !== -1) {
-          currentDisplay = currentDisplay.substring(0, x);
-        }
-        x = currentText.search(' ⇒ ');
-        if (x !== -1) {
-          currentText = currentText.substring(0, x);
-        }
-      }
-      _dice.parse(currentText);
-      result = _dice.roll();
-      $('#window').html(`${_dice.toString()} ⇒ ${result}`);
-      decoratedResult = `<span class="display-result">${result}</span>`;
-      displayResult = `<span class="display-result"> ⇒ </span>${decoratedResult}`;
-      $('#window').html(currentDisplay + displayResult);
+    const display = $('.display');
 
-      rollHistory.add(currentText, currentDisplay, decoratedResult);
+    if (newState !== undefined) {
+      blink('.key-roll', _confirm, 1, 64);
+      _dice = Dice;
+      if (oldState === 'roll') {
+        _eraseDisplayResult();
+      }
+      _dice.parse(display.text());
+      result = _dice.roll();
+
+      display.append(`<span class="display-result">${_resultSymbol}<span class="display-result-value">${result}</span></span>`);
+
+      rollHistory.add('', display.html(), decoratedResult);
     }
     else {
       blink('.key-roll', _error, 1, 64);
     }
   }
 
+  // IDEA: User setting: length of history - will remove oldest when limit is reached
+  // IDEA: Possibly make "k" vs "L/H" a user setting
+  // TODO: Allow edit of existing favorite name
+  // TODO: Enable Favorites as buttons to roll
+  // TODO: Move favorites Delete All to settings
+  // QUESTION: Define both a dark and a light color scheme?
+  function _getDieSpecHtml() {
+    let dieSpecHtml = '';
+    $('.display > span:not(.display-result').each((index, element) => { dieSpecHtml += $(element).html(); });
+    return dieSpecHtml;
+  }
+
   function _validateName(name) {
+    const keyFavoriteSet = $('.key-favorite-set');
     if (!name) {
       boadApp.alert('Favorite name cannot be blank');
-      $('.key-favorite-set').click();
+      keyFavoriteSet.click();
+    }
+    else if (favorites.nameInUse(name)) {
+      boadApp.alert(`"${name}" already in use`);
+      keyFavoriteSet.click();
     }
     else {
-      const currentText = $('#window').text();
-      const currentDisplay = $('#window').html();
-      favorites.add(name, currentText, currentDisplay);
+      favorites.add(name, '', _getDieSpecHtml());
     }
   }
 
+// FIXME faorites->Edit->Delete Symbole->Delete Button, sortable handles do not reappear
+// FIXME Add some morespace tobottom of favorites list, when longer than a screenful a little gets cut off
   function _addFavorite() {
     const state = _undoStack.peek().state;
-    const currentDisplay = $('#window').html();
 
     // If it's ok to roll at this point, it's ok to save a favorite
     if (_states[state].roll !== undefined) {
-      boadApp.prompt(currentDisplay, 'Name for favorite?', _validateName);
+      boadApp.prompt(_getDieSpecHtml(), 'Name for favorite?', _validateName);
     }
     else {
       blink('.key-favorite-set', _error, 1, 64);
