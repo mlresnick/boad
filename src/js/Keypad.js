@@ -2,8 +2,6 @@
 
 // IDEA: Maybe split display into two spans - the diespec and the result.
 
-// FIXME: minus key after die spec should work
-
 // TODO Adjust state machine so that after a roll...
 // * delete will remove result and last entry in stack
 // * entering a digit or a die will cause the current entry to be deleted and the state
