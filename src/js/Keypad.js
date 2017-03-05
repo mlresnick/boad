@@ -253,7 +253,6 @@ const Keypad = (() => {
     }
   }
 
-// FIXME faorites->Edit->Delete Symbole->Delete Button, sortable handles do not reappear
   function _addFavorite() {
     const state = _undoStack.peek().state;
 

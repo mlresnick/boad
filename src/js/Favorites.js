@@ -72,6 +72,7 @@ const Favorites = (() => {
     $('#favorites li.swipeout').on('swipeout:close', () => { boadApp.sortableOpen('#favorites .sortable'); });
     $('#favorites li.swipeout').on('swipeout:delete', (event) => {
       _delete($(event.target).data('name'));
+      boadApp.sortableOpen('#favorites .sortable');
     });
   }
 
