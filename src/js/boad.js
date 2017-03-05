@@ -27,4 +27,12 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   boadApp.addView('.view-main', { domCache: true });
 });
 
-window.addEventListener('load', (/* event */) => { $('html').css('display', 'block'); });
+window.addEventListener('load', (/* event */) => {
+  const toolbarHeight = $('.toolbar.toolbar-bottom').css('height');
+  // Tweak calculator keypad height.
+  $('#calculator .page-content').css('padding-bottom', toolbarHeight);
+  // Adjust the margin at the bottom of a list.
+  $('#favorites .list-block, #history .list-block').css('margin-bottom', toolbarHeight);
+
+  $('html').css('display', 'block');
+});
