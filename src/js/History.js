@@ -6,6 +6,7 @@
 // IDEA: Split view from model
 
 const RollHistory = (() => {
+  const _HISTORY = 'history';
   let _instance;
   let _history = null;
 
@@ -15,17 +16,20 @@ const RollHistory = (() => {
     historyEntry.displayText = displayText;
     historyEntry.result = result;
     _history.push(historyEntry);
-    localStorage.setItem('history', JSON.stringify(_history));
+    while (_history.length > boadApp.boadSettings.history.limit) {
+      _history.shift();
+    }
+    localStorage.setItem(_HISTORY, JSON.stringify(_history));
   }
 
   function _clear() {
     _history.length = 0;
-    localStorage.setItem('history', JSON.stringify(_history));
+    localStorage.setItem(_HISTORY, JSON.stringify(_history));
   }
 
   function _remove(index) {
     _history.splice(index, 1);
-    localStorage.setItem('history', JSON.stringify(_history));
+    localStorage.setItem(_HISTORY, JSON.stringify(_history));
   }
 
   function _refreshTab() {
@@ -68,13 +72,8 @@ const RollHistory = (() => {
     });
   });
 
-  // Initialize LocalStorage, if necessary
-  if (localStorage.getItem('history') === null) {
-    localStorage.setItem('history', JSON.stringify([]));
-  }
+  _history = _getLocalStorage(_HISTORY, []);
 
-  // initialize this object.
-  _history = JSON.parse(localStorage.getItem('history'), null, 2);
   _instance = {
     add: _add,
     clear: _clear,

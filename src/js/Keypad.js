@@ -1,11 +1,5 @@
 'use strict';
 
-// IDEA: Maybe split display into two spans - the diespec and the result.
-
-// TODO Adjust state machine so that after a roll...
-// * delete will remove result and last entry in stack
-// * entering a digit or a die will cause the current entry to be deleted and the state
-//   machine will be reset
 const Keypad = (() => {
   let _instance;
   let _dice;
@@ -200,9 +194,14 @@ const Keypad = (() => {
     blink($(event.target).closest('.key'), signal, 1, 64);
   }
 
+  function _getDieSpecHtml() {
+    let dieSpecHtml = '';
+    $('.display > span:not(.display-result').each((index, element) => { dieSpecHtml += $(element).html(); });
+    return dieSpecHtml;
+  }
+
   function _roll() {
     let result;
-    let decoratedResult;
     const oldState = _undoStack.peek().state;
     const newState = _transitionToState('roll', '');
     const display = $('.display');
@@ -218,7 +217,7 @@ const Keypad = (() => {
 
       display.append(`<span class="display-result">${_resultSymbol}<span class="display-result-value">${result}</span></span>`);
 
-      rollHistory.add('', display.html(), decoratedResult);
+      rollHistory.add('', _getDieSpecHtml(), $('.display .display-result-value').html());
     }
     else {
       blink('.key-roll', _error, 1, 64);
@@ -232,11 +231,6 @@ const Keypad = (() => {
   // TODO: Move favorites Delete All to settings
   // TODO: Roll favorite (Fx key)
   // QUESTION: Define both a dark and a light color scheme?
-  function _getDieSpecHtml() {
-    let dieSpecHtml = '';
-    $('.display > span:not(.display-result').each((index, element) => { dieSpecHtml += $(element).html(); });
-    return dieSpecHtml;
-  }
 
   function _validateName(name) {
     const keyFavoriteSet = $('.key-favorite-set');

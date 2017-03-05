@@ -14,6 +14,7 @@
     "Dice": false,
     "favorites": false,
     "Framework7": false,
+    "_getLocalStorage": false,
     "keypad": false,
     "rollHistory": false
   },

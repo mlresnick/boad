@@ -234,6 +234,16 @@ html {
   border: 1px solid;
 }
 
+//Steal a little from the list block to use for the label.
+#history .list-block {
+  margin-top: 25px;
+
+  .list-block-label {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+}
+
 // TODO: Decide whether to use these colors
 // sass-lint:disable no-css-comments
 /*
