@@ -230,6 +230,7 @@ const Keypad = (() => {
   // TODO: Allow edit of existing favorite name
   // TODO: Enable Favorites as buttons to roll
   // TODO: Move favorites Delete All to settings
+  // TODO: Roll favorite (Fx key)
   // QUESTION: Define both a dark and a light color scheme?
   function _getDieSpecHtml() {
     let dieSpecHtml = '';
@@ -253,7 +254,6 @@ const Keypad = (() => {
   }
 
 // FIXME faorites->Edit->Delete Symbole->Delete Button, sortable handles do not reappear
-// FIXME Add some morespace tobottom of favorites list, when longer than a screenful a little gets cut off
   function _addFavorite() {
     const state = _undoStack.peek().state;
 

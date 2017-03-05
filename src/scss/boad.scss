@@ -48,23 +48,10 @@ $background-color-key-confirm: gray;
 html {
   display: none;
 
-  &.android #calculator .page-content { padding-bottom: 116px; }
-  &.ios #calculator .page-content { padding-bottom: 91px; }
-  #calculator .page-content { padding-bottom: 99px; }
-
   //
   // Desktop
   //
-  &:not(.ios):not(.android) {
-    background-color: inherit;
-
-    #calculator .page-content { overflow: hidden; }
-
-    // .navbar .navbar-inner .text-only {
-    //   display: block;
-    // }
-
-  }
+  &:not(.ios):not(.android) { background-color: inherit; }
 
   //
   // Android or Desktop
@@ -183,12 +170,6 @@ html {
   }
 }
 
-#calculator .content-block {
-  height: 100%;
-  margin-top: 0;
-  padding: 0;
-}
-
 .display {
   font-size: 2em;
 
@@ -199,6 +180,22 @@ html {
     left: 3px;
   }
   border: 1px solid;
+}
+
+.ios,
+.android {
+  .keypad-container {
+    // Total height of div.display (1.36em height  + 2px border)
+    // Height of horizontal borders in keypad (8 rows x 2 1px borders)
+    // 5px more (not sure where these ae froim)
+    height: calc(100% - (1.35em + 2px) - 16px - 5px;);
+  }
+}
+
+.keypad-container {
+  // Total height of div.display (1.36em height  + 2px border)
+  // 4px more (not sure where these ae froim)
+  height: calc(100% - (1.35em + 2px) - 4px);
 }
 
 .keypad {
