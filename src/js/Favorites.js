@@ -42,13 +42,13 @@ const Favorites = (() => {
     const displayList = $('#favorites .list-block ul');
 
     displayList.empty();
-// TODO: Add platform specific minus-circle icons
+
     _favorites.forEach((favorite) => {
       displayList.append(
         `<li class="swipeout" data-name="${favorite.name}">
           <div class="swipeout-content item-content">
             <div class="item-media">
-              <a href="#" class="favorite-delete"><i class="icon ion-minus-circled"></i></a>
+              <a href="#" class="favorite-delete"><i class="icon ion-android-remove-circle"></i></a>
             </div>
             <div class="item-inner">
               <div class="item-title">${favorite.name} (${favorite.decoratedText})</div>
@@ -88,11 +88,7 @@ const Favorites = (() => {
     boadApp.sortableClose('#favorites .sortable');
   });
 
-  if (localStorage.getItem(_FAVORITES) === null) {
-    localStorage.setItem(_FAVORITES, JSON.stringify([]));
-  }
-
-  _favorites = JSON.parse(localStorage.getItem(_FAVORITES));
+  _favorites = _getLocalStorage(_FAVORITES, []);
 
   _instance = {
     add: _add,

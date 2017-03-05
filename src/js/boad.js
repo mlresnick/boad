@@ -1,8 +1,18 @@
 'use strict';
 
 let boadApp;
+// TODO: Attach this to some object - either boadApp or another utility object
+function _getLocalStorage(key, initialValue) {
+  if (localStorage.getItem(key) === null) {
+    localStorage.setItem(key, JSON.stringify(initialValue));
+  }
+
+  return JSON.parse(localStorage.getItem(key));
+}
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
+  const _SETTINGS = 'settings';
+
   const isAndroid = (Framework7.prototype.device.android === true);
   const isIos = (Framework7.prototype.device.ios === true);
   let platform = '';
@@ -23,6 +33,8 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
 
   $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
   <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
+
+  boadApp.boadSettings = _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
 
   boadApp.addView('.view-main', { domCache: true });
 });
