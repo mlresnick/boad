@@ -46,24 +46,6 @@ const Favorites = (() => {
 
     _favorites.forEach((favorite) => {
       displayList.append(
-/* XXX
-        `<li>
-          <div class="item-content">
-            <div class="item-media">
-              <a href="#" class="favorite-delete">
-                <i class="icon ion-android-remove-circle"></i>
-              </a>
-            </div>
-            <a href="#">
-              <div class="item-inner">
-                <div class="item-title">${favorite.name}</div>
-                <div class=", fter">${favorite.decoratedText}</div>
-              </div>
-            </a>
-          </div>
-          <div class="sortable-handler"></div>
-        </li>`
-*/
         `<li class="swipeout" data-name="${favorite.name}">
           <div class="item-content swipeout-content">
             <div class="item-media">
@@ -74,23 +56,18 @@ const Favorites = (() => {
             <a href='#'>
               <div class="item-inner">
                 <div class="item-title">${favorite.name}</div>
-                <div class=", fter">${favorite.decoratedText}</div>
+                <div class="item-after">${favorite.decoratedText}</div>
               </div>
             </a>
           </div>
           <div class="sortable-handler"></div>
           <div class="swipeout-actions-right">
-            <a href="#" class="swipeout-delete">Delete</a>
+            <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
           </div>
         </li>`
       );
     });
 
-/* XXX
-          <div class=", fter">
-            <a href="#" class="edit-item editing"><i class="icon ion-chevron-right"></i></a>
-          </div>
-*/
     // TODO: Create "_enterEdit()/_exitEdit()"
 
     $('#favorites .sortable li').on('sortable:sort', (event) => {
@@ -99,34 +76,16 @@ const Favorites = (() => {
 
     $('#favorites .favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
 
-    // XXX
-    // function _onSwipeoutOpen(event) {
-    //   boadApp.sortableClose('#favorites .sortable');
-    //   $()
-    // }
     $('#favorites li.swipeout').on('swipeout:open', () => {
       boadApp.sortableClose('#favorites .sortable');
-      // XXX $('#favorites .list-block ., fter a').each((index, element) => { $(element).prop('disabled', true); });
     });
     $('#favorites li.swipeout').on('swipeout:close', () => {
       boadApp.sortableOpen('#favorites .sortable');
-      // XXX $('#favorites .list-block ., fter a').each((element) => { $(element).prop('disabled', false); });
     });
     $('#favorites li.swipeout').on('swipeout:delete', (event) => {
       _delete($(event.target).data('name'));
       boadApp.sortableOpen('#favorites .sortable');
-      // XXX $('#favorites .list-block ., fter a').each((element) => { $(element).prop('disabled', false); });
     });
-
-    // XXX
-    // $('#favorites .list-block li ., fter a').click(() => {
-    //   if ($('#favorites .list-block li.swipeout.swipeout-opened').length === 0) {
-    //     console.log('click');
-    //   }
-    //   else {
-    //     console.log('(silence - force close)');
-    //   }
-    // });
   }
 
   function _getInstance() { return _instance; }
