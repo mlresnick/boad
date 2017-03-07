@@ -1,9 +1,16 @@
 'use strict';
 
+// IDEA: Add cursor keys to allow editing of dieSpecHtml
+
+// FIXME: Re-rolling leaves a lot o nested displayresu;t spans in the decorated text.
+
+// TODO remove unused 'text' field in both history and favorites
+
 const Keypad = (() => {
+  const _ROLL = '<span>roll</span>';
   let _instance;
   let _dice;
-  const _resultSymbol = ' ⇒ ';
+  const _RESULT_SYMBOL = ' ⇒ ';
 
   /* eslint-disable */
   const _states = {
@@ -63,7 +70,7 @@ const Keypad = (() => {
   const _error = 'error';
 
   const UndoStack = (() => {
-    const _stack = [{ text: null, decoratedText: null, state: 'count' }];
+    const _stack = [{ decoratedText: null, state: 'count' }];
 
 
     function _peek() {
@@ -77,34 +84,16 @@ const Keypad = (() => {
 
     function _reinit() { _stack.length = 1; }
 
-    function _pop() {
-      let result = null;
-      if (_stack.length > 1) {
-        result = Array.prototype.pop.call(_stack);
-      }
+    function _pop() { return (_stack.length > 1) ? _stack.pop() : null; }
 
-      return result;
+    function _push(keyHtml, newState) {
+      _stack.push({
+        decoratedText: keyHtml,
+        state: (newState || _peek().state)
+      });
     }
 
-    function _push(newText, newDecoratedText, newState) {
-      // newState = newState || _stack.peek().state;
-      Array.prototype.push.call(
-        _stack,
-        { text: newText, decoratedText: newDecoratedText, state: (newState || _stack.peek().state) });
-    }
-
-    function _toString() {
-      let result = '[';
-      if (_stack.length > 0) {
-        result += JSON.stringify(_stack[0]);
-        for (let i = 1; i < _stack.length; i++) {
-          result = `${result}, ${JSON.stringify(_stack[i])}`;
-        }
-      }
-
-      result += ']';
-      return result;
-    }
+    function _toString() { return JSON.stringify(_stack); }
 
     return {
       peek: _peek,
@@ -116,6 +105,8 @@ const Keypad = (() => {
   })();
 
   const _undoStack = UndoStack;
+
+  function _getCurrentState() { return _undoStack.peek().state; }
 
   /**
    * TODO Replace blink() with CSS3 animation
@@ -151,77 +142,84 @@ const Keypad = (() => {
     }
 
     _undoStack.reinit();
-    $('#window').html('');
+    $('.display').html('<span class="display-die-spec"></span>');
   }
 
   function _deleteLast() {
     _undoStack.pop();
-    $('.display').children().last().remove();
+    _eraseDisplayResult();
   }
 
-  function _getNextState(text) {
-    const category = _category[text];
-    const state = _undoStack.peek().state;
-    return _states[state][category];
+  function _getNextState(key) {
+    const category = _category[$(key).text()];
+    return _states[_getCurrentState()][category];
   }
 
-  function _transitionToState(text, decoratedText) {
-    const newState = _getNextState(text);
+  function _transitionToState(key) {
+    const newState = _getNextState(key);
+
     if (newState !== undefined) {
-      _undoStack.push(text, decoratedText, newState);
+      _undoStack.push(key, newState);
     }
+
     return newState;
   }
 
   function _enterNew(event) {
-    const text = event.target.textContent;
-    const oldState = _undoStack.peek().state;
-    const newState = _getNextState(text);
+    const rawText = event.target.textContent;
+    const displayClass = `display-${_displayClass[_category[rawText]]}`;
+    const key = `<span class="${displayClass}">${rawText}</span>`;
+
+    const currentState = _getCurrentState();
+    const newState = _getNextState(key);
     let signal = _error;
 
     if (newState !== undefined) {
       // Are we starting a new die specification?
-      if (oldState === 'roll') {
+      if (currentState === 'roll') {
         _clear(false);
       }
-      const displayClass = `display-${_displayClass[_category[text]]}`;
-      const decoratedText = `<span class="${displayClass}">${text}</span>`;
-      _transitionToState(text, decoratedText);
-      $('#window').html($('#window').html() + decoratedText);
+
+      _transitionToState(key);
+
+      $('.display .display-die-spec').append(key);
+
       signal = _confirm;
     }
 
     blink($(event.target).closest('.key'), signal, 1, 64);
   }
 
-  function _getDieSpecHtml() {
-    let dieSpecHtml = '';
-    $('.display > span:not(.display-result').each((index, element) => { dieSpecHtml += $(element).html(); });
-    return dieSpecHtml;
-  }
+  function _getDieSpecHtml() { return $('.display .display-die-spec').html(); }
 
   function _roll() {
-    let result;
-    const oldState = _undoStack.peek().state;
-    const newState = _transitionToState('roll', '');
-    const display = $('.display');
+    const currentState = _getCurrentState();
+    const newState = _getNextState('<span>roll</span>');
+    let feedback = _error;
 
     if (newState !== undefined) {
-      blink('.key-roll', _confirm, 1, 64);
       _dice = Dice;
-      if (oldState === 'roll') {
+
+      if (currentState === 'roll') {
+        _undoStack.pop();
         _eraseDisplayResult();
       }
-      _dice.parse(display.text());
-      result = _dice.roll();
 
-      display.append(`<span class="display-result">${_resultSymbol}<span class="display-result-value">${result}</span></span>`);
+      _transitionToState(_ROLL);
 
-      rollHistory.add('', _getDieSpecHtml(), $('.display .display-result-value').html());
+      _dice.parse($('.display .display-die-spec').text());
+      const result = _dice.roll();
+
+      const resultValueHtml = `<span class="display-result-value">${result}</span>`;
+      const resultHtml = `<span class="display-result">${_RESULT_SYMBOL}${resultValueHtml}</span>`;
+      $('.display').append(resultHtml);
+
+      rollHistory.add(_getDieSpecHtml(), resultValueHtml);
+
+      feedback = _confirm;
     }
-    else {
-      blink('.key-roll', _error, 1, 64);
-    }
+
+    blink('.key-roll', feedback, 1, 64);
   }
 
   // IDEA: User setting: length of history - will remove oldest when limit is reached
@@ -248,7 +246,7 @@ const Keypad = (() => {
   }
 
   function _addFavorite() {
-    const state = _undoStack.peek().state;
+    const state = _getCurrentState();
 
     // If it's ok to roll at this point, it's ok to save a favorite
     if (_states[state].roll !== undefined) {
@@ -274,9 +272,7 @@ const Keypad = (() => {
     clear: _clear,
     deleteLast: _deleteLast,
     enterNew: _enterNew,
-    // initialize: _initialize,
     roll: _roll,
-    // showFavoriteModal: _showFavoriteModal,
     addFavorite: _addFavorite
   };
 

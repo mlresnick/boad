@@ -4,21 +4,24 @@
 'use strict';
 
 // IDEA: Split view from model
+// IDEA: Store (and display) intermediate steps during a roll
+// IDEA: think about how to incorporate intermediate steps in the keypad display
 
 const RollHistory = (() => {
   const _HISTORY = 'history';
   let _instance;
   let _history = null;
 
-  function _add(dieSpec, displayText, result) {
-    const historyEntry = {};
-    historyEntry.dieSpec = dieSpec;
-    historyEntry.displayText = displayText;
-    historyEntry.result = result;
-    _history.push(historyEntry);
+  function _add(dieSpecHtml, resultHtml) {
+    _history.push({
+      dieSpec: dieSpecHtml,
+      result: resultHtml
+    });
+
     while (_history.length > boadApp.boadSettings.history.limit) {
       _history.shift();
     }
+
     localStorage.setItem(_HISTORY, JSON.stringify(_history));
   }
 
@@ -33,16 +36,15 @@ const RollHistory = (() => {
   }
 
   function _refreshTab() {
-    // var displayList = $('#history .content-block');
     const displayList = $('#history .list-block ul');
     displayList.empty();
-    let i = 0;
-    _history.forEach((historyEntry) => {
+
+    _history.forEach((historyEntry, index) => {
       displayList.append(
-        `<li class="swipeout" data-index="${i += 1}">
+        `<li class="swipeout" data-index="${index}">
           <div class="swipeout-content item-content">
             <div class="item-inner">
-              <div class="item-title">${historyEntry.displayText}</div>
+              <div class="item-title">${historyEntry.dieSpec}</div>
               <div class="item-after">${historyEntry.result}</div>
             </div>
           </div>
@@ -52,11 +54,11 @@ const RollHistory = (() => {
         </li>`
       );
     });
-  }
 
-  $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => {
-    _remove($(event.target).data('index'));
-  });
+    $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => {
+      _remove($(event.target).data('index'));
+    });
+  }
 
   function _values() { return _history.values(); }
 
