@@ -1,6 +1,5 @@
 'use strict';
 
-// TODO: Reset editing mode when leaving this page
 /* exported favorites */
 const Favorites = (() => {
   const _FAVORITES = 'favorites';
@@ -39,6 +38,13 @@ const Favorites = (() => {
 
   function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
+  const _favoritesView = $('#favorites');
+  // const _swipeoutItems = _favoritesView.find('li.swipeout');
+  const _swipeoutItems = _favoritesView.find('.list-block ul');
+  const _linkableItemSelector = '.list-block .item-content';
+  const _sortableObject = _favoritesView.find('.sortable');
+  const _navbarLeft = _favoritesView.find('.navbar-inner .left');
+
   function _refreshTab() {
     const displayList = $('#favorites .list-block ul');
 
@@ -68,39 +74,42 @@ const Favorites = (() => {
       );
     });
 
-    // TODO: Create "_enterEdit()/_exitEdit()"
+    _favoritesView.find('.favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
+  }
 
-    $('#favorites .sortable li').on('sortable:sort', (event) => {
-      _move(event.detail.startIndex, event.detail.newIndex);
-    });
-
-    $('#favorites .favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
-
-    $('#favorites li.swipeout').on('swipeout:open', () => {
-      boadApp.sortableClose('#favorites .sortable');
-    });
-    $('#favorites li.swipeout').on('swipeout:close', () => {
-      boadApp.sortableOpen('#favorites .sortable');
-    });
-    $('#favorites li.swipeout').on('swipeout:delete', (event) => {
-      _delete($(event.target).data('name'));
-      boadApp.sortableOpen('#favorites .sortable');
-    });
+  function _exitEditMode() {
+    const favorites = $('#favorites');
+    favorites.addClass('sorting');
+    favorites.removeClass('editing');
+    favorites.find(`${_linkableItemSelector} > .item-link`).removeClass('item-link');
+    boadApp.sortableOpen(_sortableObject);
   }
 
   function _getInstance() { return _instance; }
 
-  $('#favorites .navbar-inner .left .main').click(() => {
-    $('#favorites').addClass('editing');
-    $('#favorites .list-block .item-content > a:not(.item-link)').addClass('item-link');
-      //   boadApp.sortableOpen('#favorites .sortable');
+  // Entering and exiting the tab
+  _favoritesView.on('tab:show', () => { boadApp.sortableOpen($('#favorites .sortable')); });
+
+  _favoritesView.on('tab:hide', () => {
+    _exitEditMode();
+    boadApp.sortableClose(_sortableObject);
   });
 
-  $('#favorites .navbar-inner .left .editing').click(() => {
-    $('#favorites').removeClass('editing');
-    $('#favorites .list-block .item-content > a.item-link').removeClass('item-link');
-  //   boadApp.sortableClose('#favorites .sortable');
+  // Edit/Done link
+  _navbarLeft.find('.editing').click(() => { _exitEditMode(); });
+  _navbarLeft.find('.sorting').click(() => {
+    // Enter edit mode
+    _favoritesView.addClass('editing');
+    _favoritesView.removeClass('sorting');
+    _favoritesView.find(`${_linkableItemSelector} > a:not(.item-link)`).addClass('item-link');
+    boadApp.sortableClose(_sortableObject);
   });
+
+  // Sorting events
+  _sortableObject.on('sortable:sort', event => _move(event.detail.startIndex, event.detail.newIndex));
+
+  // Delete event
+  _swipeoutItems.on('swipeout:delete', event => _delete($(event.target).data('name')));
 
   // TEMP fix to clear old format
   if (localStorage.getItem(_FAVORITES) === JSON.stringify([null, null, null, null, null, null, null, null, null, null])) {
