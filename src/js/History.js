@@ -54,10 +54,6 @@ const RollHistory = (() => {
         </li>`
       );
     });
-
-    $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => {
-      _remove($(event.target).data('index'));
-    });
   }
 
   function _values() { return _history.values(); }
@@ -67,6 +63,7 @@ const RollHistory = (() => {
   // Initialize the UI
   $('#history').on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
   $('#history').on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
+  $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => { _remove($(event.target).data('index')); });
   $('#history .navbar .delete-all').click(() => {
     boadApp.confirm('Delete all history?', 'BoAD', () => {
       _clear();

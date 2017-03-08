@@ -83,22 +83,22 @@ html {
   </div>
 
   <div id="favorites" class="view tab">
-    <div class="navbar">
-      <div class="navbar-inner">
-          <div class="left">
-            <a href="#" class="link text-only main">Edit</a>
-            <a href="#" class="link text-only editing">Done</a>
-          </div>
-          <div class="center"><!-- Favorites --></div>
-          <div class="right">
-            <!-- <a href="#" class="link text-only editing">Delete All</a> -->
-          </div>
-      </div>
-    </div>
     <div class="pages">
       <div class="page navbar-fixed" data-page="favorites">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="left">
+              <a href="#" class="link text-only sorting">Edit</a>
+              <a href="#" class="link text-only editing">Done</a>
+            </div>
+            <div class="center"><!-- Favorites --></div>
+            <div class="right">
+              <!-- <a href="#" class="link text-only editing">Delete All</a> -->
+            </div>
+          </div>
+        </div>
         <div class="page-content">
-          <div class="list-block sortable sortable-opened">
+          <div class="list-block sortable">
             <ul>
               <!-- Filled in at runtime -->
             </ul>
@@ -107,18 +107,18 @@ html {
       </div>
     </div>
   </div>
+
   <div id="history" class="view tab">
-    <div class="navbar">
-      <div class="navbar-inner">
-        <!-- <div class="left"><a href="#favorites" class="link"><i class="icon ion-chevron-left"></i><span>Favorites</span></a></div> -->
-        <div class="center">History</div>
-          <div class="right">
-            <a href="#" class="link text-only delete-all">Delete All</a>
-          </div>
-       </div>
-    </div>
     <div class="pages">
       <div class="page navbar-fixed" data-page="history">
+        <div class="navbar">
+          <div class="navbar-inner">
+            <div class="center">History</div>
+            <div class="right">
+              <a href="#" class="link text-only delete-all">Delete All</a>
+            </div>
+          </div>
+        </div>
         <div class="page-content">
           <div class="list-block">
             <div class="list-block-label">Swipe left to delete</div>
@@ -132,7 +132,7 @@ html {
   </div>
 
 
-   <div class="toolbar toolbar-bottom tabbar tabbar-labels">
+  <div class="toolbar toolbar-bottom tabbar tabbar-labels">
     <div class="toolbar-inner">
       <a href="#calculator" class="tab-link active">
         <i class="icon ion-calculator"></i>
