@@ -10,11 +10,10 @@ const Favorites = (() => {
     localStorage.setItem(_FAVORITES, JSON.stringify(_favorites));
   }
 
-  function _add(n, spec, text) {
+  function _add(n, specHtml) {
     _favorites.push({
       name: n,
-      dieSpec: spec,
-      decoratedText: text
+      dieSpec: specHtml
     });
 
     _updateStorage();
@@ -62,7 +61,7 @@ const Favorites = (() => {
             <a href='#'>
               <div class="item-inner">
                 <div class="item-title">${favorite.name}</div>
-                <div class="item-after">${favorite.decoratedText}</div>
+                <div class="item-after">${favorite.dieSpec}</div>
               </div>
             </a>
           </div>

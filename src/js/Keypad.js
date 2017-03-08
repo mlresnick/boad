@@ -2,8 +2,6 @@
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 
-// FIXME: Re-rolling leaves a lot o nested displayresu;t spans in the decorated text.
-
 // TODO remove unused 'text' field in both history and favorites
 
 const Keypad = (() => {
@@ -133,7 +131,7 @@ const Keypad = (() => {
   }
 
   function _eraseDisplayResult() {
-    $('.display-result').remove();
+    return ($('.display-result').remove() !== 0);
   }
 
   function _clear(showConfirm = true) {
@@ -147,7 +145,11 @@ const Keypad = (() => {
 
   function _deleteLast() {
     _undoStack.pop();
-    _eraseDisplayResult();
+
+    // If there's a result remove it. If not, remove the last die spec bit
+    if (!_eraseDisplayResult()) {
+      $('.display .display-die-spec :last-child').remove();
+    }
   }
 
   function _getNextState(key) {
@@ -241,7 +243,7 @@ const Keypad = (() => {
       keyFavoriteSet.click();
     }
     else {
-      favorites.add(name, '', _getDieSpecHtml());
+      favorites.add(name, _getDieSpecHtml());
     }
   }
 
