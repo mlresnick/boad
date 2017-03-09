@@ -5,7 +5,6 @@ $background-color-key-error: red;
 $background-color-key-confirm: gray;
 
 $favs-trans-dur: 0.3s;
-$favorites-initial-offset: -30px;
 
 @media only screen and (max-density: 120dpi) {
   // ldpi
@@ -128,95 +127,45 @@ html {
   i.icon { display: none; }
 }
 
-#favorites {
-  .navbar .navbar-inner .done {
-    position: absolute;
-    left: 0;
-  }
+#favorites .list-block {
+  .item-media a { color: red; }
 
-  &:not(.editing) {
-    .navbar .navbar-inner .left {
-      .done {
-        transition: opacity $favs-trans-dur;
-        pointer-events: none;
+  .item-after {
+    margin-right: -20px;
+    .edit { color: inherit; }
+   }
 
-        opacity: 0;
-      }
+  .sortable-handler { right: 40px; }
 
-      .edit {
-        transition: opacity $favs-trans-dur $favs-trans-dur;
-        pointer-events: auto;
+  i.icon { font-size: 1.5em; }
 
-        opacity: 1;
-      }
+  li {
+    .sortable-handler {
+      top: 0;
+      right: 30px;
+
+      transition: // sass-lint:disable indentation
+        right $favs-trans-dur 0,
+        top $favs-trans-dur,
+        opacity $favs-trans-dur;
+      // sass-lint:enable indentation
+
+      opacity: 1;
     }
 
-    .list-block {
-      &.sortable-opened .sortable-handler {
-        top: 0;
-        transition: $favs-trans-dur;
-        opacity: 1;
-      }
+    &.swipeout-opened .sortable-handler {
+      top: -30px;
+      right: -30px;
 
-      .item-media i.icon,
-      .item-inner {
-        left: -30px;
+      transition: // sass-lint:disable indentation
+        right $favs-trans-dur 0,
+        top $favs-trans-dur,
+        opacity $favs-trans-dur;
+      // sass-lint:enable indentation
 
-        transition: $favs-trans-dur;
-      }
+      opacity: 0;
     }
   }
-
-  &.editing {
-    .navbar .navbar-inner .left {
-      .done {
-        transition: opacity $favs-trans-dur $favs-trans-dur;
-        pointer-events: auto;
-
-        opacity: 1;
-      }
-
-      .edit {
-        transition: opacity $favs-trans-dur;
-        pointer-events: none;
-
-        opacity: 0;
-      }
-    }
-
-    .list-block {
-      &.sortable {
-        .item-media i.icon,
-        .item-inner {
-          left: 0;
-
-          transition: $favs-trans-dur;
-        }
-      }
-
-      .sortable-handler {
-        top: -20px;
-        transition: $favs-trans-dur;
-
-        opacity: 0;
-      }
-    }
-  }
-
-  .list-block .sortable-handler {
-    background-position-x: calc(-15px + 100%);
-  }
-
-
-  .list-block li > a {
-    display: block;
-
-    color: inherit;
-  }
-
-  .left .done { margin-left: 0; }
-
-  .list-block .item-media { color: red; }
 }
 
 .display {

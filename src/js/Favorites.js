@@ -20,7 +20,7 @@ const Favorites = (() => {
   }
 
   function _findIndexByName(name) {
-    return _favorites.findIndex(favorite => favorite.name === name);
+    return _favorites.findIndex(favorite => favorite.name === name.toString());
   }
 
   function _delete(name) {
@@ -37,12 +37,9 @@ const Favorites = (() => {
 
   function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
-  const _editButtonSelector = 'li > a';
   const _favoritesView = $('#favorites');
-  const _navbarLeft = _favoritesView.find('.navbar-inner .left');
   const _favoritesListBlock = _favoritesView.find('.list-block');
   const _favoritesListBlockList = _favoritesListBlock.find('ul');
-  let _editButtons = _favoritesListBlockList.find(_editButtonSelector);
 
   function _refreshTab() {
     _favoritesListBlockList.empty();
@@ -50,20 +47,17 @@ const Favorites = (() => {
     _favorites.forEach((favorite) => {
       _favoritesListBlockList.append(
         `<li class="swipeout" data-name="${favorite.name}">
-          <a href='#' ${_favoritesView.hasClass('sorting') ? 'class="item-link"' : ''}>
-            <div class="item-content swipeout-content">
-              <div class="item-media">
-                <!-- <a href="#" class="favorite-delete"> -->
-                  <i class="icon ion-android-remove-circle"></i>
-                <!-- </a> -->
-              </div>
-              <div class="item-inner">
-                <div class="item-title">${favorite.name}</div>
-                <div class="item-after">${favorite.dieSpec}</div>
-                <div class="item-after">${favorite.dieSpec}</div>
-              </div>
+          <div class="item-content swipeout-content">
+            <div class="item-media">
+              <a href="#" class="favorite-delete">
+                <i class="icon ion-android-remove-circle"></i>
+              </a>
             </div>
-          </a>
+            <div class="item-inner">
+              <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
+              <div class="item-after"><a href="#" class="edit"><i class="icon ion-chevron-right"></i></a></div>
+            </div>
+          </div>
           <div class="sortable-handler"></div>
           <div class="swipeout-actions-right">
             <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
@@ -72,33 +66,11 @@ const Favorites = (() => {
       );
     });
 
-    _editButtons = _favoritesListBlockList.find(_editButtonSelector);
     // QUESTION can this be placed on the _fvoritesListBlockList object just once?
     _favoritesView.find('.favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
   }
 
-  function _exitEditMode() {
-    _favoritesView.removeClass('editing');
-    _editButtons.removeClass('item-link');
-    boadApp.sortableOpen(_favoritesListBlock);
-  }
-
-  function _enterEditMode() {
-    _favoritesView.addClass('editing');
-    _editButtons.addClass('item-link');
-    boadApp.sortableClose(_favoritesListBlock);
-  }
-
   function _getInstance() { return _instance; }
-
-  // Entering and exiting the tab
-  _favoritesView.on('tab:show', () => { boadApp.sortableOpen(_favoritesListBlock); });
-
-  _favoritesView.on('tab:hide', _exitEditMode);
-
-  // Edit/Done link
-  _navbarLeft.find('.done').click(() => { _exitEditMode(); });
-  _navbarLeft.find('.edit').click(() => { _enterEditMode(); });
 
   // Sorting events
   _favoritesListBlock.on('sortable:sort', event => _move(event.detail.startIndex, event.detail.newIndex));

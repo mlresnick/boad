@@ -253,6 +253,7 @@ const Keypad = (() => {
     // If it's ok to roll at this point, it's ok to save a favorite
     if (_states[state].roll !== undefined) {
       boadApp.prompt(_getDieSpecHtml(), 'Name for favorite?', _validateName);
+      $('input.modal-text-input').focus();
     }
     else {
       blink('.key-favorite-set', _error, 1, 64);

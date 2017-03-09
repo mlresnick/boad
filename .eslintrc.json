@@ -3,6 +3,8 @@
     "sourceType": "script"
   },
 
+  "plugins": [ "eslint-plugin-html" ],
+
   "env": {
     "browser": true,
     "node": false,
