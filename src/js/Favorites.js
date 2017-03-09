@@ -37,34 +37,33 @@ const Favorites = (() => {
 
   function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
+  const _editButtonSelector = 'li > a';
   const _favoritesView = $('#favorites');
-  // const _swipeoutItems = _favoritesView.find('li.swipeout');
-  const _swipeoutItems = _favoritesView.find('.list-block ul');
-  const _linkableItemSelector = '.list-block .item-content';
-  const _sortableObject = _favoritesView.find('.sortable');
   const _navbarLeft = _favoritesView.find('.navbar-inner .left');
+  const _favoritesListBlock = _favoritesView.find('.list-block');
+  const _favoritesListBlockList = _favoritesListBlock.find('ul');
+  let _editButtons = _favoritesListBlockList.find(_editButtonSelector);
 
   function _refreshTab() {
-    const displayList = $('#favorites .list-block ul');
-
-    displayList.empty();
+    _favoritesListBlockList.empty();
 
     _favorites.forEach((favorite) => {
-      displayList.append(
+      _favoritesListBlockList.append(
         `<li class="swipeout" data-name="${favorite.name}">
-          <div class="item-content swipeout-content">
-            <div class="item-media">
-              <a href="#" class="favorite-delete">
-                <i class="icon ion-android-remove-circle"></i>
-              </a>
-            </div>
-            <a href='#'>
+          <a href='#' ${_favoritesView.hasClass('sorting') ? 'class="item-link"' : ''}>
+            <div class="item-content swipeout-content">
+              <div class="item-media">
+                <!-- <a href="#" class="favorite-delete"> -->
+                  <i class="icon ion-android-remove-circle"></i>
+                <!-- </a> -->
+              </div>
               <div class="item-inner">
                 <div class="item-title">${favorite.name}</div>
                 <div class="item-after">${favorite.dieSpec}</div>
+                <div class="item-after">${favorite.dieSpec}</div>
               </div>
-            </a>
-          </div>
+            </div>
+          </a>
           <div class="sortable-handler"></div>
           <div class="swipeout-actions-right">
             <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
@@ -73,42 +72,39 @@ const Favorites = (() => {
       );
     });
 
+    _editButtons = _favoritesListBlockList.find(_editButtonSelector);
+    // QUESTION can this be placed on the _fvoritesListBlockList object just once?
     _favoritesView.find('.favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
   }
 
   function _exitEditMode() {
-    const favorites = $('#favorites');
-    favorites.addClass('sorting');
-    favorites.removeClass('editing');
-    favorites.find(`${_linkableItemSelector} > .item-link`).removeClass('item-link');
-    boadApp.sortableOpen(_sortableObject);
+    _favoritesView.removeClass('editing');
+    _editButtons.removeClass('item-link');
+    boadApp.sortableOpen(_favoritesListBlock);
+  }
+
+  function _enterEditMode() {
+    _favoritesView.addClass('editing');
+    _editButtons.addClass('item-link');
+    boadApp.sortableClose(_favoritesListBlock);
   }
 
   function _getInstance() { return _instance; }
 
   // Entering and exiting the tab
-  _favoritesView.on('tab:show', () => { boadApp.sortableOpen($('#favorites .sortable')); });
+  _favoritesView.on('tab:show', () => { boadApp.sortableOpen(_favoritesListBlock); });
 
-  _favoritesView.on('tab:hide', () => {
-    _exitEditMode();
-    boadApp.sortableClose(_sortableObject);
-  });
+  _favoritesView.on('tab:hide', _exitEditMode);
 
   // Edit/Done link
-  _navbarLeft.find('.editing').click(() => { _exitEditMode(); });
-  _navbarLeft.find('.sorting').click(() => {
-    // Enter edit mode
-    _favoritesView.addClass('editing');
-    _favoritesView.removeClass('sorting');
-    _favoritesView.find(`${_linkableItemSelector} > a:not(.item-link)`).addClass('item-link');
-    boadApp.sortableClose(_sortableObject);
-  });
+  _navbarLeft.find('.done').click(() => { _exitEditMode(); });
+  _navbarLeft.find('.edit').click(() => { _enterEditMode(); });
 
   // Sorting events
-  _sortableObject.on('sortable:sort', event => _move(event.detail.startIndex, event.detail.newIndex));
+  _favoritesListBlock.on('sortable:sort', event => _move(event.detail.startIndex, event.detail.newIndex));
 
   // Delete event
-  _swipeoutItems.on('swipeout:delete', event => _delete($(event.target).data('name')));
+  _favoritesListBlockList.on('swipeout:delete', event => _delete($(event.target).data('name')));
 
   // TEMP fix to clear old format
   if (localStorage.getItem(_FAVORITES) === JSON.stringify([null, null, null, null, null, null, null, null, null, null])) {
