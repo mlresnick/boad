@@ -5,7 +5,7 @@
 
 // IDEA: Split view from model
 // IDEA: Store (and display) intermediate steps during a roll
-// IDEA: think about how to incorporate intermediate steps in the keypad display
+// IDEA: Think about how to incorporate intermediate steps in the keypad display
 
 const RollHistory = (() => {
   const _HISTORY = 'history';

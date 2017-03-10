@@ -35,6 +35,10 @@ const Favorites = (() => {
     _updateStorage();
   }
 
+  function _edit(event) {
+    console.log(`event=${JSON.stringify(event, null, 2)}`);
+  }
+
   function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
   const _favoritesView = $('#favorites');
@@ -66,8 +70,8 @@ const Favorites = (() => {
       );
     });
 
-    // QUESTION can this be placed on the _fvoritesListBlockList object just once?
     _favoritesView.find('.favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
+    _favoritesListBlockList.find('a.edit').click(event => _edit(event));
   }
 
   function _getInstance() { return _instance; }
@@ -78,7 +82,7 @@ const Favorites = (() => {
   // Delete event
   _favoritesListBlockList.on('swipeout:delete', event => _delete($(event.target).data('name')));
 
-  // TEMP fix to clear old format
+  // TEMP Fix to clear old format
   if (localStorage.getItem(_FAVORITES) === JSON.stringify([null, null, null, null, null, null, null, null, null, null])) {
     localStorage.removeItem(_FAVORITES);
   }
