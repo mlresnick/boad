@@ -17,9 +17,7 @@ module.exports = (() => {
 
   let _parseResults = [];
 
-  let _randomizer = {
-    random(sides) { return (Math.floor((Math.random() * sides)) + 1); }
-  };
+  let _randomizer = { random(sides) { return (Math.floor((Math.random() * sides)) + 1); } };
 
   function _explode() { return (_parseResults[_EXPLODE] === '!'); }
 
@@ -265,6 +263,6 @@ module.exports = (() => {
     parse: _parse,
     toString: _toString,
     setRandomizer: _setRandomizer,
-    roll: _roll
+    roll: _roll,
   };
 })();

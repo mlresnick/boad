@@ -3,286 +3,278 @@
 const Dice = require('./Dice.js');
 const History = require('./History.js');
 const Favorites = require('./Favorites.js');
-const Util = require('./Util.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 
 module.exports = (() => {
-  const _ROLL = '<span>roll</span>';
   let _instance;
-  let _dice;
-  const _RESULT_SYMBOL = ' ⇒ ';
-  const _history = History.getInstance();
-  const _favorites = Favorites.getInstance();
 
-  /* eslint-disable */
-  const _states = {
-    start:            {digit: 'count',            die: 'die',
-                                                  dx: 'dx'},
-    count:            {digit: 'count',            die: 'die',
-                                                  dx: 'dx'},
-    die:              {                                      k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
-    dx:               {digit: 'dxDigit' },
-    dxDigit:          {digit: 'dxDigit',                     k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
-    postDieOp:        {digit: 'postDieDigit',                lh: 'lh'},
-    k:                {digit: 'kCount',                                operator: 'kOperator'},
-    kOperator:        {digit: 'kCount'},
-    kCount:           {digit: 'kCount',                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-    postDieDigit:     {digit: 'postDieDigit',                lh: 'lh',                               x: 'x', roll: 'roll'},
-    lh:               {                                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-    modifierOperator: {digit: 'modifierOperator',                                                    x: 'x'},
-    x:                {digit: 'xDigit'},
-    xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
-    roll:             {digit: 'count',            die: 'die',
-                                                  dx: 'dx',                                                  roll: 'roll'}
-  };
+  function _init() {
+    const _ROLL = '<span>roll</span>';
+    let _dice;
+    const _RESULT_SYMBOL = ' ⇒ ';
+    const _history = History.getInstance();
+    const _favorites = Favorites.getInstance();
 
-  const _category = {
-    0: 'digit', 1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit',
-    5: 'digit', 6: 'digit', 7: 'digit', 8: 'digit', 9: 'digit',
+    /* eslint-disable */
+    const _states = {
+      start:            {digit: 'count',            die: 'die',
+                                                    dx: 'dx'},
+      count:            {digit: 'count',            die: 'die',
+                                                    dx: 'dx'},
+      die:              {                                      k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
+      dx:               {digit: 'dxDigit' },
+      dxDigit:          {digit: 'dxDigit',                     k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
+      postDieOp:        {digit: 'postDieDigit',                lh: 'lh'},
+      k:                {digit: 'kCount',                                operator: 'kOperator'},
+      kOperator:        {digit: 'kCount'},
+      kCount:           {digit: 'kCount',                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
+      postDieDigit:     {digit: 'postDieDigit',                lh: 'lh',                               x: 'x', roll: 'roll'},
+      lh:               {                                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
+      modifierOperator: {digit: 'modifierOperator',                                                    x: 'x'},
+      x:                {digit: 'xDigit'},
+      xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
+      roll:             {digit: 'count',            die: 'die',
+                                                    dx: 'dx',                                                  roll: 'roll'}
+    };
 
-    d4: 'die', d6: 'die', d8: 'die', d10: 'die', d12: 'die',
-    d20: 'die', 'd%': 'die',
-    d: 'dx',
+    const _category = {
+      0: 'digit', 1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit',
+      5: 'digit', 6: 'digit', 7: 'digit', 8: 'digit', 9: 'digit',
 
-    '+': 'operator', '-': 'operator',
+      d4: 'die', d6: 'die', d8: 'die', d10: 'die', d12: 'die',
+      d20: 'die', 'd%': 'die',
+      d: 'dx',
 
-    k:    'k',
-    L:    'lh', H: 'lh',
+      '+': 'operator', '-': 'operator',
 
-    x:    'x',
+      k:    'k',
+      L:    'lh', H: 'lh',
 
-    roll: 'roll'
-  };
+      x:    'x',
 
-  const _displayClass = {
-    digit: 'digit',
+      roll: 'roll'
+    };
 
-    die: 'd',
-    dx:  'd',
+    const _displayClass = {
+      digit: 'digit',
 
-    operator: 'operation',
-    x:        'operation',
+      die: 'd',
+      dx:  'd',
 
-    k:  'keep',
-    lh: 'keep'
-  };
-  /* eslint-enable */
+      operator: 'operation',
+      x:        'operation',
 
-  const _confirm = 'confirm';
-  const _error = 'error';
+      k:  'keep',
+      lh: 'keep'
+    };
+    /* eslint-enable */
 
-  const UndoStack = (() => {
-    const _stack = [{ decoratedText: null, state: 'count' }];
+    const _confirm = 'confirm';
+    const _error = 'error';
+
+    const UndoStack = (() => {
+      const _stack = [{ decoratedText: null, state: 'count' }];
 
 
-    function _peek() {
-      let result = null;
-      if (_stack.length) {
-        result = _stack[_stack.length - 1];
+      function _peek() {
+        let result = null;
+        if (_stack.length) {
+          result = _stack[_stack.length - 1];
+        }
+
+        return result;
       }
 
-      return result;
+      function _reinit() { _stack.length = 1; }
+
+      function _pop() { return (_stack.length > 1) ? _stack.pop() : null; }
+
+      function _push(keyHtml, newState) {
+        _stack.push({
+          decoratedText: keyHtml,
+          state: (newState || _peek().state),
+        });
+      }
+
+      function _toString() { return JSON.stringify(_stack); }
+
+      return {
+        peek: _peek,
+        pop: _pop,
+        push: _push,
+        reinit: _reinit,
+        toString: _toString,
+      };
+    })();
+
+    const _undoStack = UndoStack;
+
+    function _getCurrentState() { return _undoStack.peek().state; }
+
+    /**
+     * TODO Replace blink() with CSS3 animation
+     * Purpose: blink a page element
+     * Preconditions: the element you want to apply the blink to, the number of times to blink
+     * the element (or -1 for infinite times), the speed of the blink
+     **/
+    function blink(elem, clazz, times, speed) {
+      if (times !== 0) {
+        if ($(elem).hasClass(clazz)) {
+          $(elem).removeClass(clazz);
+        }
+        else {
+          $(elem).addClass(clazz);
+        }
+      }
+
+      clearTimeout(() => { blink(elem, clazz, times, speed); });
+
+      if (times !== 0) {
+        setTimeout(() => { blink(elem, clazz, times, speed); }, speed);
+        times -= 0.5; // eslint-disable-line no-param-reassign
+      }
     }
 
-    function _reinit() { _stack.length = 1; }
-
-    function _pop() { return (_stack.length > 1) ? _stack.pop() : null; }
-
-    function _push(keyHtml, newState) {
-      _stack.push({
-        decoratedText: keyHtml,
-        state: (newState || _peek().state)
-      });
+    function _eraseDisplayResult() {
+      return ($('.display-result').remove() !== 0);
     }
 
-    function _toString() { return JSON.stringify(_stack); }
+    function _clear(showConfirm = true) {
+      if (showConfirm) {
+        blink('.key-clear', _confirm, 1, 64);
+      }
 
-    return {
-      peek: _peek,
-      pop: _pop,
-      push: _push,
-      reinit: _reinit,
-      toString: _toString
-    };
-  })();
+      _undoStack.reinit();
+      $('.display').html('<span class="display-die-spec"></span>');
+    }
 
-  const _undoStack = UndoStack;
+    function _deleteLast() {
+      _undoStack.pop();
 
-  function _getCurrentState() { return _undoStack.peek().state; }
+      // If there's a result remove it. If not, remove the last die spec bit
+      if (!_eraseDisplayResult()) {
+        $('.display .display-die-spec :last-child').remove();
+      }
+    }
 
-  /**
-   * TODO Replace blink() with CSS3 animation
-   * Purpose: blink a page element
-   * Preconditions: the element you want to apply the blink to, the number of times to blink
-   * the element (or -1 for infinite times), the speed of the blink
-   **/
-  function blink(elem, clazz, times, speed) {
-    if (times !== 0) {
-      if ($(elem).hasClass(clazz)) {
-        $(elem).removeClass(clazz);
+    function _getNextState(key) {
+      const category = _category[$(key).text()];
+      return _states[_getCurrentState()][category];
+    }
+
+    function _transitionToState(key) {
+      const newState = _getNextState(key);
+
+      if (newState !== undefined) {
+        _undoStack.push(key, newState);
+      }
+
+      return newState;
+    }
+
+    function _enterNew(event) {
+      const rawText = event.target.textContent;
+      const displayClass = `display-${_displayClass[_category[rawText]]}`;
+      const key = `<span class="${displayClass}">${rawText}</span>`;
+
+      const currentState = _getCurrentState();
+      const newState = _getNextState(key);
+      let signal = _error;
+
+      if (newState !== undefined) {
+        // Are we starting a new die specification?
+        if (currentState === 'roll') {
+          _clear(false);
+        }
+
+        _transitionToState(key);
+
+        $('.display .display-die-spec').append(key);
+
+        signal = _confirm;
+      }
+
+      blink($(event.target).closest('.key'), signal, 1, 64);
+    }
+
+    function _getDieSpecHtml() { return $('.display .display-die-spec').html(); }
+
+    function _roll() {
+      const currentState = _getCurrentState();
+      const newState = _getNextState('<span>roll</span>');
+      let feedback = _error;
+
+      if (newState !== undefined) {
+        _dice = Dice;
+
+        if (currentState === 'roll') {
+          _undoStack.pop();
+          _eraseDisplayResult();
+        }
+
+        _transitionToState(_ROLL);
+
+        _dice.parse($('.display .display-die-spec').text());
+        const result = _dice.roll();
+
+        const resultValueHtml = `<span class="display-result-value">${result}</span>`;
+        const resultHtml = `<span class="display-result">${_RESULT_SYMBOL}${resultValueHtml}</span>`;
+        $('.display').append(resultHtml);
+
+        _history.add(_getDieSpecHtml(), resultValueHtml);
+
+        feedback = _confirm;
+      }
+
+      blink('.key-roll', feedback, 1, 64);
+    }
+
+    // SETTINGS: Length of history - will remove oldest when limit is reached
+    // SETTINGS: Possibly make "k" vs "L/H" a user setting
+    // SETTINGS: Allow edit of existing favorite name
+    // TODO: Enable Favorites as buttons to roll
+    // SETTINGS: Move favorites Delete All to settings
+    // TODO: Roll favorite (Fx key)
+    // QUESTION: Define both a dark and a light color scheme?
+
+    function _addFavorite() {
+      const state = _getCurrentState();
+
+      // If it's ok to roll at this point, it's ok to save a favorite
+      if (_states[state].roll !== undefined) {
+        _favorites.promptForName(_getDieSpecHtml());
       }
       else {
-        $(elem).addClass(clazz);
+        blink('.key-favorite-set', _error, 1, 64);
       }
     }
 
-    clearTimeout(() => { blink(elem, clazz, times, speed); });
+    $('.key-d, .key-digit, .key-keep, .key-operation')
+      .click(_enterNew);
+    $('.key-delete').click(_deleteLast);
+    $('.key-roll').click(_roll);
+    $('.key-clear').click(_clear);
+    $('.key-favorite-set').click(_addFavorite);
+    $('a[href="#history"]').click(_history.refreshTab);
+    $('a[href="#favorites"]').click(_favorites.refreshTab);
 
-    if (times !== 0) {
-      setTimeout(() => { blink(elem, clazz, times, speed); }, speed);
-      times -= 0.5; // eslint-disable-line no-param-reassign
-    }
+    return {
+      clear: _clear,
+      deleteLast: _deleteLast,
+      enterNew: _enterNew,
+      roll: _roll,
+      addFavorite: _addFavorite,
+      getDieSpecHtml: _getDieSpecHtml,
+    };
   }
 
-  function _eraseDisplayResult() {
-    return ($('.display-result').remove() !== 0);
+  function _getInstance() {
+    if (!_instance) {
+      _instance = _init();
+    }
+    return _instance;
   }
-
-  function _clear(showConfirm = true) {
-    if (showConfirm) {
-      blink('.key-clear', _confirm, 1, 64);
-    }
-
-    _undoStack.reinit();
-    $('.display').html('<span class="display-die-spec"></span>');
-  }
-
-  function _deleteLast() {
-    _undoStack.pop();
-
-    // If there's a result remove it. If not, remove the last die spec bit
-    if (!_eraseDisplayResult()) {
-      $('.display .display-die-spec :last-child').remove();
-    }
-  }
-
-  function _getNextState(key) {
-    const category = _category[$(key).text()];
-    return _states[_getCurrentState()][category];
-  }
-
-  function _transitionToState(key) {
-    const newState = _getNextState(key);
-
-    if (newState !== undefined) {
-      _undoStack.push(key, newState);
-    }
-
-    return newState;
-  }
-
-  function _enterNew(event) {
-    const rawText = event.target.textContent;
-    const displayClass = `display-${_displayClass[_category[rawText]]}`;
-    const key = `<span class="${displayClass}">${rawText}</span>`;
-
-    const currentState = _getCurrentState();
-    const newState = _getNextState(key);
-    let signal = _error;
-
-    if (newState !== undefined) {
-      // Are we starting a new die specification?
-      if (currentState === 'roll') {
-        _clear(false);
-      }
-
-      _transitionToState(key);
-
-      $('.display .display-die-spec').append(key);
-
-      signal = _confirm;
-    }
-
-    blink($(event.target).closest('.key'), signal, 1, 64);
-  }
-
-  function _getDieSpecHtml() { return $('.display .display-die-spec').html(); }
-
-  function _roll() {
-    const currentState = _getCurrentState();
-    const newState = _getNextState('<span>roll</span>');
-    let feedback = _error;
-
-    if (newState !== undefined) {
-      _dice = Dice;
-
-      if (currentState === 'roll') {
-        _undoStack.pop();
-        _eraseDisplayResult();
-      }
-
-      _transitionToState(_ROLL);
-
-      _dice.parse($('.display .display-die-spec').text());
-      const result = _dice.roll();
-
-      const resultValueHtml = `<span class="display-result-value">${result}</span>`;
-      const resultHtml = `<span class="display-result">${_RESULT_SYMBOL}${resultValueHtml}</span>`;
-      $('.display').append(resultHtml);
-
-      _history.add(_getDieSpecHtml(), resultValueHtml);
-
-      feedback = _confirm;
-    }
-
-    blink('.key-roll', feedback, 1, 64);
-  }
-
-  // SETTINGS: Length of history - will remove oldest when limit is reached
-  // SETTINGS: Possibly make "k" vs "L/H" a user setting
-  // SETTINGS: Allow edit of existing favorite name
-  // TODO: Enable Favorites as buttons to roll
-  // SETTINGS: Move favorites Delete All to settings
-  // TODO: Roll favorite (Fx key)
-  // QUESTION: Define both a dark and a light color scheme?
-
-  function _validateName(name) {
-    const keyFavoriteSet = $('.key-favorite-set');
-    if (!name) {
-      Util.boadApp.alert('Favorite name cannot be blank');
-      keyFavoriteSet.click();
-    }
-    else if (_favorites.nameInUse(name)) {
-      Util.boadApp.alert(`"${name}" already in use`);
-      keyFavoriteSet.click();
-    }
-    else {
-      _favorites.add(name, _getDieSpecHtml());
-    }
-  }
-
-  function _addFavorite() {
-    const state = _getCurrentState();
-
-    // If it's ok to roll at this point, it's ok to save a favorite
-    if (_states[state].roll !== undefined) {
-      Util.boadApp.prompt(_getDieSpecHtml(), 'Name for favorite?', _validateName);
-      $('input.modal-text-input').focus();
-    }
-    else {
-      blink('.key-favorite-set', _error, 1, 64);
-    }
-  }
-
-  function _getInstance() { return _instance; }
-
-  $('.key-d, .key-digit, .key-keep, .key-operation')
-    .click(_enterNew);
-  $('.key-delete').click(_deleteLast);
-  $('.key-roll').click(_roll);
-  $('.key-clear').click(_clear);
-  $('.key-favorite-set').click(_addFavorite);
-  $('a[href="#history"]').click(_history.refreshTab);
-  $('a[href="#favorites"]').click(_favorites.refreshTab);
-
-  _instance = {
-    clear: _clear,
-    deleteLast: _deleteLast,
-    enterNew: _enterNew,
-    roll: _roll,
-    addFavorite: _addFavorite
-  };
 
   return { getInstance: _getInstance };
 })();
