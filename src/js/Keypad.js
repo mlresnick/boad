@@ -2,8 +2,6 @@
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 
-// TODO remove unused 'text' field in both history and favorites
-
 const Keypad = (() => {
   const _ROLL = '<span>roll</span>';
   let _instance;
@@ -224,11 +222,11 @@ const Keypad = (() => {
     blink('.key-roll', feedback, 1, 64);
   }
 
-  // IDEA: User setting: length of history - will remove oldest when limit is reached
-  // IDEA: Possibly make "k" vs "L/H" a user setting
-  // TODO: Allow edit of existing favorite name
+  // SETTINGS: Length of history - will remove oldest when limit is reached
+  // SETTINGS: Possibly make "k" vs "L/H" a user setting
+  // SETTINGS: Allow edit of existing favorite name
   // TODO: Enable Favorites as buttons to roll
-  // TODO: Move favorites Delete All to settings
+  // SETTINGS: Move favorites Delete All to settings
   // TODO: Roll favorite (Fx key)
   // QUESTION: Define both a dark and a light color scheme?
 
