@@ -28,7 +28,13 @@
 
   "rules": {
     "brace-style": [ 2, "stroustrup", { "allowSingleLine": true } ],
-    "comma-dangle": [ 2, { "functions": "never" } ],
+    "comma-dangle": [ 2, {
+      "arrays": "always-multiline",
+      "objects": "always-multiline",
+      "imports": "never",
+      "exports": "never",
+      "functions": "never"
+    } ],
     "func-names": [ 1, "as-needed" ],
     "linebreak-style": [ 2, "windows" ],
     "max-len": [ 2, 132 ],

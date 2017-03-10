@@ -6,12 +6,14 @@ require('./Keypad.js');
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const _SETTINGS = 'settings';
+  const _util = Util.getInstance();
 
   const isAndroid = (Framework7.prototype.device.android === true);
   const isIos = (Framework7.prototype.device.ios === true);
   let platform = '';
 
-  Util.boadApp = new Framework7({ material: isAndroid });
+  // TODO: Try moving this to Utils
+  _util.boadApp = new Framework7({ material: isAndroid });
 
   if (isIos) {
     platform = 'ios';
@@ -28,9 +30,11 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
   <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
 
-  Util.boadApp.boadSettings = Util.getLocalStorage(_SETTINGS, { history: { limit: 10 } });
+  // TODO: Try moving this to Utils
+  _util.boadApp.boadSettings = _util.getLocalStorage(_SETTINGS, { history: { limit: 10 } });
 
-  Util.boadApp.addView('.view-main', { domCache: true });
+  // TODO: Try moving this to Utils
+  _util.boadApp.addView('.view-main', { domCache: true });
 });
 
 window.addEventListener('load', (/* event */) => {

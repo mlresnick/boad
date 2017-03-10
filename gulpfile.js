@@ -22,13 +22,13 @@ gulp.task('js', () => {
       './src/js/Dice.js',
       './src/js/Favorites.js',
       './src/js/history.js',
-      './src/js/Keypad.js'
+      './src/js/Keypad.js',
     ],
     // TODO:
     // basedir;: './src/js',
-    debug: true // ,
+    debug: true, // ,
     // defining transforms here will avoid crashing your stream
-    // transform: [reactify]
+    // transform: [reactify],
   });
 
   return b.bundle()
@@ -46,7 +46,7 @@ const bowerList = [
   './bower_components/framework7/dist/**/js/framework7.js',
   './bower_components/framework7/dist/**/css/framework7.{ios,material}?(.colors).css',
   './bower_components/Ionicons/**/css/ionicons.css',
-  './bower_components/Ionicons/**/fonts/*'
+  './bower_components/Ionicons/**/fonts/*',
 ];
 
 const buildDependencies = ['html', 'js', 'scss', 'bower'/* , 'svg', 'jquery' */];
@@ -70,7 +70,7 @@ gulp.task('webserver', () => {
   connect.server({
     port: 80,
     livereload: true,
-    root: ['app']
+    root: ['app'],
   });
 });
 
