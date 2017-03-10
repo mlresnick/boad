@@ -1,7 +1,8 @@
 'use strict';
 
-/* exported favorites */
-const Favorites = (() => {
+const Util = require('./Util.js');
+
+module.exports = (() => {
   const _FAVORITES = 'favorites';
   let _instance;
   let _favorites = null;
@@ -36,7 +37,9 @@ const Favorites = (() => {
   }
 
   function _edit(event) {
-    console.log(`event=${JSON.stringify(event, null, 2)}`);
+    let a = event; // console.log(`event=${JSON.stringify(event, null, 2)}`);
+    const b = a;
+    a = b;
   }
 
   function _nameInUse(name) { return _findIndexByName(name) !== -1; }
@@ -70,7 +73,7 @@ const Favorites = (() => {
       );
     });
 
-    _favoritesView.find('.favorite-delete').click(event => boadApp.swipeoutOpen($(event.target).closest('li')));
+    _favoritesView.find('.favorite-delete').click(event => Util.boadApp.swipeoutOpen($(event.target).closest('li')));
     _favoritesListBlockList.find('a.edit').click(event => _edit(event));
   }
 
@@ -87,7 +90,7 @@ const Favorites = (() => {
     localStorage.removeItem(_FAVORITES);
   }
 
-  _favorites = _getLocalStorage(_FAVORITES, []);
+  _favorites = Util.getLocalStorage(_FAVORITES, []);
 
   _instance = {
     add: _add,
@@ -98,5 +101,3 @@ const Favorites = (() => {
 
   return { getInstance: _getInstance };
 })();
-
-const favorites = Favorites.getInstance();
