@@ -8,7 +8,8 @@
   "env": {
     "browser": true,
     "node": false,
-    "jquery": true
+    "jquery": true,
+    "commonjs": true
   },
 
   "globals": {

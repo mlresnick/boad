@@ -1,13 +1,14 @@
-/* global boadApp */
 /* exported rollHistory */
 
 'use strict';
+
+const Util = require('./Util.js');
 
 // IDEA: Split view from model
 // IDEA: Store (and display) intermediate steps during a roll
 // IDEA: Think about how to incorporate intermediate steps in the keypad display
 
-const RollHistory = (() => {
+module.exports = (() => {
   const _HISTORY = 'history';
   let _instance;
   let _history = null;
@@ -18,7 +19,7 @@ const RollHistory = (() => {
       result: resultHtml
     });
 
-    while (_history.length > boadApp.boadSettings.history.limit) {
+    while (_history.length > Util.boadApp.boadSettings.history.limit) {
       _history.shift();
     }
 
@@ -65,13 +66,13 @@ const RollHistory = (() => {
   $('#history').on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
   $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => { _remove($(event.target).data('index')); });
   $('#history .navbar .delete-all').click(() => {
-    boadApp.confirm('Delete all history?', 'BoAD', () => {
+    Util.boadApp.confirm('Delete all history?', 'BoAD', () => {
       _clear();
       _refreshTab();
     });
   });
 
-  _history = _getLocalStorage(_HISTORY, []);
+  _history = Util.getLocalStorage(_HISTORY, []);
 
   _instance = {
     add: _add,
@@ -83,5 +84,3 @@ const RollHistory = (() => {
 
   return { getInstance: _getInstance };
 })();
-
-const rollHistory = RollHistory.getInstance();

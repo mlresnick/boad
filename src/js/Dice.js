@@ -1,8 +1,6 @@
-/* exported Dice */
-
 'use strict';
 
-const Dice = (() => {
+module.exports = (() => {
   const _EXPLODE = 1;
   const _COUNT = 2;
   const _SIDES = 3;

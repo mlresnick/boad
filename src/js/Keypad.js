@@ -1,12 +1,19 @@
 'use strict';
 
+const Dice = require('./Dice.js');
+const History = require('./History.js');
+const Favorites = require('./Favorites.js');
+const Util = require('./Util.js');
+
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 
-const Keypad = (() => {
+module.exports = (() => {
   const _ROLL = '<span>roll</span>';
   let _instance;
   let _dice;
   const _RESULT_SYMBOL = ' ⇒ ';
+  const _history = History.getInstance();
+  const _favorites = Favorites.getInstance();
 
   /* eslint-disable */
   const _states = {
@@ -214,7 +221,7 @@ const Keypad = (() => {
       const resultHtml = `<span class="display-result">${_RESULT_SYMBOL}${resultValueHtml}</span>`;
       $('.display').append(resultHtml);
 
-      rollHistory.add(_getDieSpecHtml(), resultValueHtml);
+      _history.add(_getDieSpecHtml(), resultValueHtml);
 
       feedback = _confirm;
     }
@@ -233,15 +240,15 @@ const Keypad = (() => {
   function _validateName(name) {
     const keyFavoriteSet = $('.key-favorite-set');
     if (!name) {
-      boadApp.alert('Favorite name cannot be blank');
+      Util.boadApp.alert('Favorite name cannot be blank');
       keyFavoriteSet.click();
     }
-    else if (favorites.nameInUse(name)) {
-      boadApp.alert(`"${name}" already in use`);
+    else if (_favorites.nameInUse(name)) {
+      Util.boadApp.alert(`"${name}" already in use`);
       keyFavoriteSet.click();
     }
     else {
-      favorites.add(name, _getDieSpecHtml());
+      _favorites.add(name, _getDieSpecHtml());
     }
   }
 
@@ -250,7 +257,7 @@ const Keypad = (() => {
 
     // If it's ok to roll at this point, it's ok to save a favorite
     if (_states[state].roll !== undefined) {
-      boadApp.prompt(_getDieSpecHtml(), 'Name for favorite?', _validateName);
+      Util.boadApp.prompt(_getDieSpecHtml(), 'Name for favorite?', _validateName);
       $('input.modal-text-input').focus();
     }
     else {
@@ -266,8 +273,8 @@ const Keypad = (() => {
   $('.key-roll').click(_roll);
   $('.key-clear').click(_clear);
   $('.key-favorite-set').click(_addFavorite);
-  $('a[href="#history"]').click(rollHistory.refreshTab);
-  $('a[href="#favorites"]').click(favorites.refreshTab);
+  $('a[href="#history"]').click(_history.refreshTab);
+  $('a[href="#favorites"]').click(_favorites.refreshTab);
 
   _instance = {
     clear: _clear,
@@ -279,5 +286,3 @@ const Keypad = (() => {
 
   return { getInstance: _getInstance };
 })();
-
-const keypad = Keypad.getInstance();

@@ -1,14 +1,8 @@
 'use strict';
 
-let boadApp;
-// TODO: Attach this to some object - either boadApp or another utility object
-function _getLocalStorage(key, initialValue) {
-  if (localStorage.getItem(key) === null) {
-    localStorage.setItem(key, JSON.stringify(initialValue));
-  }
+const Util = require('./Util.js');
 
-  return JSON.parse(localStorage.getItem(key));
-}
+require('./Keypad.js');
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const _SETTINGS = 'settings';
@@ -17,7 +11,7 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   const isIos = (Framework7.prototype.device.ios === true);
   let platform = '';
 
-  boadApp = new Framework7({ material: isAndroid });
+  Util.boadApp = new Framework7({ material: isAndroid });
 
   if (isIos) {
     platform = 'ios';
@@ -34,9 +28,9 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">
   <link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
 
-  boadApp.boadSettings = _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
+  Util.boadApp.boadSettings = Util.getLocalStorage(_SETTINGS, { history: { limit: 10 } });
 
-  boadApp.addView('.view-main', { domCache: true });
+  Util.boadApp.addView('.view-main', { domCache: true });
 });
 
 window.addEventListener('load', (/* event */) => {
