@@ -39,7 +39,8 @@ gulp.task('js', () => {
         // .pipe(uglify())
         // .on('error', gutil.log)
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./app/js/'));
+    .pipe(gulp.dest('./app/js/')
+    .pipe(connect.reload()));
 });
 
 const bowerList = [
