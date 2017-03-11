@@ -9,22 +9,31 @@ module.exports = (() => {
     const _FAVORITES = 'favorites';
     let _favoritesList = null;
     const _util = Util.getInstance();
+    const _favoritesView = $('#favorites');
+    const _favoritesListBlock = _favoritesView.find('.list-block');
+    const _favoritesListBlockList = _favoritesListBlock.find('ul');
+
+    function _findIndexByName(name) {
+      return _favoritesList.findIndex(favorite => favorite.name === name.toString());
+    }
 
     function _updateStorage() {
       localStorage.setItem(_FAVORITES, JSON.stringify(_favoritesList));
     }
 
-    function _add(n, specHtml) {
-      _favoritesList.push({
-        name: n,
-        dieSpec: specHtml,
-      });
+    function _addOrModify(params) {
+      if (!params.oldName) {
+        _favoritesList.push({
+          name: params.name,
+          dieSpec: params.dieSpec,
+        });
+      }
+      else {
+        const index = _findIndexByName(params.oldName);
+        _favoritesList[index].name = params.name;
+      }
 
       _updateStorage();
-    }
-
-    function _findIndexByName(name) {
-      return _favoritesList.findIndex(favorite => favorite.name === name.toString());
     }
 
     function _delete(name) {
@@ -41,40 +50,49 @@ module.exports = (() => {
 
     function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
-    function _validateName(name) {
-      let message;
+    function _promptForName(params) {
+      const result = _util.boadApp.modal({
+        title: params.prompt,
+        text: params.dieSpec,
+        afterText: '<div class="input-field"><input type="text" class="modal-text-input"></div>',
+        buttons: [
+          { text: _util.boadApp.params.modalButtonCancel },
+          { text: _util.boadApp.params.modalButtonOk, bold: true },
+        ],
+        onClick: (modal, index) => {
+          if (index === 1) {
+            const localParams = Object.assign({}, params);
+            localParams.name = $(modal).find('.modal-text-input').val();
+            let message;
 
-      if (!name) {
-        message = 'Name cannot be blank';
-      }
-      else if (_nameInUse(name)) {
-        message = `"${name}" already in use`;
-      }
+            if (localParams.name !== localParams.oldName) {
+              if (!localParams.name) {
+                message = 'Name cannot be blank';
+              }
+              else if (_nameInUse(localParams.name)) {
+                message = `"${localParams.name}" already in use`;
+              }
 
-      if (message) {
-        _util.boadApp.alert(message, 'Favorites');
-        $('.key-favorite-set').click();
-      }
-      else {
-        _add(name, $('.modal .modal-text').html());
-      }
-    }
+              if (message) {
+                _util.boadApp.alert(message, 'Favorites');
 
-    function _promptForName(dieSpec) {
-      _util.boadApp.prompt(dieSpec, 'Name for favorite?', _validateName);
+                // Get the original prompt to appear.
+                localParams.originalTarget.click();
+                // $('.key-favorite-set').click();
+              }
+              else {
+                _addOrModify(localParams);
+                if (localParams.refreshCallback) {
+                  localParams.refreshCallback();
+                }
+              }
+            }
+          }
+        },
+      });
       $('input.modal-text-input').focus();
+      return result;
     }
-
-
-    function _edit(event) {
-      let a = event; // console.log(`event=${JSON.stringify(event, null, 2)}`);
-      const b = a;
-      a = b;
-    }
-
-    const _favoritesView = $('#favorites');
-    const _favoritesListBlock = _favoritesView.find('.list-block');
-    const _favoritesListBlockList = _favoritesListBlock.find('ul');
 
     function _refreshTab() {
       _favoritesListBlockList.empty();
@@ -102,7 +120,17 @@ module.exports = (() => {
       });
 
       _favoritesView.find('.favorite-delete').click(event => _util.boadApp.swipeoutOpen($(event.target).closest('li')));
-      _favoritesListBlockList.find('a.edit').click(event => _edit(event));
+      _favoritesListBlockList.find('a.edit').click((event) => {
+        const originalTarget = $(event.currentTarget);
+        const oldName = originalTarget.closest('li').data('name');
+        _promptForName({
+          prompt: `New name for favorite ${oldName}?`,
+          oldName,
+          dieSpec: _favoritesList[_findIndexByName(oldName)].dieSpec,
+          originalTarget,
+          refreshCallback: _refreshTab,
+        });
+      });
     }
 
     _favoritesView.on('tab:show', () => _util.boadApp.sortableOpen(_favoritesListBlock));
@@ -122,7 +150,6 @@ module.exports = (() => {
     _favoritesList = _util.getLocalStorage(_FAVORITES, []);
 // console.log(`_favoritesList=${JSON.stringify(_favoritesList, null, 2)}`);
     return {
-      add: _add,
       delete: _delete,
       nameInUse: _nameInUse,
       promptForName: _promptForName,
