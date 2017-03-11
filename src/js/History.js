@@ -65,8 +65,6 @@ module.exports = (() => {
     }
 
     // Initialize the UI
-    // _historyView.on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
-    // _historyView.on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
     _historyListBlockList.on('swipeout:deleted', event => _delete($(event.target).data('index')));
     _historyView.find('.navbar .delete-all').click(() => {
       _util.boadApp.confirm('Delete all history?', 'BoAD', () => {

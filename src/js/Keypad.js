@@ -129,10 +129,10 @@ module.exports = (() => {
         }
       }
 
-      clearTimeout(() => { blink(elem, clazz, times, speed); });
+      clearTimeout(() => blink(elem, clazz, times, speed));
 
       if (times !== 0) {
-        setTimeout(() => { blink(elem, clazz, times, speed); }, speed);
+        setTimeout(() => blink(elem, clazz, times, speed), speed);
         times -= 0.5; // eslint-disable-line no-param-reassign
       }
     }

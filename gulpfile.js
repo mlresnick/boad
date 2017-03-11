@@ -12,7 +12,7 @@ const connect = require('gulp-connect');
 const rm = require('gulp-rm');
 const sass = require('gulp-sass');
 const spawn = require('child_process').spawn;
-const debug = require('gulp-debug');
+// const debug = require('gulp-debug');
 
 gulp.task('js', () => {
     // set up the browserify instance on a task basis
@@ -63,7 +63,7 @@ function runCmd(cmd, args, callBack) {
   let resp = '';
 
   child.stdout.on('data', (outputBuffer) => { resp += outputBuffer.toString(); });
-  child.stdout.on('end', () => { callBack(resp); });
+  child.stdout.on('end', () => callBack(resp));
 }
 
 gulp.task('webserver', () => {
@@ -96,7 +96,6 @@ gulp.task('bower', () => copyGlobs(bowerList, './app/lib/'));
 gulp.task('scss', () =>
   gulp
     .src('./src/scss/*.scss')
-    .pipe(debug())
     .pipe(
       sass({ outputStyle: 'expanded' })
       .on('error', sass.logError)
