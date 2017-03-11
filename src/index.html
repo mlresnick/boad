@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html class="xyzzy">
+<html>
+
 <head>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -8,17 +10,21 @@
 <link rel="stylesheet" href="lib/css/ionicons.css" />
 <link rel="stylesheet" href="css/boad.css" />
 <style>
-// Because the stylesheets don't get loaded until late in the process, there
-// is a flash of the unstyled document before it appears correctly. To avoid
-// this, don't display anything to start. When everything is loaded, it will
-// be displayed,
-html {
-  display: none;
-}
+  // Because the stylesheets don't get loaded until late in the process, there
+  // is a flash of the unstyled document before it appears correctly. To avoid
+  // this, don't display anything to start. When everything is loaded, it will
+  // be displayed,
+  html {
+    display: none;
+  }
+
 </style>
 <title>BoAD</title>
+
 </head>
+
 <body>
+
 <div class="views tabs">
 
   <div id="calculator" class="view view-main tab active">
@@ -91,7 +97,7 @@ html {
           </div>
         </div>
         <div class="page-content">
-          <div class="list-block sortable sortable-opened">
+          <div class="list-block sortable">
             <ul>
               <!-- Filled in at runtime -->
             </ul>
@@ -153,5 +159,7 @@ html {
 <script src="lib/js/framework7.js"></script>
 <script src="lib/js/jquery.js"></script>
 <script src="js/boad.js"></script>
+
 </body>
+
 </html>

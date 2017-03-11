@@ -105,6 +105,9 @@ module.exports = (() => {
       _favoritesListBlockList.find('a.edit').click(event => _edit(event));
     }
 
+    _favoritesView.on('tab:show', () => _util.boadApp.sortableOpen(_favoritesListBlock));
+    _favoritesView.on('tab:hide', () => _util.boadApp.sortableClose(_favoritesListBlock));
+
     // Sorting events
     _favoritesListBlock.on('sortable:sort', event => _move(event.detail.startIndex, event.detail.newIndex));
 
@@ -117,7 +120,7 @@ module.exports = (() => {
     }
 
     _favoritesList = _util.getLocalStorage(_FAVORITES, []);
-
+// console.log(`_favoritesList=${JSON.stringify(_favoritesList, null, 2)}`);
     return {
       add: _add,
       delete: _delete,
