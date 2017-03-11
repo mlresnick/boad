@@ -239,18 +239,17 @@ module.exports = (() => {
     // TODO: Roll favorite (Fx key)
     // QUESTION: Define both a dark and a light color scheme?
 
-    function _addFavorite() {
+    function _addFavorite(event) {
       // If it's ok to roll at this point, it's ok to save a favorite
       if (_states[_getCurrentState()].roll !== undefined) {
         _favorites.promptForName({
           prompt: 'Name for favorite?',
           dieSpec: _getDieSpecHtml(),
-          // TODO: Maybe this value [$(..)] should be gotten from an event, rather than be hard coded.
-          originalTarget: $('.key-favorite-set'),
+          originalTarget: $(event.currentTarget),
         });
       }
       else {
-        blink('.key-favorite-set', _error, 1, 64);
+        blink($(event.currentTarget), _error, 1, 64);
       }
     }
 
