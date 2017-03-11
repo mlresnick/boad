@@ -24,7 +24,7 @@ gulp.task('js', () => {
       './src/js/history.js',
       './src/js/Keypad.js',
     ],
-    // TODO:
+    // TODO: Maybe use basedir property.
     // basedir;: './src/js',
     debug: true, // ,
     // defining transforms here will avoid crashing your stream
