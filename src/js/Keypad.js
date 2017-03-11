@@ -1,8 +1,9 @@
 'use strict';
 
+const Util = require('./Util.js');
 const Dice = require('./Dice.js');
-const History = require('./History.js');
 const Favorites = require('./Favorites.js');
+const History = require('./History.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 
@@ -12,9 +13,9 @@ module.exports = (() => {
   function _init() {
     const _ROLL = '<span>roll</span>';
     let _dice;
-    const _RESULT_SYMBOL = ' ⇒ ';
     const _history = History.getInstance();
     const _favorites = Favorites.getInstance();
+    const _util = Util.getInstance();
 
     /* eslint-disable */
     const _states = {
@@ -219,7 +220,7 @@ module.exports = (() => {
         const result = _dice.roll();
 
         const resultValueHtml = `<span class="display-result-value">${result}</span>`;
-        const resultHtml = `<span class="display-result">${_RESULT_SYMBOL}${resultValueHtml}</span>`;
+        const resultHtml = `<span class="display-result">${_util.RESULT_SYMBOL}${resultValueHtml}</span>`;
         $('.display').append(resultHtml);
 
         _history.add(_getDieSpecHtml(), resultValueHtml);

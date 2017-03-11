@@ -109,7 +109,7 @@ module.exports = (() => {
     _favoritesListBlock.on('sortable:sort', event => _move(event.detail.startIndex, event.detail.newIndex));
 
     // Delete event
-    _favoritesListBlockList.on('swipeout:delete', event => _delete($(event.target).data('name')));
+    _favoritesListBlockList.on('swipeout:delete', 'li.swipeout', event => _delete($(event.target).data('name')));
 
     // TEMP Fix to clear old format
     if (localStorage.getItem(_FAVORITES) === JSON.stringify([null, null, null, null, null, null, null, null, null, null])) {
@@ -131,7 +131,6 @@ module.exports = (() => {
     if (!_instance) {
       _instance = _init();
     }
-
     return _instance;
   }
 

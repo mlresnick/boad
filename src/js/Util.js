@@ -5,6 +5,7 @@ module.exports = (() => {
 
   function _init() {
     let _boadApp;
+    const _RESULT_SYMBOL = ' ⇒ ';
 
     function _getLocalStorage(key, initialValue) {
       if (localStorage.getItem(key) === null) {
@@ -17,6 +18,7 @@ module.exports = (() => {
     return {
       boadApp: _boadApp,
       getLocalStorage: _getLocalStorage,
+      RESULT_SYMBOL: _RESULT_SYMBOL,
     };
   }
 

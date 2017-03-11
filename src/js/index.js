@@ -2,7 +2,7 @@
 
 const Util = require('./Util.js');
 
-require('./Keypad.js');
+require('./Keypad.js').getInstance();
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const _SETTINGS = 'settings';

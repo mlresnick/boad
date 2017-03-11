@@ -1,5 +1,3 @@
-/* exported rollHistory */
-
 'use strict';
 
 const Util = require('./Util.js');
@@ -16,6 +14,10 @@ module.exports = (() => {
     let _history = null;
     const _util = Util.getInstance();
 
+    function _updateStorage() {
+      localStorage.setItem(_HISTORY, JSON.stringify(_history));
+    }
+
     function _add(dieSpecHtml, resultHtml) {
       _history.push({
         dieSpec: dieSpecHtml,
@@ -26,30 +28,32 @@ module.exports = (() => {
         _history.shift();
       }
 
-      localStorage.setItem(_HISTORY, JSON.stringify(_history));
+      _updateStorage();
     }
 
     function _clear() {
       _history.length = 0;
-      localStorage.setItem(_HISTORY, JSON.stringify(_history));
+      _updateStorage();
     }
 
-    function _remove(index) {
+    function _delete(index) {
       _history.splice(index, 1);
-      localStorage.setItem(_HISTORY, JSON.stringify(_history));
+      _updateStorage();
     }
 
+    const _historyView = $('#history');
+    const _historyListBlockList = _historyView.find('.list-block ul');
     function _refreshTab() {
-      const displayList = $('#history .list-block ul');
-      displayList.empty();
+      // const keypad = Keypad.getInstance();
+
+      _historyListBlockList.empty();
 
       _history.forEach((historyEntry, index) => {
-        displayList.append(
+        _historyListBlockList.append(
           `<li class="swipeout" data-index="${index}">
-            <div class="swipeout-content item-content">
+            <div class="item-content swipeout-content">
               <div class="item-inner">
-                <div class="item-title">${historyEntry.dieSpec}</div>
-                <div class="item-after">${historyEntry.result}</div>
+                <div class="item-title">${historyEntry.dieSpec}${_util.RESULT_SYMBOL}${historyEntry.result}</div>
               </div>
             </div>
             <div class="swipeout-actions-right">
@@ -60,13 +64,11 @@ module.exports = (() => {
       });
     }
 
-    function _values() { return _history.values(); }
-
     // Initialize the UI
-    $('#history').on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
-    $('#history').on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
-    $('#history ul').on('swipeout:deleted', 'li.swipeout', (event) => { _remove($(event.target).data('index')); });
-    $('#history .navbar .delete-all').click(() => {
+    // _historyView.on('tab:show', () => { $('#history .delete-all').css('display', 'flex'); });
+    // _historyView.on('tab:hide', () => { $('#history .delete-all').css('display', 'none'); });
+    _historyListBlockList.on('swipeout:deleted', event => _delete($(event.target).data('index')));
+    _historyView.find('.navbar .delete-all').click(() => {
       _util.boadApp.confirm('Delete all history?', 'BoAD', () => {
         _clear();
         _refreshTab();
@@ -78,9 +80,8 @@ module.exports = (() => {
     return {
       add: _add,
       clear: _clear,
+      delete: _delete,
       refreshTab: _refreshTab,
-      remove: _remove,
-      values: _values,
     };
   }
 
