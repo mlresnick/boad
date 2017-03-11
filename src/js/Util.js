@@ -4,8 +4,9 @@ module.exports = (() => {
   let _instance;
 
   function _init() {
-    let _boadApp;
+    const _boadApp = new Framework7({ material: Framework7.prototype.device.android });
     const _RESULT_SYMBOL = ' ⇒ ';
+    const _SETTINGS = 'settings';
 
     function _getLocalStorage(key, initialValue) {
       if (localStorage.getItem(key) === null) {
@@ -14,6 +15,9 @@ module.exports = (() => {
 
       return JSON.parse(localStorage.getItem(key));
     }
+
+    _boadApp.boadSettings = _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
+    _boadApp.addView('.view-main', { domCache: true });
 
     return {
       boadApp: _boadApp,
