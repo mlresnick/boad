@@ -3,16 +3,22 @@
 'use strict';
 
 const browserify = require('browserify');
-const gulp = require('gulp');
-const source = require('vinyl-source-stream');
 const buffer = require('vinyl-buffer');
-// const gutil = require('gulp-util');
-const sourcemaps = require('gulp-sourcemaps');
+const chalk = require('chalk');
 const connect = require('gulp-connect');
+const gulp = require('gulp');
+const gutil = require('gulp-util');
 const rm = require('gulp-rm');
 const sass = require('gulp-sass');
+const sourcemaps = require('gulp-sourcemaps');
 const spawn = require('child_process').spawn;
-// const debug = require('gulp-debug');
+const source = require('vinyl-source-stream');
+
+function audibleLog(err) {
+  gutil.beep();
+  gutil.log(chalk.cyan('Browserify'), chalk.red('Error'), `\n\n\t\t${err.message}\n\n`);
+  this.emit('end');
+}
 
 gulp.task('js', () => {
     // set up the browserify instance on a task basis
@@ -26,12 +32,13 @@ gulp.task('js', () => {
     ],
     // TODO: Maybe use basedir property.
     // basedir;: './src/js',
-    debug: true, // ,
+    //debug: true, // ,
     // defining transforms here will avoid crashing your stream
     // transform: [reactify],
   });
 
   return b.bundle()
+    .on('error', audibleLog)
     .pipe(source('./boad.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({ loadMaps: true }))
@@ -91,7 +98,6 @@ gulp.task('getPrivateIP', () => {
 });
 
 gulp.task('html', () => copyGlobs('./src/**/*.html', './app/'));
-// gulp.task('js', () => copyGlobs('./src/**/*.js', './app/'));
 gulp.task('jquery', () => copyGlobs('./bower_components/jquery/dist/jquery.js', './app/lib/js'));
 gulp.task('bower', () => copyGlobs(bowerList, './app/lib/'));
 gulp.task('scss', () =>
@@ -99,7 +105,10 @@ gulp.task('scss', () =>
     .src('./src/scss/*.scss')
     .pipe(
       sass({ outputStyle: 'expanded' })
-      .on('error', sass.logError)
+      .on('error', (err) => {
+        gutil.beep();
+        return sass.logError.bind(this)(err);
+      })
     )
     .pipe(gulp.dest('./app/css/'))
     .pipe(connect.reload())
