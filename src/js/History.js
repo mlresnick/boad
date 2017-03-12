@@ -16,9 +16,8 @@ module.exports = (() => {
       const _HISTORY = 'history';
       let _history;
 
-      // TODO: Move generic version of this into Util
       function _updateStorage() {
-        localStorage.setItem(_HISTORY, JSON.stringify(_history));
+        _util.updateStorage(_HISTORY, _history);
       }
 
       function _add(dieSpecHtml, resultHtml) {

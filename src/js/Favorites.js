@@ -22,14 +22,14 @@ module.exports = (() => {
         switch(typeof arg) {
           case 'number': result = _favoritesList[arg]; break;
           case 'string': result = _favoritesList.find(favorite => favorite.name === arg.toString()); break;
-          default: // TODO: What to do here?
+          default: // TODO: What to do switch/default case?
         }
 
         return result;
       }
 
       function _updateStorage() {
-        localStorage.setItem(_FAVORITES, JSON.stringify(_favoritesList));
+        _util.updateStorage(_FAVORITES, _favoritesList);
       }
 
       function _addOrModify(params) {
