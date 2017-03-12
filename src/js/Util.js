@@ -16,6 +16,10 @@ module.exports = (() => {
       return JSON.parse(localStorage.getItem(key));
     }
 
+    function _updateStorage(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
     _boadApp.boadSettings = _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
     _boadApp.addView('.view-main', { domCache: true });
 
@@ -23,6 +27,7 @@ module.exports = (() => {
       boadApp: _boadApp,
       getLocalStorage: _getLocalStorage,
       RESULT_SYMBOL: _RESULT_SYMBOL,
+      updateStorage: _updateStorage,
     };
   }
 

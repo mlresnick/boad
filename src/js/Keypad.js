@@ -6,6 +6,7 @@ const Favorites = require('./Favorites.js');
 const History = require('./History.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
+// IDEA: Split view from model
 
 module.exports = (() => {
   let _instance;
