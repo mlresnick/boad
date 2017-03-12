@@ -43,6 +43,11 @@
     "no-underscore-dangle": 0,
     "no-unused-vars": [ 2, { "varsIgnorePattern": "keypad|rollHistory" } ],
     "prefer-arrow-callback": [ 2, { "allowNamedFunctions": true } ],
-    "strict": [ 2, "global" ]
+    "strict": [ 2, "global" ],
+    "keyword-spacing": [ 2, {
+      "overrides": {
+        "switch": { "after": false }
+      }
+    }]
   }
 }
