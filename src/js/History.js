@@ -2,7 +2,6 @@
 
 const Util = require('./Util.js');
 
-// IDEA: Split view from model
 // IDEA: Store (and display) intermediate steps during a roll
 // IDEA: Think about how to incorporate intermediate steps in the keypad display
 
