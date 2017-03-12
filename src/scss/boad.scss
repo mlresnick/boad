@@ -6,6 +6,11 @@ $background-color-key-confirm: gray;
 
 $favs-trans-dur: 0.3s;
 
+$favorite-star-font-size: 1.93em;
+$favorite-plus-font-size: 0.66em;
+
+$star-fs: 2em;
+
 @media only screen and (max-density: 120dpi) {
   // ldpi
 }
@@ -56,15 +61,6 @@ html {
   &:not(.ios):not(.android) { background-color: inherit; }
 
   //
-  // Android or Desktop
-  //
-  &:not(.ios) .key-favorite-set i.icon:not([class*='ion-ios-']) {
-    font-size: 36px;
-
-    display: block;
-  }
-
-  //
   // Android
   //
   &.android {
@@ -101,8 +97,6 @@ html {
       i.icon[class*='ion-ios-'] { display: block; }
     }
 
-    .key-favorite-set i.icon[class*='ion-ios-'] { display: block; }
-
     .toolbar .tab-link {
       &:not(.active) i.icon[class*='ion-ios-'][class*='-outline'] {
         display: block;
@@ -122,9 +116,50 @@ html {
   }
 }
 
-.toolbar .tab-link,
-.key-favorite-set {
+.toolbar .tab-link {
   i.icon { display: none; }
+}
+
+%stacked {
+  line-height: 1;
+
+  position: absolute;
+  left: 0;
+
+  width: 100%;
+}
+
+.key-favorite {
+  &.key-favorite-set {
+    position: relative;
+
+    display: block;
+
+    text-align: center;
+
+    i {
+      // &.ion-ios-star-outline {
+      &.ion-ios-star {
+        @extend %stacked;
+
+        font-size: $star-fs;
+
+        margin-top: -5px;
+      }
+
+      &.icon.ion-plus {
+        @extend %stacked;
+
+        font-size: 0.75em;
+
+        margin-top: 12.5px;
+
+        color: #efeff4;
+      }
+    }
+  }
+
+  &.key-favorite-get i.ion-ios-star { font-size: $star-fs; }
 }
 
 #favorites .list-block {

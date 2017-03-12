@@ -10,76 +10,92 @@ module.exports = (() => {
   let _instance;
 
   function _init() {
-    const _HISTORY = 'history';
-    let _history = null;
     const _util = Util.getInstance();
 
-    function _updateStorage() {
-      localStorage.setItem(_HISTORY, JSON.stringify(_history));
-    }
+    const _model = (() => {
+      const _HISTORY = 'history';
+      let _history;
 
-    function _add(dieSpecHtml, resultHtml) {
-      _history.push({
-        dieSpec: dieSpecHtml,
-        result: resultHtml,
-      });
-
-      while (_history.length > _util.boadApp.boadSettings.history.limit) {
-        _history.shift();
+      // TODO: Move generic version of this into Util
+      function _updateStorage() {
+        localStorage.setItem(_HISTORY, JSON.stringify(_history));
       }
 
-      _updateStorage();
-    }
+      function _add(dieSpecHtml, resultHtml) {
+        _history.push({
+          dieSpec: dieSpecHtml,
+          result: resultHtml,
+        });
 
-    function _clear() {
-      _history.length = 0;
-      _updateStorage();
-    }
+        while (_history.length > _util.boadApp.boadSettings.history.limit) {
+          _history.shift();
+        }
 
-    function _delete(index) {
-      _history.splice(index, 1);
-      _updateStorage();
-    }
+        _updateStorage();
+      }
 
-    const _historyView = $('#history');
-    const _historyListBlockList = _historyView.find('.list-block ul');
-    function _refreshTab() {
-      // const keypad = Keypad.getInstance();
+      function _clear() {
+        _history.length = 0;
+        _updateStorage();
+      }
 
-      _historyListBlockList.empty();
+      function _delete(index) {
+        _history.splice(index, 1);
+        _updateStorage();
+      }
 
-      _history.forEach((historyEntry, index) => {
-        _historyListBlockList.append(
-          `<li class="swipeout" data-index="${index}">
-            <div class="item-content swipeout-content">
-              <div class="item-inner">
-                <div class="item-title">${historyEntry.dieSpec}${_util.RESULT_SYMBOL}${historyEntry.result}</div>
+      _history = _util.getLocalStorage(_HISTORY, []);
+
+      return {
+        add: _add,
+        clear: _clear,
+        delete: _delete,
+      };
+    })();
+
+    const _view = (() => {
+      const _historyView = $('#history');
+      const _historyListBlockList = _historyView.find('.list-block ul');
+
+      function _refreshTab() {
+        // const keypad = Keypad.getInstance();
+
+        _historyListBlockList.empty();
+
+        _model._history.forEach((historyEntry, index) => {
+          _historyListBlockList.append(
+            `<li class="swipeout" data-index="${index}">
+              <div class="item-content swipeout-content">
+                <div class="item-inner">
+                  <div class="item-title">${historyEntry.dieSpec}${_util.RESULT_SYMBOL}${historyEntry.result}</div>
+                </div>
               </div>
-            </div>
-            <div class="swipeout-actions-right">
-              <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-            </div>
-          </li>`
-        );
-      });
-    }
+              <div class="swipeout-actions-right">
+                <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+              </div>
+            </li>`
+          );
+        });
+      }
 
-    // Initialize the UI
-    _historyListBlockList.on('swipeout:deleted', event => _delete($(event.target).data('index')));
-    _historyView.find('.navbar .delete-all').click(() => {
-      _util.boadApp.confirm('Delete all history?', 'BoAD', () => {
-        _clear();
-        _refreshTab();
-      });
-    });
+      _historyListBlockList.on('swipeout:deleted', event => _model._delete($(event.target).data('index')));
 
-    _history = _util.getLocalStorage(_HISTORY, []);
+      _historyView.find('.navbar .delete-all').click(() => {
+        _util.boadApp.confirm('Delete all history?', 'BoAD', () => {
+          _model._clear();
+          _model._refreshTab();
+        });
+      });
+
+      _historyView.on('tab:show', _refreshTab());
+      return { refreshTab: _refreshTab };
+    })();
 
     return {
-      add: _add,
-      clear: _clear,
-      delete: _delete,
-      refreshTab: _refreshTab,
+      add: _model._add,
+      clear: _model._clear,
+      delete: _model._delete,
+      refreshTab: _view._refreshTab,
     };
   }
 

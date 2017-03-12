@@ -233,10 +233,9 @@ module.exports = (() => {
 
     // SETTINGS: Length of history - will remove oldest when limit is reached
     // SETTINGS: Possibly make "k" vs "L/H" a user setting
-    // SETTINGS: Allow edit of existing favorite name
     // TODO: Enable Favorites as buttons to roll
-    // SETTINGS: Move favorites Delete All to settings
     // TODO: Roll favorite (Fx key)
+    // SETTINGS: Move favorites Delete All to settings
     // QUESTION: Define both a dark and a light color scheme?
 
     function _addFavorite(event) {
@@ -259,7 +258,6 @@ module.exports = (() => {
     $('.key-roll').click(_roll);
     $('.key-clear').click(_clear);
     $('.key-favorite-set').click(_addFavorite);
-    $('a[href="#history"]').click(_history.refreshTab);
     $('a[href="#favorites"]').click(_favorites.refreshTab);
 
     return {
