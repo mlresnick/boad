@@ -3,7 +3,7 @@
 const Util = require('./Util.js');
 
 // IDEA: Store (and display) intermediate steps during a roll
-// IDEA: Think about how to incorporate intermediate steps in the keypad display
+// IDEA: Think about how to incorporate intermediate steps in the calculator display
 
 module.exports = (() => {
   let _instance;
@@ -56,8 +56,6 @@ module.exports = (() => {
       const _historyListBlockList = _historyView.find('.list-block ul');
 
       function _refreshTab() {
-        // const keypad = Keypad.getInstance();
-
         _historyListBlockList.empty();
 
         _model._history.forEach((historyEntry, index) => {
@@ -85,7 +83,7 @@ module.exports = (() => {
         });
       });
 
-      _historyView.on('tab:show', _refreshTab());
+      _historyView.on('tab:show', _refreshTab);
       return { refreshTab: _refreshTab };
     })();
 

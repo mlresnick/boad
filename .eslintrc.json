@@ -1,10 +1,9 @@
 {
-  "parserOptions": {
-    "sourceType": "script"
-  },
+  "parserOptions": { "sourceType": "script" },
 
   "plugins": [ "eslint-plugin-html" ],
 
+  // TODO: Maybe these should be split up and each module have only what it needs.
   "env": {
     "browser": true,
     "node": false,
@@ -12,13 +11,14 @@
     "commonjs": true
   },
 
+  // TODO: See if all of these are still necessary
   "globals": {
     "boadApp": true,
     "Dice": false,
     "favorites": false,
     "Framework7": false,
     "_getLocalStorage": false,
-    "keypad": false,
+    "calculator": false,
     "rollHistory": false
   },
 
