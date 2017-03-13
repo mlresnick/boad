@@ -13,41 +13,46 @@ module.exports = (() => {
 
     const _model = (() => {
       const _HISTORY = 'history';
-      let _history;
+      let _historyList;
 
       function _updateStorage() {
-        _util.updateStorage(_HISTORY, _history);
+        _util.updateStorage(_HISTORY, _historyList);
       }
 
       function _add(dieSpecHtml, resultHtml) {
-        _history.push({
+        _historyList.push({
           dieSpec: dieSpecHtml,
           result: resultHtml,
         });
 
-        while (_history.length > _util.boadApp.boadSettings.history.limit) {
-          _history.shift();
+        while (_historyList.length > _util.boadApp.boadSettings.history.limit) {
+          _historyList.shift();
         }
 
         _updateStorage();
       }
 
       function _clear() {
-        _history.length = 0;
+        _historyList.length = 0;
         _updateStorage();
       }
 
       function _delete(index) {
-        _history.splice(index, 1);
+        _historyList.splice(index, 1);
         _updateStorage();
       }
 
-      _history = _util.getLocalStorage(_HISTORY, []);
+      function _forEach(cb) {
+        return _historyList.forEach(cb);
+      }
+
+      _historyList = _util.getLocalStorage(_HISTORY, []);
 
       return {
         add: _add,
         clear: _clear,
         delete: _delete,
+        forEach: _forEach,
       };
     })();
 
@@ -58,7 +63,7 @@ module.exports = (() => {
       function _refreshTab() {
         _historyListBlockList.empty();
 
-        _model._history.forEach((historyEntry, index) => {
+        _model.forEach((historyEntry, index) => {
           _historyListBlockList.append(
             `<li class="swipeout" data-index="${index}">
               <div class="item-content swipeout-content">
@@ -74,12 +79,12 @@ module.exports = (() => {
         });
       }
 
-      _historyListBlockList.on('swipeout:deleted', event => _model._delete($(event.target).data('index')));
+      _historyListBlockList.on('swipeout:deleted', event => _model.delete($(event.target).data('index')));
 
       _historyView.find('.navbar .delete-all').click(() => {
         _util.boadApp.confirm('Delete all history?', 'BoAD', () => {
-          _model._clear();
-          _model._refreshTab();
+          _model.clear();
+          _model.refreshTab();
         });
       });
 
@@ -88,10 +93,10 @@ module.exports = (() => {
     })();
 
     return {
-      add: _model._add,
-      clear: _model._clear,
-      delete: _model._delete,
-      refreshTab: _view._refreshTab,
+      add: _model.add,
+      clear: _model.clear,
+      delete: _model.delete,
+      refreshTab: _view.refreshTab,
     };
   }
 

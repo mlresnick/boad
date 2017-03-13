@@ -139,7 +139,7 @@ module.exports = (() => {
     }
 
     function _eraseDisplayResult() {
-      return ($('.display-result').remove() !== 0);
+      return ($('.display-result').remove().length !== 0);
     }
 
     function _clear(showConfirm = true) {
