@@ -2,7 +2,7 @@
 
 'use strict';
 
-const browserify = require('browserify');
+const browserifier = require('browserify');
 const buffer = require('vinyl-buffer');
 const chalk = require('chalk');
 const connect = require('gulp-connect');
@@ -20,24 +20,10 @@ function audibleLog(err) {
   this.emit('end');
 }
 
-gulp.task('js', () => {
-    // set up the browserify instance on a task basis
-  const b = browserify({
-    entries: [
-      './src/js/index.js',
-      './src/js/Dice.js',
-      './src/js/Favorites.js',
-      './src/js/history.js',
-      './src/js/Keypad.js',
-    ],
-    // TODO: Maybe use basedir property.
-    // basedir;: './src/js',
-    //debug: true, // ,
-    // defining transforms here will avoid crashing your stream
-    // transform: [reactify],
-  });
-
-  return b.bundle()
+gulp.task('js', () =>
+  // set up the browserify instance on a task basis
+  browserifier('./src/js/index.js')
+    .bundle()
     .on('error', audibleLog)
     .pipe(source('./boad.js'))
     .pipe(buffer())
@@ -46,9 +32,9 @@ gulp.task('js', () => {
         // .pipe(uglify())
         // .on('error', gutil.log)
     .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./app/js/')
-    .pipe(connect.reload()));
-});
+    .pipe(gulp.dest('./app/js/'))
+    .pipe(connect.reload())
+);
 
 const bowerList = [
   './bower_components/framework7/dist/**/js/framework7.js',
