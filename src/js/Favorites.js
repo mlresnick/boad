@@ -61,12 +61,17 @@ module.exports = (() => {
 
       function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
+      function _forEach(cb) {
+        return _favoritesList.forEach(cb);
+      }
+
       _favoritesList = _util.getLocalStorage(_FAVORITES, []);
 
       return {
         addOrModify: _addOrModify,
         delete: _delete,
         find: _find,
+        forEach: _forEach,
         move: _move,
         nameInUse: _nameInUse,
       };
@@ -125,7 +130,7 @@ module.exports = (() => {
       function _refreshTab() {
         _favoritesListBlockList.empty();
 
-        _model.favoritesList.forEach((favorite) => {
+        _model.forEach((favorite) => {
           _favoritesListBlockList.append(
             `<li class="swipeout" data-name="${favorite.name}">
               <div class="item-content swipeout-content">
