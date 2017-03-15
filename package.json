@@ -30,6 +30,7 @@
     "gulp-sourcemaps": "^2.4.1",
     "gulp-spy": "^1.1.0",
     "gulp-util": "^3.0.8",
+    "node-notifier": "^5.0.2",
     "stream-browserify": "^2.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

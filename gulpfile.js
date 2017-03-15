@@ -4,37 +4,26 @@
 
 const browserifier = require('browserify');
 const buffer = require('vinyl-buffer');
-const chalk = require('chalk');
 const connect = require('gulp-connect');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
+const notifier = require('node-notifier');
 const rm = require('gulp-rm');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const spawn = require('child_process').spawn;
 const source = require('vinyl-source-stream');
 
-function audibleLog(err) {
+function audibleLog(errorMessage, plugin) {
   gutil.beep();
-  gutil.log(chalk.cyan('Browserify'), chalk.red('Error'), `\n\n\t\t${err.message}\n\n`);
+  notifier.notify({
+    title: `${'Error'} in plugin ${plugin}`,
+    message: errorMessage,
+    sound: false,
+  });
+  gutil.log(new gutil.PluginError(plugin, errorMessage).toString());
   this.emit('end');
 }
-
-gulp.task('js', () =>
-  // set up the browserify instance on a task basis
-  browserifier('./src/js/index.js')
-    .bundle()
-    .on('error', audibleLog)
-    .pipe(source('./boad.js'))
-    .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-        // Add transformation tasks to the pipeline here.
-        // .pipe(uglify())
-        // .on('error', gutil.log)
-    .pipe(sourcemaps.write('./'))
-    .pipe(gulp.dest('./app/js/'))
-    .pipe(connect.reload())
-);
 
 const bowerList = [
   './bower_components/framework7/dist/**/js/framework7.js',
@@ -86,15 +75,27 @@ gulp.task('getPrivateIP', () => {
 gulp.task('html', () => copyGlobs('./src/**/*.html', './app/'));
 gulp.task('jquery', () => copyGlobs('./bower_components/jquery/dist/jquery.js', './app/lib/js'));
 gulp.task('bower', () => copyGlobs(bowerList, './app/lib/'));
+gulp.task('js', () =>
+  // set up the browserify instance on a task basis
+  browserifier('./src/js/index.js')
+  .bundle()
+    .on('error', function logBrowsifyError(err) { audibleLog.call(this, err.message, 'browsify'); })
+  .pipe(source('./boad.js'))
+  .pipe(buffer())
+  .pipe(sourcemaps.init({ loadMaps: true }))
+      // Add transformation tasks to the pipeline here.
+      // .pipe(uglify())
+      // .on('error', function logSourceMapsError(err) { audibleLog.call(this, err.messageFormatted, 'sourcemaps'); })
+  .pipe(sourcemaps.write('./'))
+  .pipe(gulp.dest('./app/js/'))
+  .pipe(connect.reload())
+  );
 gulp.task('scss', () =>
   gulp
     .src('./src/scss/*.scss')
     .pipe(
-      sass({ outputStyle: 'expanded' })
-      .on('error', (err) => {
-        gutil.beep();
-        return sass.logError.bind(this)(err);
-      })
+      sass.sync({ outputStyle: 'expanded' })
+      .on('error', function logScssError(err) { audibleLog.call(this, err.messageFormatted, 'scss'); })
     )
     .pipe(gulp.dest('./app/css/'))
     .pipe(connect.reload())
