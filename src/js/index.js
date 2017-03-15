@@ -1,8 +1,7 @@
 'use strict';
 
 const Util = require('./Util.js');
-
-require('./Keypad.js').getInstance();
+require('./Calculator.js').getInstance();
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const _util = Util.getInstance();
