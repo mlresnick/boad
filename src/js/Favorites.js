@@ -141,7 +141,7 @@ module.exports = (() => {
                 </div>
                 <div class="item-inner">
                   <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
-                  <div class="item-after"><a href="#" class="edit"><i class="icon ion-chevron-right"></i></a></div>
+                  <div class="item-after edit-mode"><a href="#"><i class="icon ion-chevron-right"></i></a></div>
                 </div>
               </div>
               <div class="sortable-handler"></div>
@@ -166,8 +166,21 @@ module.exports = (() => {
         });
       }
 
-      _favoritesView.on('tab:show', () => _util.boadApp.sortableOpen(_favoritesListBlock));
+      function _enterEditMode() {
+        _favoritesView.find('.page').addClass('edit-mode');
+        _util.boadApp.sortableOpen(_favoritesListBlock);
+      }
+
+      function _exitEditMode() {
+        _favoritesView.find('.page').removeClass('edit-mode');
+        _util.boadApp.sortableClose(_favoritesListBlock);
+      }
+
       _favoritesView.on('tab:hide', () => _util.boadApp.sortableClose(_favoritesListBlock));
+
+      // Enter/exit edit module
+      _favoritesView.find('.navbar .left a.link:not(.edit-mode)').click(_enterEditMode);
+      _favoritesView.find('.navbar .left a.link.edit-mode').click(_exitEditMode);
 
       // Sorting events
       _favoritesListBlock.on('sortable:sort', event => _model.move(event.detail.startIndex, event.detail.newIndex));
