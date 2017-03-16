@@ -49,13 +49,11 @@
     "stream-browserify": "^2.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
-    "vinyl-transform": "^1.0.0",
-    "watchify": "^3.9.0",
-    "webpage": "^0.3.0"
+    "vinyl-transform": "^1.0.0"
   },
   "dependencies": {
     "framework7": "^1.5.4",
-    "ionicons": "2.0.1",
+    "ionicons": "^3.0.0",
     "jquery": "^3.1.1"
   }
 }
