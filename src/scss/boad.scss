@@ -4,7 +4,7 @@ $ios-icon-font-size: 30px;
 $background-color-key-error: red;
 $background-color-key-confirm: gray;
 
-$favs-trans-dur: 5s;
+$favs-trans-dur: 0.3s;
 
 $favorite-star-font-size: 1.93em;
 $favorite-plus-font-size: 0.66em;
@@ -57,7 +57,7 @@ html {
           &.edit { pointer-events: none; }
         }
 
-        .list-block .item-content {
+        .list-block div.item-content {
           left: 0;
           transition: left $favs-trans-dur;
 
@@ -69,7 +69,7 @@ html {
       }
 
       .list-block .item-content {
-        left: -50px;
+        // left: -50px;
         transition: left $favs-trans-dur;
 
         .item-after {
@@ -97,11 +97,9 @@ html {
         font-size: 24px;
         &[class*='ion-ios-'] { opacity: 0; }
       }
-    }
 
-    // XXX:
-    // Tweak the nav bar
-    // .navbar i.icon { font-size: $android-icon-font-size; }
+      .list-block .item-content { left: -50px; }
+    }
 
     // Tweak the tab bar
     .toolbar.tabbar {
@@ -127,6 +125,12 @@ html {
   &.ios {
     #favorites {
       .page {
+
+        .list-block .item-content {
+          left: -40px;
+          transition: left $favs-trans-dur;
+        }
+
         &.edit-mode .navbar a.link {
           &.edit-mode i.icon[class*='ion-ios-'] {
             transition: opacity $favs-trans-dur;
@@ -134,7 +138,7 @@ html {
           }
         }
 
-        i.icon:not([class*='ion-ios-']) { opacity: 0; }
+        a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
 
         .navbar {
           .left,
