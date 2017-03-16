@@ -2,9 +2,9 @@
   "name": "boad",
   "version": "0.0.1",
   "description": "Best of All Dice - die roller for table top games",
-  "main": "boad.js",
+  "main": "./app/boad.js",
   "directories": {
-    "doc": "doc"
+    "doc": "./doc"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
