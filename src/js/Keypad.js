@@ -242,16 +242,14 @@ module.exports = (() => {
     function _addFavorite(event) {
       // If it's ok to roll at this point, it's ok to save a favorite
       if (_states[_getCurrentState()].roll !== undefined) {
-        _favorites.promptForName({
-          prompt: 'Name for favorite?',
-          dieSpec: _getDieSpecHtml(),
-          originalTarget: $(event.currentTarget),
-        });
+        _favorites.addFavorite(event, _getDieSpecHtml());
       }
       else {
         blink($(event.currentTarget), _error, 1, 64);
       }
     }
+
+    _favorites.initialize(this);
 
     $('.key-d, .key-digit, .key-keep, .key-operation')
       .click(_enterNew);

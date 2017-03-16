@@ -191,17 +191,15 @@ html {
 
         font-size: $star-fs;
 
-        margin-top: -5px;
+        margin-top: -3px;
       }
 
-      &.icon.ion-plus {
+      &.icon.ion-md-add {
         @extend %stacked;
 
         font-size: 0.75em;
 
-        margin-top: 12.5px;
-
-        color: #efeff4;
+        margin-left: 12px;
       }
     }
   }
