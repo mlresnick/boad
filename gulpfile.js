@@ -25,14 +25,14 @@ function audibleLog(errorMessage, plugin) {
   this.emit('end');
 }
 
-const bowerList = [
-  './bower_components/framework7/dist/**/js/framework7.js',
-  './bower_components/framework7/dist/**/css/framework7.{ios,material}?(.colors).css',
-  './bower_components/Ionicons/**/css/ionicons.css',
-  './bower_components/Ionicons/**/fonts/*',
+const nodeList = [
+  './node_modules/framework7/dist/**/js/framework7.js',
+  './node_modules/framework7/dist/**/css/framework7.{ios,material}?(.colors).css',
+  './node_modules/ionicons/dist/**/css/ionicons.css',
+  './node_modules/ionicons/dist/**/fonts/*',
 ];
 
-const buildDependencies = ['html', 'js', 'scss', 'bower'/* , 'svg', 'jquery' */];
+const buildDependencies = ['html', 'js', 'scss', 'node', 'jquery'];
 
 function copyGlobs(src, dst) {
   return gulp
@@ -73,8 +73,8 @@ gulp.task('getPrivateIP', () => {
 });
 
 gulp.task('html', () => copyGlobs('./src/**/*.html', './app/'));
-gulp.task('jquery', () => copyGlobs('./bower_components/jquery/dist/jquery.js', './app/lib/js'));
-gulp.task('bower', () => copyGlobs(bowerList, './app/lib/'));
+gulp.task('jquery', () => copyGlobs('./node_modules/jquery/dist/jquery.js', './app/lib/js'));
+gulp.task('node', () => copyGlobs(nodeList, './app/lib/'));
 gulp.task('js', () =>
   // set up the browserify instance on a task basis
   browserifier('./src/js/index.js')
@@ -83,9 +83,6 @@ gulp.task('js', () =>
   .pipe(source('./boad.js'))
   .pipe(buffer())
   .pipe(sourcemaps.init({ loadMaps: true }))
-      // Add transformation tasks to the pipeline here.
-      // .pipe(uglify())
-      // .on('error', function logSourceMapsError(err) { audibleLog.call(this, err.messageFormatted, 'sourcemaps'); })
   .pipe(sourcemaps.write('./'))
   .pipe(gulp.dest('./app/js/'))
   .pipe(connect.reload())
@@ -102,14 +99,14 @@ gulp.task('scss', () =>
 );
 
 gulp.task(':build', buildDependencies);
-gulp.task(':clean', () => gulp.src(['./app/**/*'], { read: false }).pipe(rm()));
+gulp.task(':clean', () => gulp.src(['./app/**/*', './app/**/.*'], { read: false }).pipe(rm()));
 
 gulp.task('watch', () => {
   gulp.watch(['./src/**/*.html'], ['html']);
   gulp.watch(['./src/**/js/**/*.js'], ['js']);
   gulp.watch(['./src/scss/**/*.scss'], ['scss']);
-  gulp.watch(['./bower_components/jquery/dist/jquery.js'], ['jquery']);
-  gulp.watch(bowerList, ['bower']);
+  gulp.watch(['./node_modules/jquery/dist/jquery.js'], ['jquery']);
+  gulp.watch(nodeList, ['node']);
 });
 
 gulp.task('default', ['getPrivateIP', 'webserver', 'watch']);
