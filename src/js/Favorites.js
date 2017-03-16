@@ -4,6 +4,7 @@ const Util = require('./Util.js');
 
 module.exports = (() => {
   let _instance;
+  let _calculator;
 
   function _init() {
     const _util = Util.getInstance();
@@ -65,6 +66,8 @@ module.exports = (() => {
         return _favoritesList.forEach(cb);
       }
 
+      function _initialize(calculator) { _calculator = calculator; }
+
       _favoritesList = _util.getLocalStorage(_FAVORITES, []);
 
       return {
@@ -72,6 +75,7 @@ module.exports = (() => {
         delete: _delete,
         find: _find,
         forEach: _forEach,
+        initialize: _initialize,
         move: _move,
         nameInUse: _nameInUse,
       };
@@ -127,6 +131,14 @@ module.exports = (() => {
         return result;
       }
 
+      function _addFavorite(event, dieSpec) {
+        _promptForName({
+          prompt: 'Name for favorite?',
+          dieSpec,
+          originalTarget: $(event.currentTarget),
+        });
+      }
+
       function _refreshTab() {
         _favoritesListBlockList.empty();
 
@@ -176,11 +188,16 @@ module.exports = (() => {
         _util.boadApp.sortableClose(_favoritesListBlock);
       }
 
-      _favoritesView.on('tab:hide', () => _util.boadApp.sortableClose(_favoritesListBlock));
+      _favoritesView.on('tab:show', _refreshTab);
+      _favoritesView.on('tab:hide', _exitEditMode);
 
       // Enter/exit edit module
       _favoritesView.find('.navbar .left a.link:not(.edit-mode)').click(_enterEditMode);
       _favoritesView.find('.navbar .left a.link.edit-mode').click(_exitEditMode);
+
+      // Add event
+      // TODO:
+      // _favoritesView.find('.navbar .right .link.plus').click(_addFavorite);
 
       // Sorting events
       _favoritesListBlock.on('sortable:sort', event => _model.move(event.detail.startIndex, event.detail.newIndex));
@@ -189,6 +206,7 @@ module.exports = (() => {
       _favoritesListBlockList.on('swipeout:delete', 'li.swipeout', event => _model.delete($(event.target).data('name')));
 
       return {
+        addFavorite: _addFavorite,
         promptForName: _promptForName,
         refreshTab: _refreshTab,
       };
@@ -196,7 +214,9 @@ module.exports = (() => {
 
 
     return {
+      addFavorite: _view.addFavorite,
       delete: _model.delete,
+      initialize: _model.initialize,
       nameInUse: _model.nameInUse,
       promptForName: _view.promptForName,
       refreshTab: _view.refreshTab,
