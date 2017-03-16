@@ -139,33 +139,55 @@ module.exports = (() => {
         });
       }
 
+      function _getOriginalTargetAndName(event) {
+        const originalTarget = $(event.currentTarget);
+        return [
+          originalTarget,
+          originalTarget.closest('li').data('name'),
+        ];
+      }
+
+      function _rollFavorite(event) {
+        alert('_rollFavorite');
+        const [, name] = _getOriginalTargetAndName(event);
+        // const originalTarget = $(event.currentTarget);
+        // const oldName = originalTarget.closest('li').data('name');
+
+        const dieSpec = _model.find(name).dieSpec;
+        _calculator.roll(dieSpec);
+      }
+
       function _refreshTab() {
         _favoritesListBlockList.empty();
 
         _model.forEach((favorite) => {
           _favoritesListBlockList.append(
             `<li class="swipeout" data-name="${favorite.name}">
-              <div class="item-content swipeout-content">
-                <div class="item-media">
-                  <a href="#" class="favorite-delete">
-                    <i class="icon ion-android-remove-circle"></i>
-                  </a>
+              <a href="#" class="item-link roll-favorite">
+                <div class="item-content swipeout-content">
+                  <div class="item-media">
+                    <a href="#" class="favorite-delete">
+                      <i class="icon ion-md-remove-circle"></i>
+                    </a>
+                  </div>
+                  <div class="item-inner">
+                    <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
+                    <div class="item-after edit-mode"><a href="#"><i class="icon ion-md-arrow-forward"></i></a></div>
+                  </div>
                 </div>
-                <div class="item-inner">
-                  <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
-                  <div class="item-after edit-mode"><a href="#"><i class="icon ion-chevron-right"></i></a></div>
+                <div class="sortable-handler"></div>
+                <div class="swipeout-actions-right">
+                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
                 </div>
-              </div>
-              <div class="sortable-handler"></div>
-              <div class="swipeout-actions-right">
-                <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-              </div>
+              </a>
             </li>`
           );
         });
 
+
         _favoritesView.find('.favorite-delete').click(event => _util.boadApp.swipeoutOpen($(event.target).closest('li')));
-        _favoritesListBlockList.find('a.edit').click((event) => {
+        _favoritesListBlockList.find('.roll-favorite').click(_rollFavorite);
+        _favoritesListBlockList.find('.item-content a.edit').click((event) => {
           const originalTarget = $(event.currentTarget);
           const oldName = originalTarget.closest('li').data('name');
           _promptForName({
