@@ -167,12 +167,12 @@ module.exports = (() => {
                 <div class="item-content swipeout-content">
                   <div class="item-media">
                     <a href="#" class="favorite-delete">
-                      <i class="icon ion-md-remove-circle"></i>
+                      <i class="icon ion-android-remove-circle"></i>
                     </a>
                   </div>
                   <div class="item-inner">
                     <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
-                    <div class="item-after edit-mode"><a href="#"><i class="icon ion-md-arrow-forward"></i></a></div>
+                    <div class="item-after edit-mode"><a href="#"><i class="icon ion-chevron-right"></i></a></div>
                   </div>
                 </div>
                 <div class="sortable-handler"></div>
