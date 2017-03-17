@@ -23,8 +23,8 @@ function audibleLog(err) {
 const nodeList = [
   './node_modules/framework7/dist/**/js/framework7.js',
   './node_modules/framework7/dist/**/css/framework7.{ios,material}?(.colors).css',
-  './node_modules/ionicons/dist/**/css/ionicons.css',
-  './node_modules/ionicons/dist/**/fonts/*',
+  './node_modules/ionicons/**/css/ionicons.css',
+  './node_modules/ionicons/**/fonts/*',
 ];
 
 const buildDependencies = ['html', 'js', 'scss', 'node', 'jquery'];
