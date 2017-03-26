@@ -90,10 +90,12 @@ gulp.task('js', () =>
 gulp.task('scss', () =>
   gulp
     .src('./src/scss/*.scss')
+    .pipe(sourcemaps.init())
     .pipe(
       sass.sync({ outputStyle: 'expanded' })
       .on('error', function logScssError(err) { audibleLog.call(this, err.messageFormatted, 'scss'); })
     )
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./app/css/'))
     .pipe(connect.reload())
 );
