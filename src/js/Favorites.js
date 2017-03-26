@@ -148,13 +148,14 @@ module.exports = (() => {
       }
 
       function _rollFavorite(event) {
-        alert('_rollFavorite');
         const [, name] = _getOriginalTargetAndName(event);
+        console.log(`_rollFavorite for ${name}`);
+
         // const originalTarget = $(event.currentTarget);
         // const oldName = originalTarget.closest('li').data('name');
 
-        const dieSpec = _model.find(name).dieSpec;
-        _calculator.roll(dieSpec);
+        // const dieSpec = _model.find(name).dieSpec;
+        // _calculator.roll(dieSpec);
       }
 
       function _refreshTab() {
@@ -166,28 +167,27 @@ module.exports = (() => {
               <a href="#" class="item-link roll-favorite">
                 <div class="item-content swipeout-content">
                   <div class="item-media">
-                    <a href="#" class="favorite-delete">
-                      <i class="icon ion-android-remove-circle"></i>
-                    </a>
+                    <i class="icon ion-android-remove-circle"></i>
                   </div>
                   <div class="item-inner">
                     <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
-                    <div class="item-after edit-mode"><a href="#"><i class="icon ion-chevron-right"></i></a></div>
                   </div>
                 </div>
-                <div class="sortable-handler"></div>
-                <div class="swipeout-actions-right">
-                  <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
-                </div>
+                <div class="sortable-handler edit-mode"></div>
+                <div class="swipeout-actions-right"></div>
               </a>
             </li>`
           );
         });
 
+                    // <div class="item-after edit-mode">
+                    // </div>
 
-        _favoritesView.find('.favorite-delete').click(event => _util.boadApp.swipeoutOpen($(event.target).closest('li')));
-        _favoritesListBlockList.find('.roll-favorite').click(_rollFavorite);
-        _favoritesListBlockList.find('.item-content a.edit').click((event) => {
+                    // <!-- <i class="icon ion-chevron-right"></i> -->
+        // _favoritesView.find('.favorite-delete').on('click', event => _util.boadApp.swipeoutOpen($(event.target).closest('li')));
+        // TODO: Refactor part A
+        _favoritesListBlockList.find('.roll-favorite').on('click', _rollFavorite);
+        _favoritesListBlockList.find('.item-content a.edit').on('click', (event) => {
           const originalTarget = $(event.currentTarget);
           const oldName = originalTarget.closest('li').data('name');
           _promptForName({
@@ -201,25 +201,129 @@ module.exports = (() => {
       }
 
       function _enterEditMode() {
-        _favoritesView.find('.page').addClass('edit-mode');
-        _util.boadApp.sortableOpen(_favoritesListBlock);
+        if (!_favoritesView.find('.page').hasClass('edit-mode')) {
+          // Transition here and now, update DOM in event handler
+          _util.boadApp.sortableOpen(_favoritesListBlock);
+          _favoritesView.find('.page').addClass('edit-mode');
+        }
       }
 
+      // Wait until the link reappears
+      // _favoritesView.find('.navbar .left a.link.edit-mode').on('transitionend', () => {
+      _favoritesView.find('.navbar .left a.link.done').on('transitionend', () => {
+      // XXX:
+        window.__clicker = (selector, id = 2) => {
+          const eventType = ['mousedown', 'mouseup', 'click'][id];
+          $($('#favorites li')[0]).find(selector).trigger(eventType);
+        };
+
+          // XXX:
+        function dumpEventTargets(event) {
+          function collectAttributes(attrs, attribute) {
+            const newAttrs = `${attrs} ${attribute.name}="${attribute.value}"`;
+            return newAttrs;
+          }
+          function getOpenTag(node) {
+            const attributeNodeArray = Array.prototype.slice.call(node.attributes);
+            return `<${attributeNodeArray.reduce(collectAttributes, node.localName)}>`;
+          }
+
+          ['target', 'currentTarget', 'delegateTarget'].forEach((propName) => {
+            let value;
+            switch(typeof event[propName]) {
+              case 'function':
+              case 'symbol':
+                value = typeof event[propName];
+                break;
+
+              default:
+                value = getOpenTag(event[propName]);
+                break;
+            }
+            console.log(`  event['${propName}'] = ${value}`);
+          });
+        }
+
+        if (_favoritesView.find('.page').hasClass('edit-mode')) {
+          // Remove links first - so they dont interfere with the replacement...
+          _favoritesListBlockList.find('li > .roll-favorite .item-content').unwrap();
+
+          // ... then replace
+          _favoritesListBlockList.find('.icon.ion-android-remove-circle').wrap('<a href="#" class="favorite-delete"></a>');
+          _favoritesListBlockList.find('.favorite-delete')
+            .on('click', event => _util.boadApp.swipeoutOpen($(event.target).closest('li.swipeout')));
+
+          const innerItems = _favoritesListBlockList.find('.item-content .item-inner');
+          $(innerItems).each((i, innerItem) => {
+            $(innerItem)
+            .children(':not(.item-after)')
+            .wrapAll('<a href="#" class="item-link favorite-edit"></a>');
+          });
+
+          const li = _favoritesListBlockList.children('li');
+          li.on('mousedown touchstart', '.item-inner', (event) => { $(event.delegateTarget).addClass('active-state'); });
+          li.on('mouseup touchend', '.item-inner', (event) => { $(event.delegateTarget).removeClass('active-state'); });
+
+          _favoritesListBlockList.find('.item-content .item-inner :not(.item-after)').on('click', (event) => {
+            const currentTarget = event.currentTarget;
+            if (currentTarget.matches('a.item-link.favorite-edit')) {
+              // XXX:
+              dumpEventTargets(event);
+              const oldName = $(currentTarget).closest('li').data('name');
+              _promptForName({
+                prompt: `New name for favorite ${oldName}?`,
+                oldName,
+                dieSpec: _model.find(oldName).dieSpec,
+                currentTarget,
+                refreshCallback: _refreshTab,
+              });
+            }
+          });
+
+          _favoritesListBlockList.find('.swipeout-actions-right')
+            .append('<a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>');
+        }
+      });
+
       function _exitEditMode() {
-        _favoritesView.find('.page').removeClass('edit-mode');
-        _util.boadApp.sortableClose(_favoritesListBlock);
+        if (_favoritesView.find('.page').hasClass('edit-mode')) {
+          // Transition here and now, update DOM in event handler
+          _util.boadApp.sortableClose(_favoritesListBlock);
+          _favoritesView.find('.page').removeClass('edit-mode');
+        }
       }
+
+      // TODO when delete swipeout is open, the edit part of the bar should not
+      // ask for a new name, but simply close the swipeout.
+
+      // _favoritesView.find('a.link.done.edit-mode').on('transitionend', () => {
+      _favoritesView.find('.navbar .left a.link.edit').on('transitionend', () => {
+        if (!_favoritesView.find('.page').hasClass('edit-mode')) {
+          const li = _favoritesListBlockList.children('li');
+          li.off('mousedown touchstart', '.item-inner');
+          li.off('mouseup touchend', '.item-inner');
+          // Remove links first - so they dont interfere with the replacement...
+          _favoritesListBlockList.find('.icon.ion-android-remove-circle').unwrap();
+          _favoritesListBlockList.find('.swipeout-delete').remove();
+          _favoritesListBlockList.find('.favorite-edit').children().unwrap();
+
+          // ... the add links in transitionend event handler
+          _favoritesListBlockList.find('li').wrapInner('<a href="#" class="item-link roll-favorite"></a>');
+          // // TODO Refactor Part B
+          _favoritesListBlockList.find('.roll-favorite').on('click', _rollFavorite);
+        }
+      });
 
       _favoritesView.on('tab:show', _refreshTab);
       _favoritesView.on('tab:hide', _exitEditMode);
 
       // Enter/exit edit module
-      _favoritesView.find('.navbar .left a.link:not(.edit-mode)').click(_enterEditMode);
-      _favoritesView.find('.navbar .left a.link.edit-mode').click(_exitEditMode);
+      _favoritesView.find('.navbar .left a.link:not(.edit-mode)').on('click', _enterEditMode);
+      _favoritesView.find('.navbar .left a.link.edit-mode').on('click', _exitEditMode);
 
       // Add event
       // TODO:
-      // _favoritesView.find('.navbar .right .link.plus').click(_addFavorite);
+      // _favoritesView.find('.navbar .right .link.plus').on('click', _addFavorite);
 
       // Sorting events
       _favoritesListBlock.on('sortable:sort', event => _model.move(event.detail.startIndex, event.detail.newIndex));

@@ -4,8 +4,9 @@ $ios-icon-font-size: 30px;
 $background-color-key-error: red;
 $background-color-key-confirm: gray;
 
-$favs-trans-dur: 0.3s;
-
+$favs-trans-dur: 1s; //0.3s;
+$favs-initial-x-ios: -55px;
+$favs-initial-x-android: -50px;
 $favorite-star-font-size: 1.93em;
 $favorite-plus-font-size: 0.66em;
 $star-fs: 2em;
@@ -19,6 +20,7 @@ $star-fs: 2em;
   width: 100%;
 }
 
+// **** Global ***
 html {
   display: none;
 
@@ -26,242 +28,119 @@ html {
   // Desktop
   //
   &:not(.ios):not(.android) { background-color: inherit; }
-
-  #favorites {
-    .page {
-      .navbar {
-        a.link {
-          &.done { position: absolute; }
-
-          &.edit-mode {
-            transition: opacity $favs-trans-dur;
-            opacity: 0;
-          }
-        }
-
-        .right a.link:first-of-type { position: absolute; }
-      }
-
-      &.edit-mode {
-        .navbar a.link {
-          &:not(.edit-mode) {
-            transition: opacity $favs-trans-dur;
-            opacity: 0;
-          }
-
-          &.edit-mode {
-            transition: opacity $favs-trans-dur;
-            opacity: 1;
-          }
-
-          &.edit { pointer-events: none; }
-        }
-
-        .list-block div.item-content {
-          left: 0;
-          transition: left $favs-trans-dur;
-
-          .item-after {
-            transition: opacity $favs-trans-dur;
-            opacity: 1;
-          }
-        }
-      }
-
-      .list-block .item-content {
-        // left: -50px;
-        transition: left $favs-trans-dur;
-
-        .item-after {
-          transition: opacity $favs-trans-dur;
-          opacity: 0;
-        }
-      }
-    }
-  }
-
-  //
-  // Android
-  //
-  &.android {
-    #favorites .page {
-      &.edit-mode .navbar a.link.edit-mode i.icon {
-
-        &:not([class*='ion-ios-']) {
-          transition: opacity $favs-trans-dur;
-          opacity: 1;
-        }
-      }
-
-      a.link i.icon {
-        font-size: 24px;
-        &[class*='ion-ios-'] { opacity: 0; }
-      }
-
-      .list-block .item-content { left: -50px; }
-    }
-
-    // Tweak the tab bar
-    .toolbar.tabbar {
-      .tab-link {
-        padding-top: 6px;
-
-        i.icon {
-          font-size: $android-icon-font-size;
-
-          &:not([class*='ion-ios-']) { display: block; }
-        }
-
-        .tabbar-label { font-size: 12px; }
-      }
-
-      .tab-link-highlight { height: 6px; }
-    }
-  }
-
-  //
-  // iOS
-  //
-  &.ios {
-    #favorites {
-      .page {
-
-        .list-block .item-content {
-          left: -40px;
-          transition: left $favs-trans-dur;
-        }
-
-        &.edit-mode .navbar a.link {
-          &.edit-mode i.icon[class*='ion-ios-'] {
-            transition: opacity $favs-trans-dur;
-            opacity: 1;
-          }
-        }
-
-        a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
-
-        .navbar {
-          .left,
-          .right {
-            a + a { margin-left: 0; }
-          }
-
-          a.link i.icon { font-size: 30px; }
-        }
-      }
-    }
-
-    .tabbar {
-      a.tab-link {
-        padding: 0;
-
-        &:not(.active) i.icon[class*='ion-ios-'][class*='-outline'] {
-          display: block;
-        }
-
-        &.active i.icon[class*='ion-ios-']:not([class*='-outline']) {
-          display: block;
-        }
-
-        i.icon {
-          font-size: $ios-icon-font-size;
-          display: none;
-          opacity: 1;
-        }
-      }
-    }
-
-    .tabbar-labels span.tabbar-label { font-size: 14px; }
-  }
 }
 
-.toolbar .tab-link i.icon { display: none; }
+// **** Calculator ****
 
-#calculator .key-favorite {
-  &.key-favorite-set {
-    position: relative;
+// Navbar
 
-    display: block;
+// Page content
+#calculator {
+  .display {
+    font-size: 2em;
 
-    text-align: center;
-
-    i {
-      &.ion-ios-star {
-        @extend %stacked;
-
-        font-size: $star-fs;
-
-        margin-top: -3px;
-      }
-
-      &.icon.ion-plus {
-        @extend %stacked;
-
-        font-size: 0.75em;
-
-        margin-left: 12px;
-      }
-    }
-  }
-
-  &.key-favorite-get i.ion-ios-star { font-size: $star-fs; }
-}
-
-#favorites .list-block {
-  .item-media a { color: red; }
-
-  .item-after {
-    margin-right: -20px;
-    .edit { color: inherit; }
-   }
-
-  .sortable-handler { right: 40px; }
-
-  i.icon { font-size: 1.5em; }
-
-  li {
-    .sortable-handler {
-      top: 0;
-      right: 30px;
-
-      transition: // sass-lint:disable indentation
-        right $favs-trans-dur 0,
-        top $favs-trans-dur,
-        opacity $favs-trans-dur;
-      // sass-lint:enable indentation
-
-      opacity: 1;
+    height: 1.35em;
+    padding:  {
+      right: 3px;
+      left: 3px;
     }
 
-    &.swipeout-opened .sortable-handler {
-      top: -30px;
-      right: -30px;
-
-      transition: // sass-lint:disable indentation
-        right $favs-trans-dur 0,
-        top $favs-trans-dur,
-        opacity $favs-trans-dur;
-      // sass-lint:enable indentation
-
-      opacity: 0;
-    }
+    border: 1px solid;
   }
-}
 
-.display {
-  font-size: 2em;
-
-  height: 1.35em;
-  padding:  {
-    right: 3px;
-    left: 3px;
-  }
-  border: 1px solid;
-}
-
-.ios,
-.android {
   .keypad-container {
+    // Total height of div.display (1.36em height  + 2px border)
+    // 4px more (not sure where these ae froim)
+    height: calc(100% - (1.35em + 2px) - 4px);
+  }
+
+  .keypad {
+    display: flex;
+    flex-direction: row;
+    flex: 8;
+
+    height: 100%;
+
+    border: 1px solid;
+  }
+
+  .keypad-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .key {
+    font-size: 2em;
+
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    border: 1px solid;
+  }
+
+  .key-roll {
+    flex: 2;
+
+    padding-top: 2px;
+  }
+
+  .key-favorite {
+    &.key-favorite-set {
+      position: relative;
+
+      display: block;
+
+      text-align: center;
+
+      i {
+        &.ion-ios-star {
+          @extend %stacked;
+
+          font-size: $star-fs;
+
+          margin-top: -3px;
+        }
+
+        &.icon.ion-plus {
+          @extend %stacked;
+
+          font-size: 0.75em;
+
+          margin-left: 12px;
+        }
+      }
+    }
+
+    &.key-favorite-get i.ion-ios-star {
+      font-size: $star-fs;
+    }
+  }
+
+  .variable {
+    font:  {
+      family: serif;
+      style: italic;
+    }
+  }
+
+  .confirm {
+    background-color: $background-color-key-confirm;
+  }
+
+  .error {
+    background-color: $background-color-key-error;
+  }
+}
+
+html.ios,
+html.android {
+  #calculator .keypad-container {
     // Total height of div.display (1.36em height  + 2px border)
     // Height of horizontal borders in keypad (8 rows x 2 1px borders)
     // 5px more (not sure where these ae froim)
@@ -269,50 +148,159 @@ html {
   }
 }
 
-.keypad-container {
-  // Total height of div.display (1.36em height  + 2px border)
-  // 4px more (not sure where these ae froim)
-  height: calc(100% - (1.35em + 2px) - 4px);
-}
 
-.keypad {
-  display: flex;
-  flex-direction: row;
-  flex: 8;
+// **** Favorites ****
 
-  height: 100%;
+// Whole page
+html.ios #favorites .page a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
 
-  border: 1px solid;
-}
+// Navbar
+#favorites .page.edit-mode .navbar {
 
-.keypad-column {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
+  a.link {
+    transition: opacity $favs-trans-dur;
+    opacity: 0;
 
-.variable {
-  font:  {
-    family: serif;
-    style: italic;
+    &.edit-mode {
+      transition: opacity $favs-trans-dur $favs-trans-dur;
+      opacity: 1;
+    }
+
+    &.edit { pointer-events: none; }
   }
 }
 
-.key {
-  font-size: 2em;
+#favorites .page .navbar {
+  a.link {
+    transition: opacity $favs-trans-dur $favs-trans-dur;
+    opacity: 1;
 
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
+    &.done {position: absolute; }
 
-  width: 100%;
-  height: 100%;
+    &.edit-mode {
+      transition: opacity $favs-trans-dur;
+      opacity: 0;
+    }
 
-  border: 1px solid;
+    .right a.link:first-of-type { position: absolute; }
+  }
 }
 
-//Steal a little from the list block to use for the label.
+html.android #favorites .page.edit-mode .navbar {
+  a.link.edit-mode i.icon {
+    &:not([class*='ion-ios-']) {
+      transition: opacity $favs-trans-dur;
+      opacity: 1;
+    }
+  }
+}
+
+html.android #favorites .page.navbar {
+  a.link i.icon {
+    font-size: 24px;
+    &[class*='ion-ios-'] { opacity: 0; }
+  }
+}
+
+html.ios #favorites .page.edit-mode .navbar {
+  a.link.edit-mode i.icon[class*='ion-ios-'] {
+    transition: opacity $favs-trans-dur;
+    opacity: 1;
+  }
+}
+
+html.ios #favorites .page .navbar {
+  .left,
+  .right {
+    a + a { margin-left: 0; }
+  }
+
+  a.link i.icon { font-size: 30px; }
+}
+
+
+// Page content
+#favorites .page.edit-mode {
+  li.active-state { background-color: #d9d9d9; }
+
+  .sortable-handler { background-position-x: calc(-10px + 100%); }
+
+  .item-content.swipeout-content {
+    left: 0;
+    transition: $favs-trans-dur;
+
+    .item-inner {
+      margin-left: 0;
+      background: {
+        position: {
+          x: calc(-40px + 100% );
+          y: 50%;
+        }
+        repeat: {
+          x: no-repeat;
+          y: no-repeat;
+        }
+        image:
+        url('data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D"0%200%2060%20120"%20xmlns%3D"http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg"%3E%3Cpath%20d%3D"m60%2061.5-38.25%2038.25-9.75-9.75%2029.25-28.5-29.25-28.5%209.75-9.75z"%20fill%3D"%23c7c7cc"%2F%3E%3C%2Fsvg%3E'); // sass-lint:disable-line max-line-length
+        size: 10px 20px;
+      }
+
+      a.favorite-edit { width: 100%; }
+    }
+  }
+}
+
+#favorites .page .item-content.swipeout-content {
+  i.icon { font-size: 1.5em; }
+  .item-media i.icon { color: red; }
+
+
+  .item-inner {
+    width: calc(-50px + 100%);
+
+    background-image: none;
+  }
+}
+
+// Override Framwork7 styling, want to actually do this at the li element
+// With these two rules, the link itself won't appear to respond...
+#favorites .page.edit-mode .list-block .item-link,
+html:not(.watch-active-state) #favorites .page.edit-mode .list-block
+  .item-link:active, // sass-lint:disable-line indentation
+#favorites .page.edit-mode .list-block .item-link.active-state {
+  transition-duration: 0ms;
+  background-color: inherit;
+}
+
+// ... Instead the closest list item will respond.
+#favorites .page.edit-mode .list-block li {
+  display: block;
+  color: inherit;
+}
+
+html:not(.watch-active-state) #favorites .page.edit-mode .list-block li:active,
+#favorites .page.edit-mode .list-block li.active-state {
+  transition-duration: 0ms;
+  background-color: #d9d9d9;
+}
+
+html.android #favorites .page .item-content {
+  left: $favs-initial-x-android;
+  transition: $favs-trans-dur;
+}
+
+html.ios #favorites .page .item-content {
+  // left: $favs-initial-x-ios;
+  left: $favs-initial-x-ios;
+  transition: $favs-trans-dur;
+}
+
+
+// **** History ****
+
+// Navbar
+
+// Page content
 #history .list-block {
   margin-top: 25px;
 
@@ -322,27 +310,44 @@ html {
   }
 }
 
-.key-roll {
-  flex: 2;
 
-  padding-top: 2px;
+// **** Tab bar ****
+.toolbar.tabbar .tab-link i.icon { display: none; }
+
+html.android .toolbar.tabbar {
+  .tab-link {
+    padding-top: 6px;
+
+    i.icon {
+      font-size: $android-icon-font-size;
+
+      &:not([class*='ion-ios-']) { display: block; }
+    }
+
+    .tabbar-label { font-size: 12px; }
+  }
+
+  .tab-link-highlight { height: 6px; }
 }
 
-.confirm { background-color: $background-color-key-confirm; }
+html.ios .toolbar.tabbar {
+  a.tab-link {
+    padding: 0;
 
-.error { background-color: $background-color-key-error; }
+    &:not(.active) i.icon[class*='ion-ios-'][class*='-outline'] {
+      display: block;
+    }
 
-// TODO: Decide whether to use these colors
-// sass-lint:disable no-css-comments
-/*
-.key { color: black; border-color: blue;}
-.key-d { background-color: rgba(cornflowerblue, 0.7);}
-.key-roll { background-color: rgba(lightgreen, 0.7); }
-.key-favorite { background-color: rgba(yellow, 0.7); }
-.key-clear, .key-delete { background-color: rgba(gray, 0.7); }
-.key-operator { background-color: rgba(indigo, 0.7); }
-.key-keep { background-color: rgba(orange, 0.7); }
-*/
-// sass-lint:enable no-css-comments
-//  text-shadow: 1px 0 0 orange, 0 -1px 0 orange, 0 1px 0 orange,
-//               -1px 0 0 orange;
+    &.active i.icon[class*='ion-ios-']:not([class*='-outline']) {
+      display: block;
+    }
+
+    i.icon {
+      font-size: $ios-icon-font-size;
+      display: none;
+      opacity: 1;
+    }
+  }
+
+  &.tabbar-labels span.tabbar-label { font-size: 14px; }
+}
