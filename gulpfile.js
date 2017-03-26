@@ -85,6 +85,7 @@ gulp.task('js', () =>
 gulp.task('scss', () =>
   gulp
     .src('./src/scss/*.scss')
+    .pipe(sourcemaps.init())
     .pipe(
       sass({ outputStyle: 'expanded' })
       .on('error', (err) => {
@@ -92,6 +93,7 @@ gulp.task('scss', () =>
         return sass.logError.bind(this)(err);
       })
     )
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./app/css/'))
     .pipe(connect.reload())
 );
