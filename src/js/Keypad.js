@@ -252,12 +252,12 @@ module.exports = (() => {
     _favorites.initialize(this);
 
     $('.key-d, .key-digit, .key-keep, .key-operation')
-      .click(_enterNew);
-    $('.key-delete').click(_deleteLast);
-    $('.key-roll').click(_roll);
-    $('.key-clear').click(_clear);
-    $('.key-favorite-set').click(_addFavorite);
-    $('a[href="#favorites"]').click(_favorites.refreshTab);
+      .on('click', _enterNew);
+    $('.key-delete').on('click', _deleteLast);
+    $('.key-roll').on('click', _roll);
+    $('.key-clear').on('click', _clear);
+    $('.key-favorite-set').on('click', _addFavorite);
+    $('a[href="#favorites"]').on('click', _favorites.refreshTab);
 
     return {
       clear: _clear,

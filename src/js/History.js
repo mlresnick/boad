@@ -83,10 +83,10 @@ module.exports = (() => {
 
       _historyListBlockList.on('swipeout:deleted', event => _model.delete($(event.target).data('index')));
 
-      _historyView.find('.navbar .delete-all').click(() => {
+      _historyView.find('.navbar .delete-all').on('click', () => {
         _util.boadApp.confirm('Delete all history?', 'BoAD', () => {
           _model.clear();
-          _model.refreshTab();
+          _view.refreshTab();
         });
       });
 
