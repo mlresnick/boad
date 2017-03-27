@@ -4,8 +4,8 @@ $ios-icon-font-size: 30px;
 $background-color-key-error: red;
 $background-color-key-confirm: gray;
 
-$favs-trans-dur: 1s; //0.3s;
-$favs-initial-x-ios: -55px;
+$favs-trans-dur: 0.3s;
+$favs-initial-x-ios: -35px;
 $favs-initial-x-android: -50px;
 $favorite-star-font-size: 1.93em;
 $favorite-plus-font-size: 0.66em;
@@ -151,9 +151,6 @@ html.android {
 
 // **** Favorites ****
 
-// Whole page
-html.ios #favorites .page a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
-
 // Navbar
 #favorites .page.edit-mode .navbar {
 
@@ -162,7 +159,7 @@ html.ios #favorites .page a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
     opacity: 0;
 
     &.edit-mode {
-      transition: opacity $favs-trans-dur $favs-trans-dur;
+      transition: opacity $favs-trans-dur;
       opacity: 1;
     }
 
@@ -172,7 +169,7 @@ html.ios #favorites .page a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
 
 #favorites .page .navbar {
   a.link {
-    transition: opacity $favs-trans-dur $favs-trans-dur;
+    transition: opacity $favs-trans-dur;
     opacity: 1;
 
     &.done {position: absolute; }
@@ -186,63 +183,35 @@ html.ios #favorites .page a.link i.icon:not([class*='ion-ios-']) { opacity: 0; }
   }
 }
 
-html.android #favorites .page.edit-mode .navbar {
-  a.link.edit-mode i.icon {
-    &:not([class*='ion-ios-']) {
-      transition: opacity $favs-trans-dur;
-      opacity: 1;
-    }
-  }
-}
-
-html.android #favorites .page.navbar {
-  a.link i.icon {
-    font-size: 24px;
-    &[class*='ion-ios-'] { opacity: 0; }
-  }
-}
-
-html.ios #favorites .page.edit-mode .navbar {
-  a.link.edit-mode i.icon[class*='ion-ios-'] {
-    transition: opacity $favs-trans-dur;
-    opacity: 1;
-  }
-}
-
-html.ios #favorites .page .navbar {
-  .left,
-  .right {
-    a + a { margin-left: 0; }
-  }
-
-  a.link i.icon { font-size: 30px; }
-}
-
 
 // Page content
 #favorites .page.edit-mode {
   li.active-state { background-color: #d9d9d9; }
 
-  .sortable-handler { background-position-x: calc(-10px + 100%); }
+  .sortable-handler {
+    transition: $favs-trans-dur;
+    background-position-x: calc(-20px + 100%);
+  }
+
+  .swipeout-opened {
+    .sortable-handler {
+      transition: $favs-trans-dur;
+      background-position-x: 150%; //calc(20px + 100%);
+    }
+    .item-inner { pointer-events: none; }
+  }
 
   .item-content.swipeout-content {
     left: 0;
     transition: $favs-trans-dur;
 
     .item-inner {
-      margin-left: 0;
+      transition: $favs-trans-dur;
+
+      // Based on definition in Framework7
       background: {
-        position: {
-          x: calc(-40px + 100% );
-          y: 50%;
-        }
-        repeat: {
-          x: no-repeat;
-          y: no-repeat;
-        }
-        image:
-        url('data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D"0%200%2060%20120"%20xmlns%3D"http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg"%3E%3Cpath%20d%3D"m60%2061.5-38.25%2038.25-9.75-9.75%2029.25-28.5-29.25-28.5%209.75-9.75z"%20fill%3D"%23c7c7cc"%2F%3E%3C%2Fsvg%3E'); // sass-lint:disable-line max-line-length
-        size: 10px 20px;
+        position: calc(100% - 50px) center;
+        image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D'0%200%2060%20120'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cpath%20d%3D'm60%2061.5-38.25%2038.25-9.75-9.75%2029.25-28.5-29.25-28.5%209.75-9.75z'%20fill%3D'%23c7c7cc'%2F%3E%3C%2Fsvg%3E"); // sass-lint:disable-line max-line-length, quotes
       }
 
       a.favorite-edit { width: 100%; }
@@ -254,34 +223,17 @@ html.ios #favorites .page .navbar {
   i.icon { font-size: 1.5em; }
   .item-media i.icon { color: red; }
 
-
   .item-inner {
-    width: calc(-50px + 100%);
-
-    background-image: none;
+    // Based on definition in Framework7
+    padding-right: 35px;
+    transition: $favs-trans-dur;
+    background: {
+      position: -100% center;
+      image: none;
+      size: 10px 20px;
+      repeat: no-repeat;
+    }
   }
-}
-
-// Override Framwork7 styling, want to actually do this at the li element
-// With these two rules, the link itself won't appear to respond...
-#favorites .page.edit-mode .list-block .item-link,
-html:not(.watch-active-state) #favorites .page.edit-mode .list-block
-  .item-link:active, // sass-lint:disable-line indentation
-#favorites .page.edit-mode .list-block .item-link.active-state {
-  transition-duration: 0ms;
-  background-color: inherit;
-}
-
-// ... Instead the closest list item will respond.
-#favorites .page.edit-mode .list-block li {
-  display: block;
-  color: inherit;
-}
-
-html:not(.watch-active-state) #favorites .page.edit-mode .list-block li:active,
-#favorites .page.edit-mode .list-block li.active-state {
-  transition-duration: 0ms;
-  background-color: #d9d9d9;
 }
 
 html.android #favorites .page .item-content {
@@ -290,7 +242,6 @@ html.android #favorites .page .item-content {
 }
 
 html.ios #favorites .page .item-content {
-  // left: $favs-initial-x-ios;
   left: $favs-initial-x-ios;
   transition: $favs-trans-dur;
 }
@@ -299,6 +250,12 @@ html.ios #favorites .page .item-content {
 // **** History ****
 
 // Navbar
+html.ios #favorites .page .navbar {
+  .left,
+  .right {
+    a + a { margin-left: 0; }
+  }
+}
 
 // Page content
 #history .list-block {

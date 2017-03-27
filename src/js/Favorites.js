@@ -296,7 +296,6 @@ module.exports = (() => {
       // TODO when delete swipeout is open, the edit part of the bar should not
       // ask for a new name, but simply close the swipeout.
 
-      // _favoritesView.find('a.link.done.edit-mode').on('transitionend', () => {
       _favoritesView.find('.navbar .left a.link.edit').on('transitionend', () => {
         if (!_favoritesView.find('.page').hasClass('edit-mode')) {
           const li = _favoritesListBlockList.children('li');
