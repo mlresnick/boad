@@ -280,10 +280,10 @@ html.android .toolbar.tabbar {
   .tab-link {
     padding-top: 6px;
 
-    i.icon {
+    i.icon.icon-android {
       font-size: $android-icon-font-size;
 
-      &:not([class*='ion-ios-']) { display: block; }
+      display: block;
     }
 
     .tabbar-label { font-size: 12px; }
@@ -296,15 +296,15 @@ html.ios .toolbar.tabbar {
   a.tab-link {
     padding: 0;
 
-    &:not(.active) i.icon[class*='ion-ios-'][class*='-outline'] {
+    &:not(.active) i.icon.icon-ios[class*='-outline'] {
       display: block;
     }
 
-    &.active i.icon[class*='ion-ios-']:not([class*='-outline']) {
+    &.active i.icon.icon-ios:not([class*='-outline']) {
       display: block;
     }
 
-    i.icon {
+    i.icon.icon-ios {
       font-size: $ios-icon-font-size;
       display: none;
       opacity: 1;
