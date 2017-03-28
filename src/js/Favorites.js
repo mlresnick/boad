@@ -180,12 +180,7 @@ module.exports = (() => {
           );
         });
 
-                    // <div class="item-after edit-mode">
-                    // </div>
-
-                    // <!-- <i class="icon ion-chevron-right"></i> -->
-        // _favoritesView.find('.favorite-delete').on('click', event => _util.boadApp.swipeoutOpen($(event.target).closest('li')));
-        // TODO: Refactor part A
+        // TODO: Refactor part A - can we avoid having to do this for every refreshTab call
         _favoritesListBlockList.find('.roll-favorite').on('click', _rollFavorite);
         _favoritesListBlockList.find('.item-content a.edit').on('click', (event) => {
           const originalTarget = $(event.currentTarget);
@@ -209,41 +204,7 @@ module.exports = (() => {
       }
 
       // Wait until the link reappears
-      // _favoritesView.find('.navbar .left a.link.edit-mode').on('transitionend', () => {
       _favoritesView.find('.navbar .left a.link.done').on('transitionend', () => {
-      // XXX:
-        window.__clicker = (selector, id = 2) => {
-          const eventType = ['mousedown', 'mouseup', 'click'][id];
-          $($('#favorites li')[0]).find(selector).trigger(eventType);
-        };
-
-          // XXX:
-        function dumpEventTargets(event) {
-          function collectAttributes(attrs, attribute) {
-            const newAttrs = `${attrs} ${attribute.name}="${attribute.value}"`;
-            return newAttrs;
-          }
-          function getOpenTag(node) {
-            const attributeNodeArray = Array.prototype.slice.call(node.attributes);
-            return `<${attributeNodeArray.reduce(collectAttributes, node.localName)}>`;
-          }
-
-          ['target', 'currentTarget', 'delegateTarget'].forEach((propName) => {
-            let value;
-            switch(typeof event[propName]) {
-              case 'function':
-              case 'symbol':
-                value = typeof event[propName];
-                break;
-
-              default:
-                value = getOpenTag(event[propName]);
-                break;
-            }
-            console.log(`  event['${propName}'] = ${value}`);
-          });
-        }
-
         if (_favoritesView.find('.page').hasClass('edit-mode')) {
           // Remove links first - so they dont interfere with the replacement...
           _favoritesListBlockList.find('li > .roll-favorite .item-content').unwrap();
@@ -261,6 +222,7 @@ module.exports = (() => {
           });
 
           const li = _favoritesListBlockList.children('li');
+
           // Under normal circumstances make the whole list item display touch feedback.
           // However, if there is a swipeou open anywhere, skip the feedback and close the swipeout.
           li.on('mousedown touchstart', '.item-inner', (event) => {
@@ -287,8 +249,6 @@ module.exports = (() => {
           _favoritesListBlockList.find('.item-content .item-inner :not(.item-after)').on('click', (event) => {
             const currentTarget = event.currentTarget;
             if (currentTarget.matches('a.item-link.favorite-edit')) {
-              // XXX:
-              dumpEventTargets(event);
               const oldName = $(currentTarget).closest('li').data('name');
               _promptForName({
                 prompt: `New name for favorite ${oldName}?`,
