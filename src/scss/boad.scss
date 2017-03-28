@@ -198,7 +198,12 @@ html.android {
       transition: $favs-trans-dur;
       background-position-x: 150%; //calc(20px + 100%);
     }
-    .item-inner { pointer-events: none; }
+
+    .favorite-edit,
+    .favorite-delete {
+      pointer-events: none;
+    }
+
   }
 
   .item-content.swipeout-content {

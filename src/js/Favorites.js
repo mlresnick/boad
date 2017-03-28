@@ -261,8 +261,28 @@ module.exports = (() => {
           });
 
           const li = _favoritesListBlockList.children('li');
-          li.on('mousedown touchstart', '.item-inner', (event) => { $(event.delegateTarget).addClass('active-state'); });
-          li.on('mouseup touchend', '.item-inner', (event) => { $(event.delegateTarget).removeClass('active-state'); });
+          // Under normal circumstances make the whole list item display touch feedback.
+          // However, if there is a swipeou open anywhere, skip the feedback and close the swipeout.
+          li.on('mousedown touchstart', '.item-inner', (event) => {
+            if (_favoritesListBlockList.children('li.swipeout-opened').length === 0) {
+              $(event.delegateTarget).addClass('active-state');
+            }
+            else {
+              _util.boadApp.swipeoutClose(event.delegateTarget);
+            }
+          });
+
+          li.on('mouseup touchend', '.item-inner', event => $(event.delegateTarget).removeClass('active-state'));
+
+          li.on('swipeout:open', () => {
+            _favoritesListBlockList.find('.favorite-edit').each((i, link) => $(link).css('pointer-events', 'none'));
+            _favoritesListBlockList.find('.favorite-delete').each((i, link) => $(link).css('pointer-events', 'none'));
+          });
+
+          li.on('swipeout:closed', () => {
+            _favoritesListBlockList.find('.favorite-edit').each((i, link) => $(link).css('pointer-events', ''));
+            _favoritesListBlockList.find('.favorite-delete').each((i, link) => $(link).css('pointer-events', ''));
+          });
 
           _favoritesListBlockList.find('.item-content .item-inner :not(.item-after)').on('click', (event) => {
             const currentTarget = event.currentTarget;
@@ -293,14 +313,12 @@ module.exports = (() => {
         }
       }
 
-      // TODO when delete swipeout is open, the edit part of the bar should not
-      // ask for a new name, but simply close the swipeout.
-
       _favoritesView.find('.navbar .left a.link.edit').on('transitionend', () => {
         if (!_favoritesView.find('.page').hasClass('edit-mode')) {
           const li = _favoritesListBlockList.children('li');
           li.off('mousedown touchstart', '.item-inner');
           li.off('mouseup touchend', '.item-inner');
+
           // Remove links first - so they dont interfere with the replacement...
           _favoritesListBlockList.find('.icon.ion-android-remove-circle').unwrap();
           _favoritesListBlockList.find('.swipeout-delete').remove();
