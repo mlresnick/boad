@@ -2,7 +2,7 @@
 
 const Util = require('./Util.js');
 
-module.exports = (() => {
+module.exports = (($) => {
   let _instance;
   let _calculator;
 
@@ -334,4 +334,4 @@ module.exports = (() => {
   }
 
   return { getInstance: _getInstance };
-})();
+})(jQuery);

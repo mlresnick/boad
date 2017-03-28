@@ -1,6 +1,8 @@
+/* global Framework7 */
+
 'use strict';
 
-module.exports = (() => {
+module.exports = ((Framework7) => {
   let _instance;
 
   function _init() {
@@ -39,4 +41,4 @@ module.exports = (() => {
   }
 
   return { getInstance: _getInstance };
-})();
+})(Framework7);

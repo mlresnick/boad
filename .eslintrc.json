@@ -3,51 +3,40 @@
 
   "plugins": [ "eslint-plugin-html" ],
 
-  // TODO: Maybe these should be split up and each module have only what it needs.
   "env": {
     "browser": true,
-    "node": false,
-    "jquery": true,
-    "commonjs": true
+    "jquery": true
   },
-
-  // TODO: See if all of these are still necessary
-  "globals": {
-    "boadApp": true,
-    "Dice": false,
-    "favorites": false,
-    "Framework7": false,
-    "_getLocalStorage": false,
-    "calculator": false,
-    "rollHistory": false
-  },
-
-  "exported": [ "Dice", "keypad" ],
 
   "extends": "airbnb-base",
-
   "rules": {
-    "brace-style": [ 2, "stroustrup", { "allowSingleLine": true } ],
-    "comma-dangle": [ 2, {
-      "arrays": "always-multiline",
-      "objects": "always-multiline",
-      "imports": "never",
-      "exports": "never",
-      "functions": "never"
-    } ],
-    "func-names": [ 1, "as-needed" ],
-    "linebreak-style": [ 2, "windows" ],
-    "max-len": [ 2, 132 ],
-    "no-plusplus": [ 2, { "allowForLoopAfterthoughts": true } ],
-    "no-restricted-syntax": [ 2, "ForOfStatement" ],
-    "no-underscore-dangle": 0,
-    "no-unused-vars": [ 2, { "varsIgnorePattern": "keypad|rollHistory" } ],
-    "prefer-arrow-callback": [ 2, { "allowNamedFunctions": true } ],
-    "strict": [ 2, "global" ],
-    "keyword-spacing": [ 2, {
-      "overrides": {
-        "switch": { "after": false }
+    "brace-style": [ "error", "stroustrup", { "allowSingleLine": true } ],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "objects": "always-multiline",
+        "imports": "never",
+        "exports": "never",
+        "functions": "never"
       }
-    }]
+    ],
+    "func-names": [ "warn", "as-needed" ],
+    "linebreak-style": [ "error", "windows" ],
+    "max-len": [ "error", 132 ],
+    "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
+    "no-restricted-syntax": [ "error", "ForOfStatement" ],
+    "no-underscore-dangle": "off",
+    "no-unused-vars": [ "error", { "varsIgnorePattern": "keypad|rollHistory" } ],
+    "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
+    "strict": [ "error", "global" ],
+    "keyword-spacing": [
+      "error",
+      {
+        "overrides": {
+          "switch": { "after": false }
+        }
+      }
+    ]
   }
 }
