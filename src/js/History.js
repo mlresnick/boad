@@ -5,7 +5,7 @@ const Util = require('./Util.js');
 // IDEA: Store (and display) intermediate steps during a roll
 // IDEA: Think about how to incorporate intermediate steps in the keypad display
 
-module.exports = (() => {
+module.exports = (($) => {
   let _instance;
 
   function _init() {
@@ -110,4 +110,4 @@ module.exports = (() => {
   }
 
   return { getInstance: _getInstance };
-})();
+})(jQuery);

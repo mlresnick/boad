@@ -40,7 +40,7 @@ module.exports = (() => {
     const lowHighCount = _parseResults[_LOW_HIGH_COUNT];
 
     /* eslint-disable no-multi-spaces */
-    switch (lowHighCount) {
+    switch(lowHighCount) {
       case '-':       result = -1; break;
       case '+':       result =  1; break;
       case undefined: result =  0; break;
@@ -86,7 +86,7 @@ module.exports = (() => {
     let result = null;
 
     /* eslint-disable no-multi-spaces */
-    switch (_keepType()) {
+    switch(_keepType()) {
       case 'k': result = _kCount() >= 0; break;
       case 'H': result = false;          break;
       case 'L': result = true;           break;
@@ -104,7 +104,7 @@ module.exports = (() => {
     }
     else {
       /* eslint-disable no-multi-spaces */
-      switch (_keepType()) {
+      switch(_keepType()) {
         case 'H':
         case 'L': result = -_lowHighCount();               break;
         case 'k': result = _count() - Math.abs(_kCount()); break;

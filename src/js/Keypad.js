@@ -8,7 +8,7 @@ const History = require('./History.js');
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 // IDEA: Split view from model
 
-module.exports = (() => {
+module.exports = (($) => {
   let _instance;
 
   function _init() {
@@ -234,8 +234,6 @@ module.exports = (() => {
 
     // SETTINGS: Length of history - will remove oldest when limit is reached
     // SETTINGS: Possibly make "k" vs "L/H" a user setting
-    // TODO: Enable Favorites as buttons to roll
-    // TODO: Roll favorite (Fx key)
     // SETTINGS: Move favorites Delete All to settings
     // QUESTION: Define both a dark and a light color scheme?
 
@@ -277,4 +275,4 @@ module.exports = (() => {
   }
 
   return { getInstance: _getInstance };
-})();
+})(jQuery);
