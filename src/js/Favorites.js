@@ -1,10 +1,10 @@
 'use strict';
 
 const Util = require('./Util.js');
+const DieSpec = require('./DieSpec.js');
 
 module.exports = (($) => {
   let _instance;
-  let _calculator;
 
   function _init() {
     const _util = Util.getInstance();
@@ -35,9 +35,11 @@ module.exports = (($) => {
 
       function _addOrModify(params) {
         if (!params.oldName) {
+          const newDieSpec = DieSpec();
+          newDieSpec.set(params.dieSpec);
           _favoritesList.push({
             name: params.name,
-            dieSpec: params.dieSpec,
+            dieSpec: newDieSpec,
           });
         }
         else {
@@ -66,16 +68,20 @@ module.exports = (($) => {
         return _favoritesList.forEach(cb);
       }
 
-      function _initialize(calculator) { _calculator = calculator; }
-
-      _favoritesList = _util.getLocalStorage(_FAVORITES, []);
+      _favoritesList = _util.getLocalStorage(_FAVORITES, [], (key, value) => {
+        if (key === 'dieSpec') {
+          const dieSpec = DieSpec();
+          dieSpec.set(JSON.parse(value));
+          return dieSpec;
+        }
+        return value;
+      });
 
       return {
         addOrModify: _addOrModify,
         delete: _delete,
         find: _find,
         forEach: _forEach,
-        initialize: _initialize,
         move: _move,
         nameInUse: _nameInUse,
       };
@@ -85,6 +91,16 @@ module.exports = (($) => {
       const _favoritesView = $('#favorites');
       const _favoritesListBlock = _favoritesView.find('.list-block');
       const _favoritesListBlockList = _favoritesListBlock.find('ul');
+
+      let _calculator;
+
+
+      function _getCalculator() {
+        if (!_calculator) {
+          _calculator = require('./Calculator.js').getInstance(); // eslint-disable-line global-require
+        }
+        return _calculator;
+      }
 
       function _promptForName(params) {
         const result = _util.boadApp.modal({
@@ -139,23 +155,10 @@ module.exports = (($) => {
         });
       }
 
-      function _getOriginalTargetAndName(event) {
-        const originalTarget = $(event.currentTarget);
-        return [
-          originalTarget,
-          originalTarget.closest('li').data('name'),
-        ];
-      }
-
       function _rollFavorite(event) {
-        const [, name] = _getOriginalTargetAndName(event);
-        console.log(`_rollFavorite for ${name}`);
-
-        // const originalTarget = $(event.currentTarget);
-        // const oldName = originalTarget.closest('li').data('name');
-
-        // const dieSpec = _model.find(name).dieSpec;
-        // _calculator.roll(dieSpec);
+        const name = $(event.currentTarget).closest('li').data('name');
+        _util.boadApp.showTab('#calculator');
+        _getCalculator().roll(_model.find(name).dieSpec);
       }
 
       function _refreshTab() {
@@ -170,7 +173,7 @@ module.exports = (($) => {
                     <i class="icon ion-android-remove-circle"></i>
                   </div>
                   <div class="item-inner">
-                    <div class="item-title">${favorite.name} (${favorite.dieSpec})</div>
+                    <div class="item-title">${favorite.name} (${favorite.dieSpec.toHTML()})</div>
                   </div>
                 </div>
                 <div class="sortable-handler edit-mode"></div>
@@ -297,10 +300,6 @@ module.exports = (($) => {
       // Enter/exit edit module
       _favoritesView.find('.navbar .left a.link:not(.edit-mode)').on('click', _enterEditMode);
       _favoritesView.find('.navbar .left a.link.edit-mode').on('click', _exitEditMode);
-
-      // Add event
-      // TODO:
-      // _favoritesView.find('.navbar .right .link.plus').on('click', _addFavorite);
 
       // Sorting events
       _favoritesListBlock.on('sortable:sort', event => _model.move(event.detail.startIndex, event.detail.newIndex));

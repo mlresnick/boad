@@ -175,8 +175,17 @@ module.exports = (($) => {
       return newState;
     }
 
-    function _enterNew(event) {
-      const rawText = event.target.textContent;
+    function _enterNew(arg) {
+      let event;
+      let rawText;
+
+      if (typeof arg === 'string') {
+        rawText = arg;
+      }
+      else {
+        event = arg;
+        rawText = event.target.textContent;
+      }
       const displayClass = `display-${_displayClass[_category[rawText]]}`;
       const key = `<span class="${displayClass}">${rawText}</span>`;
 
@@ -197,12 +206,27 @@ module.exports = (($) => {
         signal = _confirm;
       }
 
-      blink($(event.target).closest('.key'), signal, 1, 64);
+      if (event) {
+        blink($(event.target).closest('.key'), signal, 1, 64);
+      }
     }
 
     function _getDieSpecHtml() { return $('.display .display-die-spec').html(); }
 
-    function _roll() {
+    function _roll(arg) {
+      if (arg.type === 'DieSpec') {
+        // Feed the spec to the interpreter one character at
+        // a time to get to the right state.
+        _clear();
+        const c = arg.newWalker();
+        while (c.next()) {
+          _enterNew(c.value);
+        }
+      }
+      else {
+        // It's an event
+      }
+
       const currentState = _getCurrentState();
       const newState = _getNextState('<span>roll</span>');
       let feedback = _error;
@@ -246,8 +270,6 @@ module.exports = (($) => {
         blink($(event.currentTarget), _error, 1, 64);
       }
     }
-
-    _favorites.initialize(this);
 
     $('.key-d, .key-digit, .key-keep, .key-operation')
       .on('click', _enterNew);

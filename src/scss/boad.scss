@@ -10,6 +10,10 @@ $favs-initial-x-android: -50px;
 $favorite-star-font-size: 1.93em;
 $favorite-plus-font-size: 0.66em;
 $star-fs: 2em;
+.display-d { color: green; }
+.display-operation { color: black; }
+.display-keep { color: orange; }
+.display-digit { color: gray; }
 
 %stacked {
   line-height: 1;
