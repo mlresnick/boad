@@ -244,16 +244,24 @@ html.android {
   .item-media i.icon { color: red; }
 
   .item-inner {
-    // Based on definition in Framework7
+    flex-direction: column;
+    align-items: flex-start;
+
     padding-right: 35px;
+
     transition: $favs-trans-dur;
-    background: {
+
+    // Based on definition in Framework7
+    background:  {
       position: -100% center;
+
       image: none;
-      size: 10px 20px;
       repeat: no-repeat;
+      size: 10px 20px;
     }
   }
+
+  .item-subtitle { margin-left: 10px; }
 }
 
 html.android #favorites .page .item-content {
