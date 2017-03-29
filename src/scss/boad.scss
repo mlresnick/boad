@@ -18,6 +18,18 @@ $color-active-background: #d9d9d9;
 .display-keep { color: orange; }
 .display-digit { color: gray; }
 
+.display-favorite {
+  font-size: 60%;
+  line-height: 0;
+
+  position: relative;
+  top: -0.75em;
+
+  vertical-align: baseline;
+
+  color: goldenrod;
+}
+
 %stacked {
   line-height: 1;
 
@@ -267,11 +279,15 @@ html.android {
 html.android #favorites .page .item-content {
   left: $favs-initial-x-android;
   transition: $favs-trans-dur;
+
+  .display-favorite i.icon-ios { display: none; }
 }
 
 html.ios #favorites .page .item-content {
   left: $favs-initial-x-ios;
   transition: $favs-trans-dur;
+
+  .display-favorite i.icon-android { display: none; }
 }
 
 
