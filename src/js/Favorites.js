@@ -36,7 +36,7 @@ module.exports = (($) => {
       function _addOrModify(params) {
         if (!params.oldName) {
           const newDieSpec = DieSpec();
-          newDieSpec.set(params.dieSpec);
+          newDieSpec.set(params.dieSpec, true);
           _favoritesList.push({
             name: params.name,
             dieSpec: newDieSpec,
@@ -71,7 +71,7 @@ module.exports = (($) => {
       _favoritesList = _util.getLocalStorage(_FAVORITES, [], (key, value) => {
         if (key === 'dieSpec') {
           const dieSpec = DieSpec();
-          dieSpec.set(JSON.parse(value));
+          dieSpec.set(value);
           return dieSpec;
         }
         return value;

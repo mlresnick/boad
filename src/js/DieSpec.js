@@ -2,14 +2,12 @@
 
 module.exports = (() => {
   let _parts;
-  let _isFavorite;
+  let _favorite;
 
   function _set(arg, isFavorite) {
     if (typeof arg === 'object') {
       _parts = arg._parts;
-      if (arg._isFavorite) {
-        _isFavorite = arg._isFavorite;
-      }
+      _favorite = arg._favorite;
     }
     else {
       const html = arg;
@@ -29,17 +27,30 @@ module.exports = (() => {
       });
 
       if (isFavorite) {
-        _isFavorite = true;
+        _favorite = true;
       }
     }
   }
 
-  function _toJSON() { return `{"_parts":${JSON.stringify(_parts)}${_isFavorite ? ',"_isFavorite":true' : ''}}`; }
+  function _isFavorite(value) {
+    if (value !== undefined) {
+      _favorite = value;
+    }
+    return (_favorite === true);
+  }
 
-  function _toString() { return _parts.reduce((result, part) => result.concat(part.value), '') + (_isFavorite ? '*' : ''); }
+  function _toJSON() { return { _parts, _favorite }; }
+
+  function _toString() { return _parts.reduce((result, part) => result.concat(part.value), '') + (_favorite ? '*' : ''); }
 
   function _toHTML() {
-    return _parts.reduce((result, part) => result.concat(`<span class="display-${part.type}">${part.value}</span>`), '');
+    return _parts.reduce((result, part) => result.concat(`<span class="display-${part.type}">${part.value}</span>`), '')
+      + (_favorite
+        ? '<span class="display-favorite">' +
+            '<i class="icon icon-android ion-android-star"></i>' +
+            '<i class="icon icon-ios ion-ios-star"></i>' +
+          '</span>'
+        : '');
   }
 
   function Walker() {
@@ -75,6 +86,7 @@ module.exports = (() => {
     parts: _parts,
     toJSON: _toJSON,
     toHTML: _toHTML,
+    isFavorite: _isFavorite,
     type: 'DieSpec',
   };
 });
