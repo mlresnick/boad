@@ -173,7 +173,10 @@ module.exports = (($) => {
                     <i class="icon ion-android-remove-circle"></i>
                   </div>
                   <div class="item-inner">
-                    <div class="item-title">${favorite.name} (${favorite.dieSpec.toHTML()})</div>
+                    <div class="item-title-row">
+                      <div class="item-title">${favorite.name}</div>
+                    </div>
+                    <div class="item-subtitle">${favorite.dieSpec.toHTML()}</div>
                   </div>
                 </div>
                 <div class="sortable-handler edit-mode"></div>
