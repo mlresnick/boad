@@ -10,16 +10,16 @@ module.exports = ((Framework7) => {
     const _RESULT_SYMBOL = ' ⇒ ';
     const _SETTINGS = 'settings';
 
-    function _getLocalStorage(key, initialValue) {
+    function _getLocalStorage(key, initialValue, reviver) {
       if (localStorage.getItem(key) === null) {
         localStorage.setItem(key, JSON.stringify(initialValue));
       }
 
-      return JSON.parse(localStorage.getItem(key));
+      return JSON.parse(localStorage.getItem(key), reviver);
     }
 
-    function _updateStorage(key, value) {
-      localStorage.setItem(key, JSON.stringify(value));
+    function _updateStorage(key, value, replacer) {
+      localStorage.setItem(key, JSON.stringify(value, replacer));
     }
 
     _boadApp.boadSettings = _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
