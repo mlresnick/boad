@@ -10,6 +10,9 @@ $favs-initial-x-android: -50px;
 $favorite-star-font-size: 1.93em;
 $favorite-plus-font-size: 0.66em;
 $star-fs: 2em;
+
+$color-active-background: #d9d9d9;
+
 .display-d { color: green; }
 .display-operation { color: black; }
 .display-keep { color: orange; }
@@ -85,7 +88,15 @@ html {
     width: 100%;
     height: 100%;
 
+    transition: background-color $favs-trans-dur;
+
     border: 1px solid;
+
+    &.active-state {
+      transition: background-color 0s;
+
+      background-color: $color-active-background;
+    }
   }
 
   .key-roll {
@@ -190,7 +201,7 @@ html.android {
 
 // Page content
 #favorites .page.edit-mode {
-  li.active-state { background-color: #d9d9d9; }
+  li.active-state { background-color: $color-active-background; }
 
   .sortable-handler {
     transition: $favs-trans-dur;

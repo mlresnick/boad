@@ -72,9 +72,6 @@ module.exports = (($) => {
     };
     /* eslint-enable */
 
-    const _confirm = 'confirm';
-    const _error = 'error';
-
     const UndoStack = (() => {
       const _stack = [{ decoratedText: null, state: 'count' }];
 
@@ -114,39 +111,11 @@ module.exports = (($) => {
 
     function _getCurrentState() { return _undoStack.peek().state; }
 
-    /**
-     * TODO Replace blink() with CSS3 animation
-     * Purpose: blink a page element
-     * Preconditions: the element you want to apply the blink to, the number of times to blink
-     * the element (or -1 for infinite times), the speed of the blink
-     **/
-    function blink(elem, clazz, times, speed) {
-      if (times !== 0) {
-        if ($(elem).hasClass(clazz)) {
-          $(elem).removeClass(clazz);
-        }
-        else {
-          $(elem).addClass(clazz);
-        }
-      }
-
-      clearTimeout(() => blink(elem, clazz, times, speed));
-
-      if (times !== 0) {
-        setTimeout(() => blink(elem, clazz, times, speed), speed);
-        times -= 0.5; // eslint-disable-line no-param-reassign
-      }
-    }
-
     function _eraseDisplayResult() {
       return ($('.display-result').remove().length !== 0);
     }
 
-    function _clear(showConfirm = true) {
-      if (showConfirm) {
-        blink('.key-clear', _confirm, 1, 64);
-      }
-
+    function _clear() {
       _undoStack.reinit();
       $('.display').html('<span class="display-die-spec"></span>');
     }
@@ -191,23 +160,16 @@ module.exports = (($) => {
 
       const currentState = _getCurrentState();
       const newState = _getNextState(key);
-      let signal = _error;
 
       if (newState !== undefined) {
         // Are we starting a new die specification?
         if (currentState === 'roll') {
-          _clear(false);
+          _clear();
         }
 
         _transitionToState(key);
 
         $('.display .display-die-spec').append(key);
-
-        signal = _confirm;
-      }
-
-      if (event) {
-        blink($(event.target).closest('.key'), signal, 1, 64);
       }
     }
 
@@ -229,7 +191,6 @@ module.exports = (($) => {
 
       const currentState = _getCurrentState();
       const newState = _getNextState('<span>roll</span>');
-      let feedback = _error;
 
       if (newState !== undefined) {
         _dice = Dice;
@@ -249,11 +210,7 @@ module.exports = (($) => {
         $('.display').append(resultHtml);
 
         _history.add(_getDieSpecHtml(), resultValueHtml);
-
-        feedback = _confirm;
       }
-
-      blink('.key-roll', feedback, 1, 64);
     }
 
     // SETTINGS: Length of history - will remove oldest when limit is reached
@@ -266,9 +223,6 @@ module.exports = (($) => {
       if (_states[_getCurrentState()].roll !== undefined) {
         _favorites.addFavorite(event, _getDieSpecHtml());
       }
-      else {
-        blink($(event.currentTarget), _error, 1, 64);
-      }
     }
 
     $('.key-d, .key-digit, .key-keep, .key-operation')
@@ -278,6 +232,9 @@ module.exports = (($) => {
     $('.key-clear').on('click', _clear);
     $('.key-favorite-set').on('click', _addFavorite);
     $('a[href="#favorites"]').on('click', _favorites.refreshTab);
+
+    $('.keypad .key:not(.key-disabled)').on('mousedown touchstart').addClass('active-state');
+    $('.keypad .key:not(.key-disabled)').on('mouseup touchend').removeClass('active-state');
 
     return {
       clear: _clear,
