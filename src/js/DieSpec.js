@@ -14,16 +14,18 @@ module.exports = (() => {
       _parts = [];
       let currentPart = { type: null, value: null };
 
-      $(html).each((index, span) => {
-        const clazz = $(span).attr('class');
-        const newType = clazz.substr(8);
-        const newValue = $(span).text();
+      $(html).each((index, node) => {
+        if (node.nodeType === node.ELEMENT_NODE) {
+          const clazz = $(node).attr('class');
+          const newType = clazz.substr(8);
+          const newValue = $(node).text();
 
-        if (newType !== currentPart.type) {
-          currentPart = { type: newType, value: '' };
-          _parts.push(currentPart);
+          if (newType !== currentPart.type) {
+            currentPart = { type: newType, value: '' };
+            _parts.push(currentPart);
+          }
+          currentPart.value += newValue;
         }
-        currentPart.value += newValue;
       });
 
       if (isFavorite) {
@@ -41,16 +43,23 @@ module.exports = (() => {
 
   function _toJSON() { return { _parts, _favorite }; }
 
-  function _toString() { return _parts.reduce((result, part) => result.concat(part.value), '') + (_favorite ? '*' : ''); }
+  function _toString() {
+    return _parts.reduce((result, part) => result.concat(part.value), '')
+           + (_favorite ? '*' : '');
+  }
 
   function _toHTML() {
-    return _parts.reduce((result, part) => result.concat(`<span class="display-${part.type}">${part.value}</span>`), '')
+    return _parts.reduce(
+      (result, part) =>
+        result.concat(
+          `<span class="display-${part.type}">${part.value}</span>`),
+          '')
       + (_favorite
-        ? '<span class="display-favorite">' +
-            '<i class="icon icon-android ion-android-star"></i>' +
-            '<i class="icon icon-ios ion-ios-star"></i>' +
-          '</span>'
-        : '');
+          ? '<span class="display-favorite">' +
+              '<i class="icon icon-android ion-android-star"></i>' +
+              '<i class="icon icon-ios ion-ios-star"></i>' +
+            '</span>'
+          : '');
   }
 
   function Walker() {
@@ -60,7 +69,8 @@ module.exports = (() => {
 
     this.next = () => {
       let result = false;
-      if (this.partIndex === -1 || (this.charIndex === _parts[this.partIndex].value.length)) {
+      if (this.partIndex === -1
+          || (this.charIndex === _parts[this.partIndex].value.length)) {
         this.partIndex += 1;
         this.charIndex = 0;
       }

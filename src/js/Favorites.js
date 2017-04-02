@@ -4,26 +4,58 @@ const Util = require('./Util.js');
 const DieSpec = require('./DieSpec.js');
 
 module.exports = (($) => {
+  const _NAME_OK = 0;
+  const _NAME_BLANK = 1;
+  const _NAME_IN_USE = 2;
+
+  const _util = Util.getInstance();
+
   let _instance;
+  let _view;
+  let _model;
+
+  function _validateAndSave() {
+    const { newName, dieSpec, currentName } = _view.panel.getFavorite();
+    const returnCode = _model.validateName(newName);
+    if (returnCode) {
+      _view.reportNameError(returnCode, newName);
+    }
+    else {
+      _model.setFavorite(newName, dieSpec, currentName);
+      _view.updateListItem(currentName, newName);
+      _util.boadApp.closePanel('right', true);
+    }
+  }
 
   function _init() {
-    const _util = Util.getInstance();
-
-    const _model = (() => {
+    _model = (() => {
       const _FAVORITES = 'favorites';
       let _favoritesList = null;
 
       function _findIndexByName(name) {
-        return _favoritesList.findIndex(favorite => favorite.name === name.toString());
+        return _favoritesList.findIndex(
+          favorite => favorite.name === name.toString()
+        );
       }
 
       function _find(arg) {
         let result;
 
         switch(typeof arg) {
-          case 'number': result = _favoritesList[arg]; break;
-          case 'string': result = _favoritesList.find(favorite => favorite.name === arg.toString()); break;
-          default: // TODO: What to do switch/default case?
+          case 'number':
+            result = _favoritesList[arg];
+            break;
+
+          case 'string':
+            result = _favoritesList.find(
+              favorite => favorite.name === arg.toString()
+            );
+            break;
+
+          default:
+            throw new Error(
+              `Unexpected argument type ${typeof arg} in Favorites.model.find`
+            );
         }
 
         return result;
@@ -33,18 +65,19 @@ module.exports = (($) => {
         _util.updateStorage(_FAVORITES, _favoritesList);
       }
 
-      function _addOrModify(params) {
-        if (!params.oldName) {
-          const newDieSpec = DieSpec();
-          newDieSpec.set(params.dieSpec, true);
-          _favoritesList.push({
-            name: params.name,
-            dieSpec: newDieSpec,
-          });
+      function _setFavorite(name, dieSpec, currentName) {
+        // Presence of currentName indicates whether this is a new Favorite or
+        // an edit.
+        if (currentName) {
+          // Update
+          const index = _findIndexByName(currentName);
+          _favoritesList[index].name = name;
         }
         else {
-          const index = _findIndexByName(params.oldName);
-          _favoritesList[index].name = params.name;
+          // New
+          // TODO Have DieSpec constructor take arguments
+          dieSpec.isFavorite(true);
+          _favoritesList.push({ name, dieSpec });
         }
 
         _updateStorage();
@@ -68,6 +101,19 @@ module.exports = (($) => {
         return _favoritesList.forEach(cb);
       }
 
+      function _validateName(name) {
+        let result = _NAME_OK;
+
+        if (!name || (name === '')) {
+          result = _NAME_BLANK;
+        }
+        else if (_nameInUse(name)) {
+          result = _NAME_IN_USE;
+        }
+
+        return result;
+      }
+
       _favoritesList = _util.getLocalStorage(_FAVORITES, [], (key, value) => {
         if (key === 'dieSpec') {
           const dieSpec = DieSpec();
@@ -78,81 +124,87 @@ module.exports = (($) => {
       });
 
       return {
-        addOrModify: _addOrModify,
+        // addOrModify: _addOrModify,
         delete: _delete,
         find: _find,
         forEach: _forEach,
         move: _move,
         nameInUse: _nameInUse,
+        setFavorite: _setFavorite,
+        validateName: _validateName,
       };
     })();
 
-    const _view = (() => {
+    _view = (() => {
       const _favoritesView = $('#favorites');
       const _favoritesListBlock = _favoritesView.find('.list-block');
       const _favoritesListBlockList = _favoritesListBlock.find('ul');
 
       let _calculator;
 
+      const _panel = (() => {
+        const _dieSpecEl = $('.panel.panel-right .die-spec')[0];
+
+        const _newNameEl =
+          $('.panel.panel-right ' +
+            '.list-block ' +
+            '.item-input input')[0];
+
+        function _currentName(arg) {
+          return (arg !== undefined)
+            ? $(_dieSpecEl).data('currentName', arg)
+            : $(_dieSpecEl).data('currentName');
+        }
+
+        function _removeCurrentName() {
+          $(_dieSpecEl).removeData('currentName');
+        }
+
+        function _getFavorite() {
+          const newName = $(_newNameEl).val();
+          const currentName = _currentName();
+          const dieSpec = DieSpec();
+          dieSpec.set($(_dieSpecEl).html());
+          return { newName, dieSpec, currentName };
+        }
+
+        function _setDieSpec(arg) {
+          let dieSpec;
+          if (typeof arg === 'string') {
+            dieSpec = arg;
+          }
+          else if (typeof arg === 'object') {
+            const favorite = arg;
+            dieSpec = favorite.dieSpec.toHTML();
+            _currentName(favorite.name);
+          }
+
+          $(_dieSpecEl).children().remove();
+          $(_dieSpecEl).append(dieSpec);
+        }
+
+        function _reset() {
+          _removeCurrentName();
+          $(_newNameEl).val('');
+        }
+
+        return {
+          getFavorite: _getFavorite,
+          setDieSpec: _setDieSpec,
+          reset: _reset,
+        };
+      })();
 
       function _getCalculator() {
         if (!_calculator) {
-          _calculator = require('./Calculator.js').getInstance(); // eslint-disable-line global-require
+          _calculator = require('./Calculator.js').getInstance(); // eslint-disable-line global-require, max-len
         }
         return _calculator;
       }
 
-      function _promptForName(params) {
-        const result = _util.boadApp.modal({
-          title: params.prompt,
-          text: params.dieSpec,
-          afterText: '<div class="input-field"><input type="text" class="modal-text-input"></div>',
-          buttons: [
-            { text: _util.boadApp.params.modalButtonCancel },
-            { text: _util.boadApp.params.modalButtonOk, bold: true },
-          ],
-          onClick: (modal, index) => {
-            if (index === 1) {
-              const localParams = Object.assign({}, params);
-              localParams.name = $(modal).find('.modal-text-input').val();
-              let message;
-
-              if (localParams.name !== localParams.oldName) {
-                if (!localParams.name) {
-                  message = 'Name cannot be blank';
-                }
-                else if (_model.nameInUse(localParams.name)) {
-                  message = `"${localParams.name}" already in use`;
-                }
-
-                if (message) {
-                  _util.boadApp.alert(message, 'Favorites');
-
-                  // Get the original prompt to appear.
-                  localParams.originalTarget.click();
-                  // $('.key-favorite-set').click();
-                }
-                else {
-                  _model.addOrModify(localParams);
-                  if (localParams.refreshCallback) {
-                    localParams.refreshCallback();
-                  }
-                }
-              }
-            }
-          },
-        });
-        $('input.modal-text-input').focus();
-
-        return result;
-      }
-
-      function _addFavorite(event, dieSpec) {
-        _promptForName({
-          prompt: 'Name for favorite?',
-          dieSpec,
-          originalTarget: $(event.currentTarget),
-        });
+      function _add(dieSpecHtml) {
+        _panel.setDieSpec(dieSpecHtml);
+        _util.boadApp.openPanel('right', true);
       }
 
       function _rollFavorite(event) {
@@ -176,7 +228,9 @@ module.exports = (($) => {
                     <div class="item-title-row">
                       <div class="item-title">${favorite.name}</div>
                     </div>
-                    <div class="item-subtitle">${favorite.dieSpec.toHTML()}</div>
+                    <div class="item-subtitle">
+                      ${favorite.dieSpec.toHTML()}
+                    </div>
                   </div>
                 </div>
                 <div class="sortable-handler edit-mode"></div>
@@ -186,19 +240,21 @@ module.exports = (($) => {
           );
         });
 
-        // TODO: Refactor part A - can we avoid having to do this for every refreshTab call
-        _favoritesListBlockList.find('.roll-favorite').on('click', _rollFavorite);
-        _favoritesListBlockList.find('.item-content a.edit').on('click', (event) => {
-          const originalTarget = $(event.currentTarget);
-          const oldName = originalTarget.closest('li').data('name');
-          _promptForName({
-            prompt: `New name for favorite ${oldName}?`,
-            oldName,
-            dieSpec: _model.find(oldName).dieSpec,
-            originalTarget,
-            refreshCallback: _refreshTab,
-          });
-        });
+        // TODO: Refactor part A - can we avoid having to do this for every
+        // refreshTab call
+        _favoritesListBlockList
+          .find('.roll-favorite')
+          .on('click', _rollFavorite);
+      }
+
+      function _reportNameError(reason, name) {
+        let message;
+        switch(reason) {
+          case _NAME_BLANK: message = 'Name cannot be blank'; break;
+          case _NAME_IN_USE: message = `"${name}" already in use`; break;
+          default: throw new Error(`Unexpected name error value: '${reason}='`);
+        }
+        _util.boadApp.alert(message, 'Favorites');
       }
 
       function _enterEditMode() {
@@ -210,17 +266,25 @@ module.exports = (($) => {
       }
 
       // Wait until the link reappears
-      _favoritesView.find('.navbar .left a.link.done').on('transitionend', () => {
+      _favoritesView.find('.navbar a.link.done').on('transitionend', () => {
         if (_favoritesView.find('.page').hasClass('edit-mode')) {
           // Remove links first - so they dont interfere with the replacement...
-          _favoritesListBlockList.find('li > .roll-favorite .item-content').unwrap();
+          _favoritesListBlockList
+            .find('li > .roll-favorite .item-content')
+            .unwrap();
 
           // ... then replace
-          _favoritesListBlockList.find('.icon.ion-android-remove-circle').wrap('<a href="#" class="favorite-delete"></a>');
+          _favoritesListBlockList
+            .find('.icon.ion-android-remove-circle')
+            .wrap('<a href="#" class="favorite-delete"></a>');
           _favoritesListBlockList.find('.favorite-delete')
-            .on('click', event => _util.boadApp.swipeoutOpen($(event.target).closest('li.swipeout')));
+            .on('click',
+                event => _util.boadApp.swipeoutOpen($(event.target)
+                                                    .closest('li.swipeout'))
+            );
 
-          const innerItems = _favoritesListBlockList.find('.item-content .item-inner');
+          const innerItems =
+            _favoritesListBlockList.find('.item-content .item-inner');
           $(innerItems).each((i, innerItem) => {
             $(innerItem)
             .children(':not(.item-after)')
@@ -229,10 +293,12 @@ module.exports = (($) => {
 
           const li = _favoritesListBlockList.children('li');
 
-          // Under normal circumstances make the whole list item display touch feedback.
-          // However, if there is a swipeou open anywhere, skip the feedback and close the swipeout.
+          // Under normal circumstances make the whole list item display touch
+          // feedback. However, if there is a swipeou open anywhere, skip the
+          // feedback and close the swipeout.
           li.on('mousedown touchstart', '.item-inner', (event) => {
-            if (_favoritesListBlockList.children('li.swipeout-opened').length === 0) {
+            if (_favoritesListBlockList.children('li.swipeout-opened').length
+                === 0) {
               $(event.delegateTarget).addClass('active-state');
             }
             else {
@@ -240,34 +306,44 @@ module.exports = (($) => {
             }
           });
 
-          li.on('mouseup touchend', '.item-inner', event => $(event.delegateTarget).removeClass('active-state'));
+          li.on('mouseup touchend',
+                '.item-inner',
+                event => $(event.delegateTarget).removeClass('active-state'));
 
           li.on('swipeout:open', () => {
-            _favoritesListBlockList.find('.favorite-edit').each((i, link) => $(link).css('pointer-events', 'none'));
-            _favoritesListBlockList.find('.favorite-delete').each((i, link) => $(link).css('pointer-events', 'none'));
+            _favoritesListBlockList
+              .find('.favorite-edit')
+              .each((i, link) => $(link).css('pointer-events', 'none'));
+            _favoritesListBlockList
+              .find('.favorite-delete')
+              .each((i, link) => $(link).css('pointer-events', 'none'));
           });
 
           li.on('swipeout:closed', () => {
-            _favoritesListBlockList.find('.favorite-edit').each((i, link) => $(link).css('pointer-events', ''));
-            _favoritesListBlockList.find('.favorite-delete').each((i, link) => $(link).css('pointer-events', ''));
+            _favoritesListBlockList
+              .find('.favorite-edit')
+              .each((i, link) => $(link).css('pointer-events', ''));
+            _favoritesListBlockList
+              .find('.favorite-delete')
+              .each((i, link) => $(link).css('pointer-events', ''));
           });
 
-          _favoritesListBlockList.find('.item-content .item-inner :not(.item-after)').on('click', (event) => {
-            const currentTarget = event.currentTarget;
-            if (currentTarget.matches('a.item-link.favorite-edit')) {
-              const oldName = $(currentTarget).closest('li').data('name');
-              _promptForName({
-                prompt: `New name for favorite ${oldName}?`,
-                oldName,
-                dieSpec: _model.find(oldName).dieSpec,
-                currentTarget,
-                refreshCallback: _refreshTab,
-              });
-            }
-          });
+          _favoritesListBlockList
+            .find('.item-content .item-inner :not(.item-after)')
+            .on('click', (event) => {
+              const currentTarget = event.currentTarget;
+              if (currentTarget.matches('a.item-link.favorite-edit')) {
+                const listItem = $(currentTarget).closest('li');
+                const favorite = _model.find($(listItem).data('name'));
+                _panel.setDieSpec(favorite);
+                _util.boadApp.openPanel('right', true);
+              }
+            });
 
           _favoritesListBlockList.find('.swipeout-actions-right')
-            .append('<a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>');
+            .append('<a href="#" class="swipeout-delete swipeout-overswipe">' +
+                      'Delete' +
+                    '</a>');
         }
       });
 
@@ -279,52 +355,82 @@ module.exports = (($) => {
         }
       }
 
-      _favoritesView.find('.navbar .left a.link.edit').on('transitionend', () => {
+      _favoritesView.find('.navbar a.link.edit').on('transitionend', () => {
         if (!_favoritesView.find('.page').hasClass('edit-mode')) {
+          console.log('cleaning up');
           const li = _favoritesListBlockList.children('li');
           li.off('mousedown touchstart', '.item-inner');
           li.off('mouseup touchend', '.item-inner');
 
           // Remove links first - so they dont interfere with the replacement...
-          _favoritesListBlockList.find('.icon.ion-android-remove-circle').unwrap();
+          _favoritesListBlockList
+            .find('.icon.ion-android-remove-circle')
+            .unwrap();
           _favoritesListBlockList.find('.swipeout-delete').remove();
           _favoritesListBlockList.find('.favorite-edit').children().unwrap();
 
           // ... the add links in transitionend event handler
-          _favoritesListBlockList.find('li').wrapInner('<a href="#" class="item-link roll-favorite"></a>');
-          // // TODO Refactor Part B
-          _favoritesListBlockList.find('.roll-favorite').on('click', _rollFavorite);
+          _favoritesListBlockList
+            .find('li')
+            .wrapInner('<a href="#" class="item-link roll-favorite"></a>');
+          // TODO Refactor Part B
+          _favoritesListBlockList
+            .find('.roll-favorite')
+            .on('click', _rollFavorite);
         }
       });
+
+      function _updateListItem(currentName, newName) {
+        if ($('.tabbar a[href="#favorites"]').hasClass('active')) {
+          const listItem =
+            $(`#favorites .list-block li[data-name="${currentName}"]`);
+          $(listItem).data(newName);
+          $(listItem).find('.item-title').text(newName);
+        }
+      }
 
       _favoritesView.on('tab:show', _refreshTab);
       _favoritesView.on('tab:hide', _exitEditMode);
 
       // Enter/exit edit module
-      _favoritesView.find('.navbar .left a.link:not(.edit-mode)').on('click', _enterEditMode);
-      _favoritesView.find('.navbar .left a.link.edit-mode').on('click', _exitEditMode);
+      _favoritesView.find('.navbar  .link.edit').on('click', _enterEditMode);
+      _favoritesView.find('.navbar  .link.done').on('click', _exitEditMode);
 
       // Sorting events
-      _favoritesListBlock.on('sortable:sort', event => _model.move(event.detail.startIndex, event.detail.newIndex));
+      _favoritesListBlock
+        .on(
+          'sortable:sort',
+          event => _model.move(event.detail.startIndex, event.detail.newIndex)
+        );
 
       // Delete event
-      _favoritesListBlockList.on('swipeout:delete', 'li.swipeout', event => _model.delete($(event.target).data('name')));
+      _favoritesListBlockList
+        .on(
+          'swipeout:delete', 'li.swipeout',
+          event => _model.delete($(event.target).data('name'))
+        );
+
+      $('.panel.panel-right a.save').on('click', _validateAndSave);
+      $('.panel.panel-right').on('panel:closed', _panel.reset);
 
       return {
-        addFavorite: _addFavorite,
-        promptForName: _promptForName,
+        add: _add,
+        panel: _panel,
         refreshTab: _refreshTab,
+        reportNameError: _reportNameError,
+        updateListItem: _updateListItem,
+        validateAndSave: _validateAndSave,
       };
     })();
 
 
     return {
-      addFavorite: _view.addFavorite,
+      add: _view.add,
       delete: _model.delete,
       initialize: _model.initialize,
       nameInUse: _model.nameInUse,
-      promptForName: _view.promptForName,
       refreshTab: _view.refreshTab,
+      validateAndSave: _validateAndSave,
     };
   }
 

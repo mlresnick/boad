@@ -3,7 +3,7 @@
 const Util = require('./Util.js');
 
 // IDEA: Store (and display) intermediate steps during a roll
-// IDEA: Think about how to incorporate intermediate steps in the calculator display
+// IDEA: How to incorporate intermediate steps in the calculator display
 
 module.exports = (($) => {
   let _instance;
@@ -68,18 +68,28 @@ module.exports = (($) => {
             `<li class="swipeout" data-index="${index}">
               <div class="item-content swipeout-content">
                 <div class="item-inner">
-                  <div class="item-title">${historyEntry.dieSpec}${_util.RESULT_SYMBOL}${historyEntry.result}</div>
+                  <div class="item-title">
+                    ${historyEntry.dieSpec}
+                    ${_util.RESULT_SYMBOL}
+                    ${historyEntry.result}
+                  </div>
                 </div>
               </div>
               <div class="swipeout-actions-right">
-                <a href="#" class="swipeout-delete swipeout-overswipe">Delete</a>
+                <a href="#" class="swipeout-delete swipeout-overswipe">
+                  Delete
+                </a>
               </div>
             </li>`
           );
         });
       }
 
-      _historyListBlockList.on('swipeout:deleted', event => _model.delete($(event.target).data('index')));
+      _historyListBlockList
+        .on(
+          'swipeout:deleted',
+          event => _model.delete($(event.target).data('index'))
+        );
 
       _historyView.find('.navbar .delete-all').on('click', () => {
         _util.boadApp.confirm('Delete all history?', 'BoAD', () => {

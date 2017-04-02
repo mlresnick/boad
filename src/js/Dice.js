@@ -10,23 +10,31 @@ module.exports = (() => {
   const _MODIFIER = 7;
   const _REPEATS = 8;
 
+  /* eslint-disable max-len */
   // Visual of this expression can be found at http://tinyurl.com/h5wt99z
   // It is meant to deal with two similar but subtly different expressions.
   const _REGEX =
     /^(!)?([1-9]\d*)?d([1-9]\d*|%)(?:(?:([+-](?:[1-9]\d*)?)([LH])|k([+-]?[1-9]\d*))?([+-][1-9]\d*)?)(?:x([1-9]\d*))?$/;
+  /* eslint-enable maxlen */
 
   let _parseResults = [];
 
-  let _randomizer = { random(sides) { return (Math.floor((Math.random() * sides)) + 1); } };
+  let _randomizer = sides => (Math.floor((Math.random() * sides)) + 1);
 
   function _explode() { return (_parseResults[_EXPLODE] === '!'); }
 
   function _count() {
-    return (_parseResults[_COUNT] === undefined) ? 1 : Number.parseInt(_parseResults[_COUNT], 10);
+    return (_parseResults[_COUNT] === undefined)
+              ? 1
+              : Number.parseInt(_parseResults[_COUNT],
+            10);
   }
 
   function _sides() {
-    return (_parseResults[_SIDES] === '%') ? 100 : Number.parseInt(_parseResults[_SIDES], 10);
+    return (_parseResults[_SIDES] === '%')
+              ? 100
+              : Number.parseInt(_parseResults[_SIDES],
+            10);
   }
 
   function _modifier() {

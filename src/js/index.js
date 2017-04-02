@@ -11,8 +11,12 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
     material: '<meta name="theme-color" content="#2196f3">',
   };
 
-  $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.css">`);
-  $('head').append(`<link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`);
+  $('head').append(
+    `<link rel="stylesheet" href="lib/css/framework7.${platform}.css">`
+  );
+  $('head').append(
+    `<link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`
+  );
   $('head').append(meta[platform]);
 });
 
@@ -21,7 +25,8 @@ window.addEventListener('load', (/* event */) => {
   // Tweak calculator height.
   $('#calculator .page-content').css('padding-bottom', toolbarHeight);
   // Adjust the margin at the bottom of a list.
-  $('#favorites .list-block, #history .list-block').css('margin-bottom', toolbarHeight);
+  $('#favorites .list-block, #history .list-block')
+    .css('margin-bottom', toolbarHeight);
 
 
   $('html').css('display', 'block');

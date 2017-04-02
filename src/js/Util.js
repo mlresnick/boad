@@ -6,7 +6,10 @@ module.exports = ((Framework7) => {
   let _instance;
 
   function _init() {
-    const _boadApp = new Framework7({ material: Framework7.prototype.device.android });
+    const _boadApp = new Framework7({
+      material: Framework7.prototype.device.android,
+      panelsCloseByOutside: false,
+    });
     const _RESULT_SYMBOL = ' ⇒ ';
     const _SETTINGS = 'settings';
 
@@ -22,7 +25,8 @@ module.exports = ((Framework7) => {
       localStorage.setItem(key, JSON.stringify(value, replacer));
     }
 
-    _boadApp.boadSettings = _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
+    _boadApp.boadSettings =
+      _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
     _boadApp.addView('.view-main', { domCache: true });
 
     return {
