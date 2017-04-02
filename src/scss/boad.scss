@@ -5,7 +5,7 @@ $background-color-key-error: red;
 $background-color-key-confirm: gray;
 
 $favs-trans-dur: 0.3s;
-$favs-initial-x-ios: -35px;
+$favs-initial-x-ios: -37px;
 $favs-initial-x-android: -50px;
 $favorite-star-font-size: 1.93em;
 $favorite-plus-font-size: 0.66em;
@@ -48,6 +48,61 @@ html {
   //
   &:not(.ios):not(.android) { background-color: inherit; }
 }
+
+// **** NavBar ****
+// Make sure
+.panel.panel-right .navbar {
+  .left,
+  .center,
+  .right {
+    display: flex;
+    flex: 1;
+  }
+
+  .left {
+    justify-content: flex-start;
+    margin-right: auto;
+  }
+
+  .right {
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+}
+html.ios .panel.panel-right .navbar .center { justify-content: center; }
+
+// **** Side Panel ****
+// Make both the main page and the side panel slide left or right together
+html body.with-panel-right-reveal {
+  .panel {
+    width: 100%;
+
+    .content-block-title {
+      font-size: 17px;
+      text-transform: none;
+    }
+  }
+
+  // Normal
+  .panel.panel-right.panel-reveal { transform: translate3d(100%, 0, 0); }
+  .views { transform: translate3d(0, 0, 0); }
+
+  // With panel revealed
+  &.with-panel-right-reveal {
+    .panel.panel-right.panel-reveal { transform: translate3d(0, 0, 0); }
+    .views { transform: translate3d(-100%, 0, 0); }
+    .panel-overlay { transform: translate3d(-100%, 0, 0); }
+  }
+}
+
+html.ios body.with-panel-right-reveal .panel { background: rgb(239, 239, 244); }
+
+html.android body.with-panel-right-reveal .panel .navbar .link .ios {
+  display: none;
+}
+
+html.android .display-favorite i.icon-ios { display: none; }
+html.ios .display-favorite i.icon-android { display: none; }
 
 // **** Calculator ****
 
@@ -179,37 +234,53 @@ html.android {
 // **** Favorites ****
 
 // Navbar
-#favorites .page.edit-mode .navbar {
+#favorites,
+#history {
+  .page.edit-mode .navbar {
 
-  a.link {
-    transition: opacity $favs-trans-dur;
-    opacity: 0;
-
-    &.edit-mode {
-      transition: opacity $favs-trans-dur;
-      opacity: 1;
-    }
-
-    &.edit { pointer-events: none; }
-  }
-}
-
-#favorites .page .navbar {
-  a.link {
-    transition: opacity $favs-trans-dur;
-    opacity: 1;
-
-    &.done {position: absolute; }
-
-    &.edit-mode {
+    a.link {
       transition: opacity $favs-trans-dur;
       opacity: 0;
-    }
 
-    .right a.link:first-of-type { position: absolute; }
+      &.edit-mode {
+        transition: opacity $favs-trans-dur;
+        opacity: 1;
+      }
+
+      &.edit { pointer-events: none; }
+    }
+  }
+
+  .page .navbar {
+    a.link {
+      transition: opacity $favs-trans-dur;
+      opacity: 1;
+
+      &.done {position: absolute; }
+
+      &.edit-mode {
+        transition: opacity $favs-trans-dur;
+        opacity: 0;
+      }
+
+      .right a.link:first-of-type { position: absolute; }
+    }
   }
 }
 
+html.android {
+  #favorites,
+  #history {
+    .navbar a.link.ios { display: none; }
+  }
+}
+
+html.ios {
+  #favorites,
+  #history {
+    .navbar a.link.android { display: none; }
+  }
+}
 
 // Page content
 #favorites .page.edit-mode {
@@ -279,27 +350,21 @@ html.android {
 html.android #favorites .page .item-content {
   left: $favs-initial-x-android;
   transition: $favs-trans-dur;
-
-  .display-favorite i.icon-ios { display: none; }
 }
 
 html.ios #favorites .page .item-content {
   left: $favs-initial-x-ios;
   transition: $favs-trans-dur;
-
-  .display-favorite i.icon-android { display: none; }
 }
 
 
 // **** History ****
 
 // Navbar
-html.ios #favorites .page .navbar {
-  .left,
-  .right {
-    a + a { margin-left: 0; }
-  }
-}
+
+// See the Navbar section on the Favorites tab for information related to the
+// History tab navbar
+
 
 // Page content
 #history .list-block {

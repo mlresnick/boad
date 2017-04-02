@@ -25,7 +25,7 @@
     ],
     "func-names": [ "warn", "as-needed" ],
     "linebreak-style": [ "error", "windows" ],
-    "max-len": [ "error", 132 ],
+    "max-len": [ "error", 80 ],
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
     "no-restricted-syntax": [ "error", "ForOfStatement" ],
     "no-underscore-dangle": "off",

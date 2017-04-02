@@ -173,7 +173,9 @@ module.exports = (($) => {
       }
     }
 
-    function _getDieSpecHtml() { return $('.display .display-die-spec').html(); }
+    function _getDieSpecHtml() {
+      return $('.display .display-die-spec').html();
+    }
 
     function _roll(arg) {
       if (arg.type === 'DieSpec') {
@@ -205,8 +207,12 @@ module.exports = (($) => {
         _dice.parse($('.display .display-die-spec').text());
         const result = _dice.roll();
 
-        const resultValueHtml = `<span class="display-result-value">${result}</span>`;
-        const resultHtml = `<span class="display-result">${_util.RESULT_SYMBOL}${resultValueHtml}</span>`;
+        const resultValueHtml =
+          `<span class="display-result-value">${result}</span>`;
+        const resultHtml =
+          `<span class="display-result">
+            ${_util.RESULT_SYMBOL}${resultValueHtml}
+          </span>`;
         $('.display').append(resultHtml);
 
         _history.add(_getDieSpecHtml(), resultValueHtml);
@@ -217,11 +223,12 @@ module.exports = (($) => {
     // SETTINGS: Possibly make "k" vs "L/H" a user setting
     // SETTINGS: Move favorites Delete All to settings
     // QUESTION: Define both a dark and a light color scheme?
+    // FIXME: fix dx button and allow +/- after keep (k/L/H) letters
 
-    function _addFavorite(event) {
+    function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
       if (_states[_getCurrentState()].roll !== undefined) {
-        _favorites.addFavorite(event, _getDieSpecHtml());
+        _favorites.add(_getDieSpecHtml());
       }
     }
 
@@ -233,8 +240,12 @@ module.exports = (($) => {
     $('.key-favorite-set').on('click', _addFavorite);
     $('a[href="#favorites"]').on('click', _favorites.refreshTab);
 
-    $('.keypad .key:not(.key-disabled)').on('mousedown touchstart').addClass('active-state');
-    $('.keypad .key:not(.key-disabled)').on('mouseup touchend').removeClass('active-state');
+    $('.keypad .key:not(.key-disabled)')
+      .on('mousedown touchstart')
+      .addClass('active-state');
+    $('.keypad .key:not(.key-disabled)')
+      .on('mouseup touchend')
+      .removeClass('active-state');
 
     return {
       clear: _clear,

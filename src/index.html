@@ -25,6 +25,39 @@
 
 <body>
 
+<div class="panel-overlay"></div>
+<div class="panel panel-right panel-reveal">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="left"><a href="#" class="link close-panel"><i class="icon icon-back"></i><span class="ios">Back</span></a></div>
+      <div class="center">Favorite</div>
+      <div class="right"></div>
+    </div>
+  </div>
+  <div class="content-block">
+    <div class="content-block-title die-spec">
+      <!-- Filled in at runtime -->
+    </div>
+    <div class="list-block">
+      <ul>
+        <li>
+          <div class="item-content">
+            <div class="item-inner">
+              <div class="item-input">
+                <input type="text" placeholder="Name" />
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <p class="buttons-row">
+      <a href="#" class="button button-big color-red close-panel cancel">Cancel</a>
+      <a href="#" class="button button-big save">Save</a>
+    </p>
+  </div>
+ </div>
+
 <div class="views tabs">
 
   <div id="calculator" class="view view-main tab active">
@@ -32,7 +65,9 @@
       <div class="page navbar-fixed" data-page="calculator">
         <div class="navbar">
           <div class="navbar-inner">
+            <div class="left"></div>
             <div class="center">BoAD</div>
+            <div class="right"></div>
           </div>
         </div>
         <div class="page-content">
@@ -93,11 +128,14 @@
       <div class="page navbar-fixed" data-page="favorites">
         <div class="navbar">
           <div class="navbar-inner">
-            <div class="left">
-              <a ref="#" class="link done edit-mode">Done</a>
-              <a ref="#" class="link edit">Edit</a>
-            </div>
+            <div class="left"></div>
             <div class="center">Favorites</div>
+            <div class="right">
+              <a ref="#" class="link done edit-mode ios">Done</a>
+              <a ref="#" class="link edit ios">Edit</a>
+              <a ref="#" class="link done edit-mode android"><i class="icon icon-android ion-android-checkbox-outline"></i></a>
+              <a ref="#" class="link edit android"><i class="icon icon-android icon-android ion-edit"></i></a>
+            </div>
           </div>
         </div>
         <div class="page-content">
@@ -116,9 +154,13 @@
       <div class="page navbar-fixed" data-page="history">
         <div class="navbar">
           <div class="navbar-inner">
+            <div class="left"></div>
             <div class="center">History</div>
             <div class="right">
-              <a href="#" class="link text-only delete-all">Delete All</a>
+              <a ref="#" class="link done edit-mode ios">Cancel</a>
+              <a ref="#" class="link edit ios">Edit</a>
+              <a ref="#" class="link done edit-mode android"><i class="icon icon-android ion-android-checkbox-outline"></i></a>
+              <a ref="#" class="link edit android"><i class="icon icon-android icon-android ion-edit"></i></a>
             </div>
           </div>
         </div>
