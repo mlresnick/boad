@@ -60,7 +60,7 @@
 
 <div class="views tabs">
 
-  <div id="calculator" class="view view-main tab active">
+  <div id="calculator" class="calculator view view-main tab active">
     <div class="pages">
       <div class="page navbar-fixed" data-page="calculator">
         <div class="navbar">
@@ -71,7 +71,18 @@
           </div>
         </div>
         <div class="page-content">
-          <div id="window" class="display"><span class="display-die-spec"></span></div>
+          <div class="output">
+            <div id="window" class="display">
+              <div class="display-die-spec"></div>
+            </div>
+            <a class="favorite-status">
+              <i class="icon icon-android ion-android-star-outline"></i>
+              <i class="icon icon-android ion-android-star-star  is-favorite">
+              </i>
+              <i class="icon icon-ios ion-ios-star-outline"></i>
+              <i class="icon icon-ios ion-ios-star is-favorite"></i>
+          </a>
+        </div>
           <div class="keypad-container">
             <div class="keypad">
               <div class="keypad-column">
@@ -82,10 +93,13 @@
                 <a href="#" class="key key-digit">4</a>
                 <a href="#" class="key key-digit">1</a>
                 <a href="#" class="key key-clear">C</a>
+                <a href="#" class="key key-disabled"></a>
+<!-- TODO
                 <a href="#" class="key key-favorite key-favorite-set">
                   <i class="icon ion-ios-star"></i>
                   <i class="icon ion-plus"></i>
                 </a>
+ -->
               </div>
               <div class="keypad-column">
                 <a href="#" class="key key-keep">L</a>
@@ -95,6 +109,9 @@
                 <a href="#" class="key key-digit">5</a>
                 <a href="#" class="key key-digit">2</a>
                 <a href="#" class="key key-digit">0</a>
+<!-- TODO:
+                  <a href="#" class="key key-d">d66</a>
+  -->
                 <a href="#" class="key key-disabled"></a>
               </div>
               <div class="keypad-column">
@@ -105,6 +122,11 @@
                 <a href="#" class="key key-digit">6</a>
                 <a href="#" class="key key-digit">3</a>
                 <a href="#" class="key key-delete">⌫</a>
+<!-- TODO
+                <a href="#" class="key key-d">
+                  d<span class="long-die-number">1000</span>
+                </a>
+-->
                 <a href="#" class="key key-disabled"></a>
               </div>
               <div class="keypad-column">
@@ -114,6 +136,9 @@
                 <a href="#" class="key key-operation">+</a>
                 <a href="#" class="key key-operation">-</a>
                 <a href="#" class="key key-roll">Roll</a>
+<!-- TODO:
+                <a href="#" class="key key-d">dF</a>
+-->
                 <a href="#" class="key key-disabled"></a>
               </div>
             </div>

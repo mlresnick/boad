@@ -23,6 +23,7 @@ module.exports = (($) => {
     else {
       _model.setFavorite(newName, dieSpec, currentName);
       _view.updateListItem(currentName, newName);
+      _view.getCalculator().isFavorite(true);
       _util.boadApp.closePanel('right', true);
     }
   }
@@ -35,6 +36,12 @@ module.exports = (($) => {
       function _findIndexByName(name) {
         return _favoritesList.findIndex(
           favorite => favorite.name === name.toString()
+        );
+      }
+
+      function _findByDieSpec(dieSpec) {
+        return _favoritesList.find(
+          favorite => (favorite.dieSpec.toString() === (dieSpec + '*'))
         );
       }
 
@@ -127,6 +134,7 @@ module.exports = (($) => {
         // addOrModify: _addOrModify,
         delete: _delete,
         find: _find,
+        findByDieSpec: _findByDieSpec,
         forEach: _forEach,
         move: _move,
         nameInUse: _nameInUse,
@@ -415,6 +423,7 @@ module.exports = (($) => {
 
       return {
         add: _add,
+        getCalculator: _getCalculator,
         panel: _panel,
         refreshTab: _refreshTab,
         reportNameError: _reportNameError,
@@ -427,6 +436,7 @@ module.exports = (($) => {
     return {
       add: _view.add,
       delete: _model.delete,
+      findByDieSpec: _model.findByDieSpec,
       initialize: _model.initialize,
       nameInUse: _model.nameInUse,
       refreshTab: _view.refreshTab,

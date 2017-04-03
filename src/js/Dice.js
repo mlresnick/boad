@@ -19,7 +19,7 @@ module.exports = (() => {
 
   let _parseResults = [];
 
-  let _randomizer = sides => (Math.floor((Math.random() * sides)) + 1);
+  let _randomizer = { random: sides => (Math.floor((Math.random() * sides)) + 1) };
 
   function _explode() { return (_parseResults[_EXPLODE] === '!'); }
 
