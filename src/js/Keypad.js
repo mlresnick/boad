@@ -2,6 +2,7 @@
 
 const Util = require('./Util.js');
 const Dice = require('./Dice.js');
+const DieSpec = require('./DieSpec');
 const Favorites = require('./Favorites.js');
 const History = require('./History.js');
 
@@ -13,12 +14,39 @@ module.exports = (($) => {
 
   function _init() {
     const _ROLL = '<span>roll</span>';
+    const _AUTO = -1;
+    const _displayDieSpecEl = $('.display .display-die-spec');
     let _dice;
     const _history = History.getInstance();
     const _favorites = Favorites.getInstance();
     const _util = Util.getInstance();
 
     /* eslint-disable */
+    //
+    // [count]die[keep-drop][modifier][repetitions]
+    //
+    // count = a positive integer
+    // die = die-type|dx
+    // keep-drop = (k-spec|lh-spec)
+    // modifier = ('+'|'-')modifier-value
+    // repetitions = 'x'repetition-count
+    //
+    //   die-type = 'd4'|'d6|'d8'|'d10'|'d12'|'d20'|'d%'
+    //   dx = 'dx'side-count
+    //   k-spec = 'k'['-']keep-drop-count
+    //   lh-spec = ('+'|'-')keep-drop-count('L'|'H')
+    //   modifier-value = amount to add or subtract from sum of dice
+    //   repetition-count - number of times to repeat the roll
+    //
+    //     side-count = user defined number of sides
+    //     keep-drop-count = integer number of dice to keep/drop
+    //       ('k'n)  keep highest n
+    //       ('k-'n) drop lowest n
+    //       ('-'n'L') drop lowest n
+    //       ('-'n'H') drop highest n
+    //       ('+'n'L') re-add lowest n
+    //       ('+'n'h') re-add highest-n
+    //
     const _states = {
       start:            {digit: 'count',            die: 'die',
                                                     dx: 'dx'},
@@ -115,8 +143,30 @@ module.exports = (($) => {
       return ($('.display-result').remove().length !== 0);
     }
 
+    function _isFavorite(isFavorite) {
+      let flag = isFavorite;
+
+      if (isFavorite === undefined) {
+        return $('.favorite-status').hasClass('is-favorite');
+      }
+
+      if (isFavorite === _AUTO) {
+        flag =
+          (_favorites.findByDieSpec($('.disoplay .display-die-spec').text())
+            !== undefined);
+      }
+
+      if (flag) {
+        $('.favorite-status').addClass('is-favorite');
+      }
+      else {
+        $('.favorite-status').removeClass('is-favorite');
+      }
+    }
+
     function _clear() {
       _undoStack.reinit();
+      _isFavorite(false);
       $('.display').html('<span class="display-die-spec"></span>');
     }
 
@@ -127,6 +177,8 @@ module.exports = (($) => {
       if (!_eraseDisplayResult()) {
         $('.display .display-die-spec :last-child').remove();
       }
+
+      _isFavorite(_AUTO);
     }
 
     function _getNextState(key) {
@@ -169,18 +221,20 @@ module.exports = (($) => {
 
         _transitionToState(key);
 
-        $('.display .display-die-spec').append(key);
+        $(_displayDieSpecEl).append(key);
+
+        _isFavorite(_AUTO);
       }
     }
 
     function _getDieSpecHtml() {
-      return $('.display .display-die-spec').html();
+      return $(_displayDieSpecEl).html();
     }
 
     function _roll(arg) {
       if (arg.type === 'DieSpec') {
         // Feed the spec to the interpreter one character at
-        // a time to get to the right state.
+        // a time to get to the correct state.
         _clear();
         const c = arg.newWalker();
         while (c.next()) {
@@ -204,7 +258,7 @@ module.exports = (($) => {
 
         _transitionToState(_ROLL);
 
-        _dice.parse($('.display .display-die-spec').text());
+        _dice.parse($(_displayDieSpecEl).text());
         const result = _dice.roll();
 
         const resultValueHtml =
@@ -228,7 +282,15 @@ module.exports = (($) => {
     function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
       if (_states[_getCurrentState()].roll !== undefined) {
+        // TODO:
+        // if (_isFavorite()) {
+        //   $('.tabbar a[href="#favorites"]').click();
+        //   $(`#favorites .list-content li[data-name="${_dieSpec.name}"]`)
+        //     .scrollIntoView(true);
+        // }
+        // else {
         _favorites.add(_getDieSpecHtml());
+        // }
       }
     }
 
@@ -237,13 +299,12 @@ module.exports = (($) => {
     $('.key-delete').on('click', _deleteLast);
     $('.key-roll').on('click', _roll);
     $('.key-clear').on('click', _clear);
-    $('.key-favorite-set').on('click', _addFavorite);
-    $('a[href="#favorites"]').on('click', _favorites.refreshTab);
+    $('.favorite-status').on('click', _addFavorite);
 
-    $('.keypad .key:not(.key-disabled)')
+    $(['.keypad .key:not(.key-disabled)', '.favorite-status'])
       .on('mousedown touchstart')
       .addClass('active-state');
-    $('.keypad .key:not(.key-disabled)')
+    $(['.keypad .key:not(.key-disabled)', '.favorite-status'])
       .on('mouseup touchend')
       .removeClass('active-state');
 
@@ -251,6 +312,7 @@ module.exports = (($) => {
       clear: _clear,
       deleteLast: _deleteLast,
       enterNew: _enterNew,
+      isFavorite: _isFavorite,
       roll: _roll,
       addFavorite: _addFavorite,
       getDieSpecHtml: _getDieSpecHtml,

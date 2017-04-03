@@ -4,6 +4,8 @@ $ios-icon-font-size: 30px;
 $background-color-key-error: red;
 $background-color-key-confirm: gray;
 
+$color-favorite: goldenrod;
+
 $favs-trans-dur: 0.3s;
 $favs-initial-x-ios: -37px;
 $favs-initial-x-android: -50px;
@@ -16,7 +18,7 @@ $color-active-background: #d9d9d9;
 .display-d { color: green; }
 .display-operation { color: black; }
 .display-keep { color: orange; }
-.display-digit { color: gray; }
+.display-digit { color: cornflowerblue; }
 
 .display-favorite {
   font-size: 60%;
@@ -27,7 +29,7 @@ $color-active-background: #d9d9d9;
 
   vertical-align: baseline;
 
-  color: goldenrod;
+  color: $color-favorite;
 }
 
 %stacked {
@@ -35,7 +37,7 @@ $color-active-background: #d9d9d9;
 
   position: absolute;
   left: 0;
-
+  // right: 25px;
   width: 100%;
 }
 
@@ -101,31 +103,83 @@ html.android body.with-panel-right-reveal .panel .navbar .link .ios {
   display: none;
 }
 
-html.android .display-favorite i.icon-ios { display: none; }
-html.ios .display-favorite i.icon-android { display: none; }
+html.android i.icon-ios { display: none; }
+html.ios i.icon-android { display: none; }
 
 // **** Calculator ****
 
 // Navbar
 
 // Page content
-#calculator {
-  .display {
+.calculator {
+  .output {
     font-size: 2em;
-
+    display: flex;
     height: 1.35em;
+    border: 1px solid;
+  }
+
+  .favorite-status {
+    flex: 1;
+    transition: background-color $favs-trans-dur;
+
+    &.active-state {
+      transition: background-color 0s;
+
+      background-color: $color-active-background;
+    }
+
+    i.icon {
+      position: absolute;
+      display: inline-block;
+
+      &.is-favorite { display: none; }
+    }
+
+    &.is-favorite i.icon {
+      display: none;
+      color: $color-favorite;
+
+      &.is-favorite { display: inline-block; }
+    }
+  }
+
+  .display {
+    flex: 10;
+    width: 100%;
     padding:  {
       right: 3px;
       left: 3px;
     }
 
-    border: 1px solid;
   }
 
-  .keypad-container {
-    // Total height of div.display (1.36em height  + 2px border)
-    // 4px more (not sure where these ae froim)
-    height: calc(100% - (1.35em + 2px) - 4px);
+  .favorite-add {
+    position: relative;
+
+    display: block;
+
+    text-align: center;
+
+    i {
+      &.ion-ios-star,
+      &.ion-ios-star-outline {
+        @extend %stacked;
+
+        font-size: $star-fs;
+
+        margin-top: 3px;
+      }
+
+      &.icon.ion-plus {
+        @extend %stacked;
+
+        font-size: 0.75em;
+
+        margin-top: 3px;
+        margin-left: 12px;
+      }
+    }
   }
 
   .keypad {
@@ -165,6 +219,8 @@ html.ios .display-favorite i.icon-android { display: none; }
       background-color: $color-active-background;
     }
   }
+
+  .key-disabled { pointer-events: none; }
 
   .key-roll {
     flex: 2;
@@ -211,6 +267,8 @@ html.ios .display-favorite i.icon-android { display: none; }
     }
   }
 
+  .long-die-number { letter-spacing: -1px; }
+
   .confirm {
     background-color: $background-color-key-confirm;
   }
@@ -220,13 +278,14 @@ html.ios .display-favorite i.icon-android { display: none; }
   }
 }
 
-html.ios,
-html.android {
-  #calculator .keypad-container {
-    // Total height of div.display (1.36em height  + 2px border)
-    // Height of horizontal borders in keypad (8 rows x 2 1px borders)
-    // 5px more (not sure where these ae froim)
-    height: calc(100% - (1.35em + 2px) - 16px - 5px;);
+html.android,
+html.ios {
+  .calculator .keypad-container {
+    // (1.36em height  + 2 x 1px border) Total height of div.output
+    // 16 px Height of horizontal borders in keypad
+    //   (8 rows x 2 borders/row x 1px borders)
+    // 4px more (not sure where these are from)
+    height: calc(100% - (1.35em + 2px) - 16px - 4px);
   }
 }
 
