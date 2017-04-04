@@ -30,6 +30,7 @@
     "no-restricted-syntax": [ "error", "ForOfStatement" ],
     "no-underscore-dangle": "off",
     "no-unused-vars": [ "error", { "varsIgnorePattern": "keypad|rollHistory" } ],
+    "padded-blocks": "off",
     "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
     "strict": [ "error", "global" ],
     "keyword-spacing": [

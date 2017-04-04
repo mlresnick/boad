@@ -7,6 +7,7 @@ const History = require('./History.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 // IDEA: Split view from model
+// TODO: When a favorite is rolled include its name in the history
 
 module.exports = (($) => {
   let _instance;
@@ -275,7 +276,7 @@ module.exports = (($) => {
     // SETTINGS: Possibly make "k" vs "L/H" a user setting
     // SETTINGS: Move favorites Delete All to settings
     // QUESTION: Define both a dark and a light color scheme?
-    // FIXME: fix dx button and allow +/- after keep (k/L/H) letters
+    // TODO: d66, dF and possibly d1000
 
     function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
