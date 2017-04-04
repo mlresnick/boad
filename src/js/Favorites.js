@@ -1,7 +1,3 @@
-
-// FIXME: in favorites 1) sort  handle isn't disappearing when delete shows up
-// FIXME: in favorites 2) after first delete the delete but stops working
-
 'use strict';
 
 const Util = require('./Util.js');
@@ -284,9 +280,8 @@ module.exports = (($) => {
             .find('.icon.ion-android-remove-circle')
             .wrap('<a href="#" class="favorite-delete"></a>');
           _favoritesList.find('.favorite-delete')
-            .on('click',
-                event => _util.boadApp.swipeoutOpen($(event.target)
-                                                    .closest('li.swipeout'))
+            .on('click', event =>
+              _util.boadApp.swipeoutOpen($(event.target).closest('li.swipeout'))
             );
 
           const innerItems = _favoritesList.find('.item-content .item-inner');
@@ -324,7 +319,7 @@ module.exports = (($) => {
               .each((i, link) => $(link).css('pointer-events', 'none'));
           });
 
-          li.on('swipeout:closed', () => {
+          li.on('swipeout:closed swipeout:delete', () => {
             _favoritesList
               .find('.favorite-edit')
               .each((i, link) => $(link).css('pointer-events', ''));
@@ -407,7 +402,8 @@ module.exports = (($) => {
       // Delete event
       _favoritesList
         .on(
-          'swipeout:delete', 'li.swipeout',
+          'swipeout:delete',
+          'li.swipeout',
           event => _model.delete($(event.target).data('name'))
         );
 

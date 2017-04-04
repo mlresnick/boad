@@ -65,7 +65,7 @@ html.ios {
   .swipeout-opened {
     .sortable-handler {
       transition: $favs-trans-dur;
-      background-position-x: 150%; //calc(20px + 100%);
+      background-position-x: 200%;
     }
 
     .favorite-edit,
