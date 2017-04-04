@@ -2,7 +2,6 @@
 
 const Util = require('./Util.js');
 const Dice = require('./Dice.js');
-const DieSpec = require('./DieSpec');
 const Favorites = require('./Favorites.js');
 const History = require('./History.js');
 
@@ -152,7 +151,7 @@ module.exports = (($) => {
 
       if (isFavorite === _AUTO) {
         flag =
-          (_favorites.findByDieSpec($('.disoplay .display-die-spec').text())
+          (_favorites.findByDieSpec($('.display .display-die-spec').text())
             !== undefined);
       }
 
@@ -162,12 +161,14 @@ module.exports = (($) => {
       else {
         $('.favorite-status').removeClass('is-favorite');
       }
+      return null;
     }
 
     function _clear() {
       _undoStack.reinit();
       _isFavorite(false);
-      $('.display').html('<span class="display-die-spec"></span>');
+      $('.display .display-die-spec').children().remove();
+      $('.display .display-result').remove();
     }
 
     function _deleteLast() {
@@ -257,19 +258,16 @@ module.exports = (($) => {
         }
 
         _transitionToState(_ROLL);
-
         _dice.parse($(_displayDieSpecEl).text());
         const result = _dice.roll();
 
-        const resultValueHtml =
-          `<span class="display-result-value">${result}</span>`;
         const resultHtml =
-          `<span class="display-result">
-            ${_util.RESULT_SYMBOL}${resultValueHtml}
-          </span>`;
+          '<span class="display-result">' +
+  `${_util.RESULT_SYMBOL}<span class="display-result-value">${result}</span>` +
+          '</span>';
         $('.display').append(resultHtml);
 
-        _history.add(_getDieSpecHtml(), resultValueHtml);
+        _history.add(_getDieSpecHtml(), resultHtml);
       }
     }
 
@@ -282,15 +280,7 @@ module.exports = (($) => {
     function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
       if (_states[_getCurrentState()].roll !== undefined) {
-        // TODO:
-        // if (_isFavorite()) {
-        //   $('.tabbar a[href="#favorites"]').click();
-        //   $(`#favorites .list-content li[data-name="${_dieSpec.name}"]`)
-        //     .scrollIntoView(true);
-        // }
-        // else {
         _favorites.add(_getDieSpecHtml());
-        // }
       }
     }
 
