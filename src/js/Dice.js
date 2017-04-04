@@ -1,7 +1,5 @@
 'use strict';
 
-// FIXME: Make keep/drop count isn't larger than die count
-
 module.exports = (() => {
   const _EXPLODE = 1;
   const _COUNT = 2;
@@ -127,7 +125,41 @@ module.exports = (() => {
 
   let _rollResults = [];
 
-  function _parse(spec) { _parseResults = _REGEX.exec(spec); }
+  function _validateSpec() {
+    let result;
+    let offendingValue = null;
+    let keepSpec = null;
+    let action;
+
+    const count = _count();
+    const lowHighCount = _lowHighCount();
+
+    if (Math.abs(lowHighCount) > count) {
+      offendingValue = lowHighCount;
+      keepSpec = lowHighCount + _lowHigh();
+      action = (lowHighCount > 0) ? 'add, again,' : 'drop';
+    }
+    else {
+      const kCount = _kCount();
+      if (Math.abs(kCount) > count) {
+        offendingValue = kCount;
+        keepSpec = `k${offendingValue}`;
+        action = (offendingValue > 0) ? 'keep' : 'drop';
+      }
+    }
+
+    if (offendingValue) {
+      result = `Dice to ${action} (${keepSpec}) is larger than the number of dice to roll (${count})`;
+    }
+
+    return result;
+  }
+
+  function _parse(spec) {
+    _parseResults = _REGEX.exec(spec);
+    return _validateSpec();
+  }
+
 
   function _setRandomizer(arg) { _randomizer = arg; }
 
@@ -271,8 +303,8 @@ module.exports = (() => {
   return {
     //  explode: _getExplode(), // TODO Implement Explode
     parse: _parse,
-    toString: _toString,
-    setRandomizer: _setRandomizer,
     roll: _roll,
+    setRandomizer: _setRandomizer,
+    toString: _toString,
   };
-})();
+});

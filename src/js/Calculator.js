@@ -65,7 +65,8 @@ module.exports = (($) => {
       x:                {digit: 'xDigit'},
       xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
       roll:             {digit: 'count',            die: 'die',
-                                                    dx: 'dx',                                                  roll: 'roll'}
+                                                    dx: 'dx',                                                  roll: 'roll'},
+      error:            { /* There's no escape, except to delete */ }
     };
 
     const _category = {
@@ -83,7 +84,7 @@ module.exports = (($) => {
 
       x:    'x',
 
-      roll: 'roll'
+      roll: 'roll',
     };
 
     const _displayClass = {
@@ -189,7 +190,7 @@ module.exports = (($) => {
     }
 
     function _transitionToState(key) {
-      const newState = _getNextState(key);
+      const newState = (key !== 'error') ? _getNextState(key) : 'error';
 
       if (newState !== undefined) {
         _undoStack.push(key, newState);
@@ -201,6 +202,7 @@ module.exports = (($) => {
     function _enterNew(arg) {
       let event;
       let rawText;
+      let result = null;
 
       if (typeof arg === 'string') {
         rawText = arg;
@@ -221,11 +223,23 @@ module.exports = (($) => {
           _clear();
         }
 
-        _transitionToState(key);
-
         $(_displayDieSpecEl).append(key);
 
-        _isFavorite(_AUTO);
+        // Test validity of diespec
+        if (_states[newState].roll !== undefined) {
+          const _testDice = Dice();
+          result = _testDice.parse($(_displayDieSpecEl).text());
+        }
+
+        if (!result) {
+          _transitionToState(key);
+          _isFavorite(_AUTO);
+        }
+        else {
+          _util.boadApp.alert(result, 'BoAD');
+          _transitionToState('error');
+          $(_displayDieSpecEl).find(':last-child').addClass('invalid');
+        }
       }
     }
 
@@ -251,7 +265,7 @@ module.exports = (($) => {
       const newState = _getNextState('<span>roll</span>');
 
       if (newState !== undefined) {
-        _dice = Dice;
+        _dice = Dice();
 
         if (currentState === 'roll') {
           _undoStack.pop();
