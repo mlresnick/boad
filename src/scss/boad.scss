@@ -19,18 +19,8 @@ $color-active-background: #d9d9d9;
 .display-operation { color: black; }
 .display-keep { color: orange; }
 .display-digit { color: cornflowerblue; }
+.display-favorite { color: $color-favorite; }
 
-.display-favorite {
-  font-size: 60%;
-  line-height: 0;
-
-  position: relative;
-  top: -0.75em;
-
-  vertical-align: baseline;
-
-  color: $color-favorite;
-}
 
 %stacked {
   line-height: 1;
@@ -52,7 +42,6 @@ html {
 }
 
 // **** NavBar ****
-// Make sure
 .panel.panel-right .navbar {
   .left,
   .center,
@@ -136,11 +125,15 @@ html.ios i.icon-android { display: none; }
       &.is-favorite { display: none; }
     }
 
-    &.is-favorite i.icon {
-      display: none;
-      color: $color-favorite;
+    &.is-favorite {
+      pointer-events: none;
 
-      &.is-favorite { display: inline-block; }
+      i.icon {
+        display: none;
+        color: $color-favorite;
+
+        &.is-favorite { display: inline-block; }
+      }
     }
   }
 
@@ -152,6 +145,16 @@ html.ios i.icon-android { display: none; }
       left: 3px;
     }
 
+  }
+
+  .display-favorite {
+    font-size: 60%;
+    line-height: 0;
+
+    position: relative;
+    top: -0.75em;
+
+    vertical-align: baseline;
   }
 
   .favorite-add {
@@ -341,9 +344,13 @@ html.ios {
   }
 }
 
+#favorites .page {
+  li.active-state { background-color: $color-active-background; }
+}
+
 // Page content
 #favorites .page.edit-mode {
-  li.active-state { background-color: $color-active-background; }
+  // li.active-state { background-color: $color-active-background; }
 
   .sortable-handler {
     transition: $favs-trans-dur;

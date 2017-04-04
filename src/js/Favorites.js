@@ -41,7 +41,7 @@ module.exports = (($) => {
 
       function _findByDieSpec(dieSpec) {
         return _favoritesList.find(
-          favorite => (favorite.dieSpec.toString() === (dieSpec + '*'))
+          favorite => (favorite.dieSpec.toString() === `${dieSpec}*`)
         );
       }
 
@@ -104,9 +104,7 @@ module.exports = (($) => {
 
       function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
-      function _forEach(cb) {
-        return _favoritesList.forEach(cb);
-      }
+      function _forEach(cb) { return _favoritesList.forEach(cb); }
 
       function _validateName(name) {
         let result = _NAME_OK;
@@ -146,7 +144,7 @@ module.exports = (($) => {
     _view = (() => {
       const _favoritesView = $('#favorites');
       const _favoritesListBlock = _favoritesView.find('.list-block');
-      const _favoritesListBlockList = _favoritesListBlock.find('ul');
+      const _favoritesList = _favoritesListBlock.find('ul');
 
       let _calculator;
 
@@ -222,10 +220,10 @@ module.exports = (($) => {
       }
 
       function _refreshTab() {
-        _favoritesListBlockList.empty();
+        _favoritesList.empty();
 
         _model.forEach((favorite) => {
-          _favoritesListBlockList.append(
+          _favoritesList.append(
             `<li class="swipeout" data-name="${favorite.name}">
               <a href="#" class="item-link roll-favorite">
                 <div class="item-content swipeout-content">
@@ -250,9 +248,7 @@ module.exports = (($) => {
 
         // TODO: Refactor part A - can we avoid having to do this for every
         // refreshTab call
-        _favoritesListBlockList
-          .find('.roll-favorite')
-          .on('click', _rollFavorite);
+        _favoritesList.find('.roll-favorite').on('click', _rollFavorite);
       }
 
       function _reportNameError(reason, name) {
@@ -277,35 +273,32 @@ module.exports = (($) => {
       _favoritesView.find('.navbar a.link.done').on('transitionend', () => {
         if (_favoritesView.find('.page').hasClass('edit-mode')) {
           // Remove links first - so they dont interfere with the replacement...
-          _favoritesListBlockList
-            .find('li > .roll-favorite .item-content')
-            .unwrap();
+          _favoritesList.find('li > .roll-favorite .item-content').unwrap();
 
           // ... then replace
-          _favoritesListBlockList
+          _favoritesList
             .find('.icon.ion-android-remove-circle')
             .wrap('<a href="#" class="favorite-delete"></a>');
-          _favoritesListBlockList.find('.favorite-delete')
+          _favoritesList.find('.favorite-delete')
             .on('click',
                 event => _util.boadApp.swipeoutOpen($(event.target)
                                                     .closest('li.swipeout'))
             );
 
-          const innerItems =
-            _favoritesListBlockList.find('.item-content .item-inner');
+          const innerItems = _favoritesList.find('.item-content .item-inner');
           $(innerItems).each((i, innerItem) => {
             $(innerItem)
             .children(':not(.item-after)')
             .wrapAll('<a href="#" class="item-link favorite-edit"></a>');
           });
 
-          const li = _favoritesListBlockList.children('li');
+          const li = _favoritesList.children('li');
 
           // Under normal circumstances make the whole list item display touch
-          // feedback. However, if there is a swipeou open anywhere, skip the
+          // feedback. However, if there is a swipeout open anywhere, skip the
           // feedback and close the swipeout.
           li.on('mousedown touchstart', '.item-inner', (event) => {
-            if (_favoritesListBlockList.children('li.swipeout-opened').length
+            if (_favoritesList.children('li.swipeout-opened').length
                 === 0) {
               $(event.delegateTarget).addClass('active-state');
             }
@@ -319,24 +312,24 @@ module.exports = (($) => {
                 event => $(event.delegateTarget).removeClass('active-state'));
 
           li.on('swipeout:open', () => {
-            _favoritesListBlockList
+            _favoritesList
               .find('.favorite-edit')
               .each((i, link) => $(link).css('pointer-events', 'none'));
-            _favoritesListBlockList
+            _favoritesList
               .find('.favorite-delete')
               .each((i, link) => $(link).css('pointer-events', 'none'));
           });
 
           li.on('swipeout:closed', () => {
-            _favoritesListBlockList
+            _favoritesList
               .find('.favorite-edit')
               .each((i, link) => $(link).css('pointer-events', ''));
-            _favoritesListBlockList
+            _favoritesList
               .find('.favorite-delete')
               .each((i, link) => $(link).css('pointer-events', ''));
           });
 
-          _favoritesListBlockList
+          _favoritesList
             .find('.item-content .item-inner :not(.item-after)')
             .on('click', (event) => {
               const currentTarget = event.currentTarget;
@@ -348,7 +341,8 @@ module.exports = (($) => {
               }
             });
 
-          _favoritesListBlockList.find('.swipeout-actions-right')
+          _favoritesList
+            .find('.swipeout-actions-right')
             .append('<a href="#" class="swipeout-delete swipeout-overswipe">' +
                       'Delete' +
                     '</a>');
@@ -365,26 +359,21 @@ module.exports = (($) => {
 
       _favoritesView.find('.navbar a.link.edit').on('transitionend', () => {
         if (!_favoritesView.find('.page').hasClass('edit-mode')) {
-          console.log('cleaning up');
-          const li = _favoritesListBlockList.children('li');
+          const li = _favoritesList.children('li');
           li.off('mousedown touchstart', '.item-inner');
           li.off('mouseup touchend', '.item-inner');
 
           // Remove links first - so they dont interfere with the replacement...
-          _favoritesListBlockList
-            .find('.icon.ion-android-remove-circle')
-            .unwrap();
-          _favoritesListBlockList.find('.swipeout-delete').remove();
-          _favoritesListBlockList.find('.favorite-edit').children().unwrap();
+          _favoritesList.find('.icon.ion-android-remove-circle').unwrap();
+          _favoritesList.find('.swipeout-delete').remove();
+          _favoritesList.find('.favorite-edit').children().unwrap();
 
           // ... the add links in transitionend event handler
-          _favoritesListBlockList
+          _favoritesList
             .find('li')
             .wrapInner('<a href="#" class="item-link roll-favorite"></a>');
           // TODO Refactor Part B
-          _favoritesListBlockList
-            .find('.roll-favorite')
-            .on('click', _rollFavorite);
+          _favoritesList.find('.roll-favorite').on('click', _rollFavorite);
         }
       });
 
@@ -412,7 +401,7 @@ module.exports = (($) => {
         );
 
       // Delete event
-      _favoritesListBlockList
+      _favoritesList
         .on(
           'swipeout:delete', 'li.swipeout',
           event => _model.delete($(event.target).data('name'))
