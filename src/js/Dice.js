@@ -1,5 +1,7 @@
 'use strict';
 
+// FIXME: Make keep/drop count isn't larger than die count
+
 module.exports = (() => {
   const _EXPLODE = 1;
   const _COUNT = 2;

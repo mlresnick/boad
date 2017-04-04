@@ -1,0 +1,205 @@
+%stacked {
+  line-height: 1;
+
+  position: absolute;
+  left: 0;
+  // right: 25px;
+  width: 100%;
+}
+
+
+// Navbar
+
+
+// Page content
+.calculator {
+  .output {
+    font-size: 2em;
+    display: flex;
+    height: 1.35em;
+    border: 1px solid;
+  }
+
+  .favorite-status {
+    flex: 1;
+    transition: background-color $favs-trans-dur;
+
+    &.active-state {
+      transition: background-color 0s;
+
+      background-color: $color-active-background;
+    }
+
+    i.icon {
+      position: absolute;
+      display: inline-block;
+
+      &.is-favorite { display: none; }
+    }
+
+    &.is-favorite {
+      pointer-events: none;
+
+      i.icon {
+        display: none;
+        color: $color-favorite;
+
+        &.is-favorite { display: inline-block; }
+      }
+    }
+  }
+
+  .display {
+    flex: 10;
+    width: 100%;
+    padding:  {
+      right: 3px;
+      left: 3px;
+    }
+
+  }
+
+  .display-favorite {
+    font-size: 60%;
+    line-height: 0;
+
+    position: relative;
+    top: -0.75em;
+
+    vertical-align: baseline;
+  }
+
+  .favorite-add {
+    position: relative;
+
+    display: block;
+
+    text-align: center;
+
+    i {
+      &.ion-ios-star,
+      &.ion-ios-star-outline {
+        @extend %stacked;
+
+        font-size: $star-fs;
+
+        margin-top: 3px;
+      }
+
+      &.icon.ion-plus {
+        @extend %stacked;
+
+        font-size: 0.75em;
+
+        margin-top: 3px;
+        margin-left: 12px;
+      }
+    }
+  }
+
+  .keypad {
+    display: flex;
+    flex-direction: row;
+    flex: 8;
+
+    height: 100%;
+
+    border: 1px solid;
+  }
+
+  .keypad-column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .key {
+    font-size: 2em;
+
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+
+    transition: background-color $favs-trans-dur;
+
+    border: 1px solid;
+
+    &.active-state {
+      transition: background-color 0s;
+
+      background-color: $color-active-background;
+    }
+  }
+
+  .key-disabled { pointer-events: none; }
+
+  .key-roll {
+    flex: 2;
+
+    padding-top: 2px;
+  }
+
+  .key-favorite {
+    &.key-favorite-set {
+      position: relative;
+
+      display: block;
+
+      text-align: center;
+
+      i {
+        &.ion-ios-star {
+          @extend %stacked;
+
+          font-size: $star-fs;
+
+          margin-top: -3px;
+        }
+
+        &.icon.ion-plus {
+          @extend %stacked;
+
+          font-size: 0.75em;
+
+          margin-left: 12px;
+        }
+      }
+    }
+
+    &.key-favorite-get i.ion-ios-star {
+      font-size: $star-fs;
+    }
+  }
+
+  .variable {
+    font:  {
+      family: serif;
+      style: italic;
+    }
+  }
+
+  .long-die-number { letter-spacing: -1px; }
+
+  .confirm {
+    background-color: $background-color-key-confirm;
+  }
+
+  .error {
+    background-color: $background-color-key-error;
+  }
+}
+
+html.android,
+html.ios {
+  .calculator .keypad-container {
+    // (1.36em height  + 2 x 1px border) Total height of div.output
+    // 16 px Height of horizontal borders in keypad
+    //   (8 rows x 2 borders/row x 1px borders)
+    // 4px more (not sure where these are from)
+    height: calc(100% - (1.35em + 2px) - 16px - 4px);
+  }
+}
