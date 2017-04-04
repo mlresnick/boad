@@ -1,5 +1,3 @@
-// FIXME: in history there two "=>" in each entry
-
 'use strict';
 
 const Util = require('./Util.js');
@@ -73,9 +71,7 @@ module.exports = (($) => {
               <div class="item-content swipeout-content">
                 <div class="item-inner">
                   <div class="item-title">
-                    ${historyEntry.dieSpec}
-                    ${_util.RESULT_SYMBOL}
-                    ${historyEntry.result}
+                    ${historyEntry.dieSpec}${historyEntry.result}
                   </div>
                 </div>
               </div>
