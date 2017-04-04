@@ -1,0 +1,53 @@
+// **** Side Panel ****
+// **** NavBar ****
+.panel.panel-right .navbar {
+  .left,
+  .center,
+  .right {
+    display: flex;
+    flex: 1;
+  }
+
+  .left {
+    justify-content: flex-start;
+    margin-right: auto;
+  }
+
+  .right {
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+}
+html.ios .panel.panel-right .navbar .center { justify-content: center; }
+
+// Make both the main page and the side panel slide left or right together
+html body.with-panel-right-reveal {
+  .panel {
+    width: 100%;
+
+    .content-block-title {
+      font-size: 17px;
+      text-transform: none;
+    }
+  }
+
+  // Normal
+  .panel.panel-right.panel-reveal { transform: translate3d(100%, 0, 0); }
+  .views { transform: translate3d(0, 0, 0); }
+
+  // With panel revealed
+  &.with-panel-right-reveal {
+    .panel.panel-right.panel-reveal { transform: translate3d(0, 0, 0); }
+    .views { transform: translate3d(-100%, 0, 0); }
+    .panel-overlay { transform: translate3d(-100%, 0, 0); }
+  }
+}
+
+html.ios body.with-panel-right-reveal .panel { background: rgb(239, 239, 244); }
+
+html.android body.with-panel-right-reveal .panel .navbar .link .ios {
+  display: none;
+}
+
+html.android i.icon-ios { display: none; }
+html.ios i.icon-android { display: none; }

@@ -1,3 +1,7 @@
+
+// FIXME: in favorites 1) sort  handle isn't disappearing when delete shows up
+// FIXME: in favorites 2) after first delete the delete but stops working
+
 'use strict';
 
 const Util = require('./Util.js');

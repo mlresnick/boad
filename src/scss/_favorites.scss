@@ -1,0 +1,129 @@
+// **** Favorites ****
+
+// Navbar
+#favorites,
+#history {
+  .page.edit-mode .navbar {
+
+    a.link {
+      transition: opacity $favs-trans-dur;
+      opacity: 0;
+
+      &.edit-mode {
+        transition: opacity $favs-trans-dur;
+        opacity: 1;
+      }
+
+      &.edit { pointer-events: none; }
+    }
+  }
+
+  .page .navbar {
+    a.link {
+      transition: opacity $favs-trans-dur;
+      opacity: 1;
+
+      &.done {position: absolute; }
+
+      &.edit-mode {
+        transition: opacity $favs-trans-dur;
+        opacity: 0;
+      }
+
+      .right a.link:first-of-type { position: absolute; }
+    }
+  }
+}
+
+html.android {
+  #favorites,
+  #history {
+    .navbar a.link.ios { display: none; }
+  }
+}
+
+html.ios {
+  #favorites,
+  #history {
+    .navbar a.link.android { display: none; }
+  }
+}
+
+#favorites .page {
+  li.active-state { background-color: $color-active-background; }
+}
+
+// Page content
+#favorites .page.edit-mode {
+  // li.active-state { background-color: $color-active-background; }
+
+  .sortable-handler {
+    transition: $favs-trans-dur;
+    background-position-x: calc(-20px + 100%);
+  }
+
+  .swipeout-opened {
+    .sortable-handler {
+      transition: $favs-trans-dur;
+      background-position-x: 150%; //calc(20px + 100%);
+    }
+
+    .favorite-edit,
+    .favorite-delete {
+      pointer-events: none;
+    }
+
+  }
+
+  .item-content.swipeout-content {
+    left: 0;
+    transition: $favs-trans-dur;
+
+    .item-inner {
+      transition: $favs-trans-dur;
+
+      // Based on definition in Framework7
+      background: {
+        position: calc(100% - 50px) center;
+        image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20viewBox%3D'0%200%2060%20120'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cpath%20d%3D'm60%2061.5-38.25%2038.25-9.75-9.75%2029.25-28.5-29.25-28.5%209.75-9.75z'%20fill%3D'%23c7c7cc'%2F%3E%3C%2Fsvg%3E"); // sass-lint:disable-line max-line-length, quotes
+      }
+
+      a.favorite-edit { width: 100%; }
+    }
+  }
+}
+
+#favorites .page .item-content.swipeout-content {
+  i.icon { font-size: 1.5em; }
+  .item-media i.icon { color: red; }
+
+  .item-inner {
+    flex-direction: column;
+    align-items: flex-start;
+
+    padding-right: 35px;
+
+    transition: $favs-trans-dur;
+
+    // Based on definition in Framework7
+    background:  {
+      position: -100% center;
+
+      image: none;
+      repeat: no-repeat;
+      size: 10px 20px;
+    }
+  }
+
+  .item-subtitle { margin-left: 10px; }
+}
+
+html.android #favorites .page .item-content {
+  left: $favs-initial-x-android;
+  transition: $favs-trans-dur;
+}
+
+html.ios #favorites .page .item-content {
+  left: $favs-initial-x-ios;
+  transition: $favs-trans-dur;
+}

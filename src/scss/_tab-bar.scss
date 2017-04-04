@@ -1,0 +1,40 @@
+// **** Tab bar ****
+.toolbar.tabbar .tab-link i.icon { display: none; }
+
+html.android .toolbar.tabbar {
+  .tab-link {
+    padding-top: 6px;
+
+    i.icon.icon-android {
+      font-size: $android-icon-font-size;
+
+      display: block;
+    }
+
+    .tabbar-label { font-size: 12px; }
+  }
+
+  .tab-link-highlight { height: 6px; }
+}
+
+html.ios .toolbar.tabbar {
+  a.tab-link {
+    padding: 0;
+
+    &:not(.active) i.icon.icon-ios[class*='-outline'] {
+      display: block;
+    }
+
+    &.active i.icon.icon-ios:not([class*='-outline']) {
+      display: block;
+    }
+
+    i.icon.icon-ios {
+      font-size: $ios-icon-font-size;
+      display: none;
+      opacity: 1;
+    }
+  }
+
+  &.tabbar-labels span.tabbar-label { font-size: 14px; }
+}

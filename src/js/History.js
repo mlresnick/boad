@@ -1,3 +1,5 @@
+// FIXME: in history there two "=>" in each entry
+
 'use strict';
 
 const Util = require('./Util.js');
