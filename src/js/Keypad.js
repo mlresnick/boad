@@ -7,7 +7,6 @@ const History = require('./History.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 // IDEA: Split view from model
-// TODO: When a favorite is rolled include its name in the history
 
 module.exports = (($) => {
   let _instance;
@@ -248,11 +247,14 @@ module.exports = (($) => {
     }
 
     function _roll(arg) {
-      if (arg.type === 'DieSpec') {
+      let favoriteName = null;
+
+      if (arg.dieSpec) {
+        favoriteName = arg.name;
         // Feed the spec to the interpreter one character at
         // a time to get to the correct state.
         _clear();
-        const c = arg.newWalker();
+        const c = arg.dieSpec.newWalker();
         while (c.next()) {
           _enterNew(c.value);
         }
@@ -281,8 +283,7 @@ module.exports = (($) => {
   `${_util.RESULT_SYMBOL}<span class="display-result-value">${result}</span>` +
           '</span>';
         $('.display').append(resultHtml);
-
-        _history.add(_getDieSpecHtml(), resultHtml);
+        _history.add(_getDieSpecHtml(), resultHtml, favoriteName);
       }
     }
 
@@ -290,7 +291,6 @@ module.exports = (($) => {
     // SETTINGS: Possibly make "k" vs "L/H" a user setting
     // SETTINGS: Move favorites Delete All to settings
     // QUESTION: Define both a dark and a light color scheme?
-    // TODO: d66, dF and possibly d1000
 
     function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
