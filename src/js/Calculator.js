@@ -12,7 +12,8 @@ module.exports = (($) => {
   let _instance;
 
   function _init() {
-    const _ROLL = '<span>roll</span>';
+    const _ROLL = 'roll';
+    const _ERROR = 'error';
     const _AUTO = -1;
     const _displayDieSpecEl = $('.display .display-die-spec');
     let _dice;
@@ -60,7 +61,8 @@ module.exports = (($) => {
       kCount:           {digit: 'kCount',                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
       postDieDigit:     {digit: 'postDieDigit',                lh: 'lh',                               x: 'x', roll: 'roll'},
       lh:               {                                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-      modifierOperator: {digit: 'modifierOperator',                                                    x: 'x'},
+      modifierOperator: {digit: 'modifierDigit'},
+      modifierDigit:    {digit: 'modifierDigit',                                                       x: 'x', roll: 'roll'},
       x:                {digit: 'xDigit'},
       xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
       roll:             {digit: 'count',            die: 'die',
@@ -89,11 +91,11 @@ module.exports = (($) => {
     const _displayClass = {
       digit: 'digit',
 
-      die: 'd',
-      dx:  'd',
+      die: 'die',
+      dx:  'die',
 
-      operator: 'operation',
-      x:        'operation',
+      operator: 'operator',
+      x:        'operator',
 
       k:  'keep',
       lh: 'keep'
@@ -101,7 +103,7 @@ module.exports = (($) => {
     /* eslint-enable */
 
     const UndoStack = (() => {
-      const _stack = [{ decoratedText: null, state: 'count' }];
+      const _stack = [{ state: 'count' }];
 
 
       function _peek() {
@@ -117,11 +119,8 @@ module.exports = (($) => {
 
       function _pop() { return (_stack.length > 1) ? _stack.pop() : null; }
 
-      function _push(keyHtml, newState) {
-        _stack.push({
-          decoratedText: keyHtml,
-          state: (newState || _peek().state),
-        });
+      function _push(newState) {
+        _stack.push({ state: (newState || _peek().state) });
       }
 
       function _toString() { return JSON.stringify(_stack); }
@@ -183,46 +182,66 @@ module.exports = (($) => {
       _isFavorite(_AUTO);
     }
 
-    function _getNextState(key) {
-      const category = _category[$(key).text()];
+    function _getNextState(category) {
       return _states[_getCurrentState()][category];
     }
 
-    function _transitionToState(key) {
-      const newState = (key !== 'error') ? _getNextState(key) : 'error';
+    function _transitionToNewState(category) {
+      const newState =
+        (category !== _ERROR) ? _getNextState(category) : _ERROR;
 
       if (newState !== undefined) {
-        _undoStack.push(key, newState);
+        _undoStack.push(newState);
       }
 
       return newState;
     }
 
     function _enterNew(arg) {
-      let event;
-      let rawText;
+      const categoryMap = {
+        die: { dx: 'dx' },
+        operator: { x: 'x' },
+        keep: { k: 'k', L: 'lh', H: 'lh' },
+      };
+      let displayCategory;
+      let category;
+      let text;
       let result = null;
 
-      if (typeof arg === 'string') {
-        rawText = arg;
+      if (arg instanceof jQuery.Event) {
+        displayCategory =
+          $(arg.currentTarget)
+            .attr('class')
+            .split(' ')
+            .find(className => className.startsWith('key-'))
+            .substring(4);
+        text = arg.target.textContent;
       }
       else {
-        event = arg;
-        rawText = event.target.textContent;
+        displayCategory = arg.type;
+        text = arg.value;
       }
-      const displayClass = `display-${_displayClass[_category[rawText]]}`;
-      const key = `<span class="${displayClass}">${rawText}</span>`;
 
-      const currentState = _getCurrentState();
-      const newState = _getNextState(key);
+      if (categoryMap[displayCategory] && categoryMap[displayCategory][text]) {
+        category = categoryMap[displayCategory][text];
+      }
+      else {
+        category = displayCategory;
+      }
+
+      const newState = _getNextState(category);
 
       if (newState !== undefined) {
         // Are we starting a new die specification?
-        if (currentState === 'roll') {
+        if (_getCurrentState() === _ROLL) {
           _clear();
         }
 
-        $(_displayDieSpecEl).append(key);
+        $(_displayDieSpecEl).append(
+          `<span class="display-${displayCategory}">` +
+            `${text === 'dx' ? 'd' : text}` +
+          '</span>'
+        );
 
         // Test validity of diespec
         if (_states[newState].roll !== undefined) {
@@ -231,12 +250,12 @@ module.exports = (($) => {
         }
 
         if (!result) {
-          _transitionToState(key);
+          _transitionToNewState(category);
           _isFavorite(_AUTO);
         }
         else {
           _util.boadApp.alert(result, 'BoAD');
-          _transitionToState('error');
+          _transitionToNewState(_ERROR);
           $(_displayDieSpecEl).find(':last-child').addClass('invalid');
         }
       }
@@ -264,17 +283,17 @@ module.exports = (($) => {
       }
 
       const currentState = _getCurrentState();
-      const newState = _getNextState('<span>roll</span>');
+      const newState = _getNextState(_ROLL);
 
       if (newState !== undefined) {
         _dice = Dice();
 
-        if (currentState === 'roll') {
+        if (currentState === _ROLL) {
           _undoStack.pop();
           _eraseDisplayResult();
         }
 
-        _transitionToState(_ROLL);
+        _transitionToNewState(_ROLL);
         _dice.parse($(_displayDieSpecEl).text());
         const result = _dice.roll();
 
@@ -299,7 +318,7 @@ module.exports = (($) => {
       }
     }
 
-    $('.key-d, .key-digit, .key-keep, .key-operation')
+    $('.key-die, .key-digit, .key-keep, .key-operator')
       .on('click', _enterNew);
     $('.key-delete').on('click', _deleteLast);
     $('.key-roll').on('click', _roll);
