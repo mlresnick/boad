@@ -19,9 +19,13 @@ module.exports = (($) => {
         _util.updateStorage(_HISTORY, _historyList);
       }
 
-      function _add(dieSpecHtml, resultHtml) {
+      function _add(dieSpecHtml, resultHtml, favoriteName = null) {
+        let dieSpec = dieSpecHtml;
+        if (favoriteName) {
+          dieSpec = `${favoriteName} - ${dieSpec}`;
+        }
         _historyList.push({
-          dieSpec: dieSpecHtml,
+          dieSpec,
           result: resultHtml,
         });
 

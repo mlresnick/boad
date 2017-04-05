@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO: Merge Favorite and DieSpec objects
 const Util = require('./Util.js');
 const DieSpec = require('./DieSpec.js');
 
@@ -47,7 +48,6 @@ module.exports = (($) => {
 
       function _find(arg) {
         let result;
-
         switch(typeof arg) {
           case 'number':
             result = _favoritesList[arg];
@@ -216,9 +216,8 @@ module.exports = (($) => {
       function _rollFavorite(event) {
         const name = $(event.currentTarget).closest('li').data('name');
         _util.boadApp.showTab('#calculator');
-        _getCalculator().roll(_model.find(name).dieSpec);
+        _getCalculator().roll(_model.find(name));
       }
-
       function _refreshTab() {
         _favoritesList.empty();
 

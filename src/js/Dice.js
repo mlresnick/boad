@@ -1,3 +1,4 @@
+// TODO: Implement !, d66, dF and possibly d1000
 'use strict';
 
 module.exports = (() => {
@@ -301,7 +302,6 @@ module.exports = (() => {
   }
 
   return {
-    //  explode: _getExplode(), // TODO Implement Explode
     parse: _parse,
     roll: _roll,
     setRandomizer: _setRandomizer,
