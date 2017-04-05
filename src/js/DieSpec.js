@@ -16,8 +16,13 @@ module.exports = (() => {
 
       $(html).each((index, node) => {
         if (node.nodeType === node.ELEMENT_NODE) {
-          const clazz = $(node).attr('class');
-          const newType = clazz.substr(8);
+          const newType =
+            $(arg.currentTarget)
+              .attr('class')
+              .split(' ')
+              .find(className => className.startsWith('display-'))
+              .substring(8);
+
           const newValue = $(node).text();
 
           if (newType !== currentPart.type) {
@@ -66,9 +71,12 @@ module.exports = (() => {
     this.partIndex = -1;
     this.charIndex = 0;
     this.value = '';
+    this.type = '';
 
     this.next = () => {
       let result = false;
+      let value;
+
       if (this.partIndex === -1
           || (this.charIndex === _parts[this.partIndex].value.length)) {
         this.partIndex += 1;
@@ -76,13 +84,17 @@ module.exports = (() => {
       }
 
       if (this.partIndex < _parts.length) {
-        if (_parts[this.partIndex].type === 'd') {
-          this.value = _parts[this.partIndex].value;
+        if (_parts[this.partIndex].type === 'die') {
+          value = _parts[this.partIndex].value;
         }
         else {
-          this.value = _parts[this.partIndex].value.charAt(this.charIndex);
+          value = _parts[this.partIndex].value.charAt(this.charIndex);
         }
-        this.charIndex += this.value.length;
+        this.value = {
+          type: _parts[this.partIndex].type,
+          value,
+        };
+        this.charIndex += value.length;
         result = true;
       }
       return result;

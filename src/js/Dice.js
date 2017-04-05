@@ -1,6 +1,6 @@
-// TODO: Implement !, d66, dF and possibly d1000
 'use strict';
 
+// TODO: Implement !
 module.exports = (() => {
   const _EXPLODE = 1;
   const _COUNT = 2;
@@ -12,15 +12,98 @@ module.exports = (() => {
   const _REPEATS = 8;
 
   /* eslint-disable max-len */
-  // Visual of this expression can be found at http://tinyurl.com/h5wt99z
+  // Visual of this expression can be found at // http://tinyurl.com/kf85ogn
   // It is meant to deal with two similar but subtly different expressions.
   const _REGEX =
-    /^(!)?([1-9]\d*)?d([1-9]\d*|%)(?:(?:([+-](?:[1-9]\d*)?)([LH])|k([+-]?[1-9]\d*))?([+-][1-9]\d*)?)(?:x([1-9]\d*))?$/;
+    /^(!)?([1-9]\d*)?d([1-9]\d*|%|F)(?:(?:([+-](?:[1-9]\d*)?)(?=[LH])([LH])|k([+-]?[1-9]\d*))?([+-][1-9]\d*)?)(?:x([1-9]\d*))?$/;
   /* eslint-enable maxlen */
 
   let _parseResults = [];
+  let _die;
 
-  let _randomizer = { random: sides => (Math.floor((Math.random() * sides)) + 1) };
+  function _randomInt(first, second) {
+    let low = 1;
+    let high;
+    if (second) {
+      low = first;
+      high = second;
+    }
+    else {
+      high = first;
+    }
+    return (Math.floor(Math.random() * (high - low)) + low);
+  }
+
+  // Base class for die definitions
+  function DieDef() {}
+  DieDef.prototype.sides =
+    function sidesImpl() { return Number.parseInt(_parseResults[_SIDES], 10); };
+  DieDef.prototype.sidesToString =
+    function sidesToStringImpl() { return this.sides().toString(); };
+  DieDef.prototype.roll =
+    function rollImpl() { return _randomInt(this.sides()); };
+  DieDef.prototype.exlodeValue =
+    function exlodeValueImpl() { return this.sides(); };
+  DieDef.prototype.canExplode =
+    function canExplodeImpl(roll) { return this.exlodeValue() === roll; };
+  DieDef.prototype.constructor = DieDef;
+
+  // Fudge Dice (range of -1 - +1)
+  function DFDef() { DieDef.call(this); }
+  DFDef.prototype = Object.create(DieDef.prototype);
+  DFDef.prototype.sidesToString =
+    function sidesToStringImpl() { return 'F'; };
+  DFDef.prototype.roll = function rollImpl() { return _randomInt(-1, 1); };
+  DieDef.prototype.exlodeValue = function exlodeValueImpl() { return 1; };
+  DFDef.prototype.constructor = DFDef;
+
+  // Base class for die definitions where the final value is made up of
+  // the concatenation of repeated rolls. Examples are
+  //   - % which can be modelled as 2 D10 rolls, concatenated
+  //   - d66 where the results of 2d6 are concanated, rather than summed. Lowest
+  //     value is 11, highest is 66.
+  function DrepDef(dieCount, sides) {
+    DieDef.call(this);
+    this._dieCount = dieCount;
+    this._sides = sides;
+    this._explodeValue = 0;
+    for (let i = 0; i < this._sides; i++) {
+      this._exlodeValue = (this._explodeValue * 10) + this._sides;
+    }
+  }
+  DrepDef.prototype = Object.create(DieDef.prototype);
+  DrepDef.prototype.sides = function sidesImpl() { return this._sides; };
+  DrepDef.prototype.rollOne =
+    function rollOneImpl() { return _randomInt(this._sides); };
+  DrepDef.prototype.roll = function rollImpl() {
+    let result = 0;
+    for (let i = 0; i < this._dieCount; i++) {
+      result = (result * 10) + this.rollOne();
+    }
+    return result;
+  };
+  DrepDef.prototype.exlodeValue =
+    function exlodeValueImpl() { return this._explodeValue; };
+  DrepDef.prototype.constructor = DrepDef;
+
+
+  function D100Def() { DrepDef.call(this, 2, 10); }
+  D100Def.prototype = Object.create(DrepDef.prototype);
+  D100Def.prototype.sidesToString =
+    function sidesToStringImpl() { return '%'; };
+  D100Def.prototype.constructor = D100Def;
+
+  function D66Def() { DrepDef.call(this, 2, 6); }
+  D66Def.prototype = Object.create(DrepDef.prototype);
+  D66Def.prototype.sidesToString =
+    function sidesToStringImpl() { return '66'; };
+  D66Def.prototype.constructor = D66Def;
+
+  function D1000Def() { DrepDef.call(this, 3, 10); }
+  D1000Def.prototype = Object.create(DrepDef.prototype);
+  D1000Def.prototype.sidesToString =
+    function sidesToStringImpl() { return '1000'; };
+  D1000Def.prototype.constructor = D1000Def;
 
   function _explode() { return (_parseResults[_EXPLODE] === '!'); }
 
@@ -28,13 +111,6 @@ module.exports = (() => {
     return (_parseResults[_COUNT] === undefined)
               ? 1
               : Number.parseInt(_parseResults[_COUNT],
-            10);
-  }
-
-  function _sides() {
-    return (_parseResults[_SIDES] === '%')
-              ? 100
-              : Number.parseInt(_parseResults[_SIDES],
             10);
   }
 
@@ -135,14 +211,14 @@ module.exports = (() => {
     const count = _count();
     const lowHighCount = _lowHighCount();
 
-    if (Math.abs(lowHighCount) > count) {
+    if (Math.abs(lowHighCount) >= count) {
       offendingValue = lowHighCount;
       keepSpec = lowHighCount + _lowHigh();
-      action = (lowHighCount > 0) ? 'add, again,' : 'drop';
+      action = (offendingValue > 0) ? 'add again,' : 'drop';
     }
     else {
       const kCount = _kCount();
-      if (Math.abs(kCount) > count) {
+      if (Math.abs(kCount) >= count) {
         offendingValue = kCount;
         keepSpec = `k${offendingValue}`;
         action = (offendingValue > 0) ? 'keep' : 'drop';
@@ -150,7 +226,8 @@ module.exports = (() => {
     }
 
     if (offendingValue) {
-      result = `Dice to ${action} (${keepSpec}) is larger than the number of dice to roll (${count})`;
+      result = `Dice to roll (${count}) must be larger than the dice to `
+        + `${action} (${keepSpec})`;
     }
 
     return result;
@@ -158,15 +235,20 @@ module.exports = (() => {
 
   function _parse(spec) {
     _parseResults = _REGEX.exec(spec);
-    return _validateSpec();
+    const result = _validateSpec();
+    if (!result) {
+      switch(_parseResults[_SIDES]) {
+        case '%': _die = new D100Def(); break;
+        case '66': _die = new D66Def(); break;
+        case '1000': _die = new D1000Def(); break;
+        case 'F': _die = new DFDef(); break;
+        default: _die = new DieDef();
+      }
+    }
+    return result;
   }
 
-
-  function _setRandomizer(arg) { _randomizer = arg; }
-
   function _resultSort(a, b) { return b - a; }
-
-  function _random() { return _randomizer.random(_sides()); }
 
   function _rollOne() {
     let result = 0;
@@ -179,7 +261,7 @@ module.exports = (() => {
 
     _rollResults = [];
     for (i = 0; i < _count(); i++) {
-      _rollResults[i] = _random(_sides());
+      _rollResults[i] = _die.roll();
     }
 
     if ((_removeCount() > 0) || (_addCount() > 0)) {
@@ -217,8 +299,8 @@ module.exports = (() => {
       do {
         addedCount = 0;
         for (i = originalStart; i < originalLength; i++) {
-          if (_rollResults[i] === _sides()) {
-            _rollResults.push(_random(_sides));
+          if (_rollResults[i] === _die.sides()) {
+            _rollResults.push(_die.roll());
             addedCount += 1;
           }
         }
@@ -259,13 +341,7 @@ module.exports = (() => {
       result += _count();
     }
 
-    result += 'd';
-    if (_sides() === 100) {
-      result += '%';
-    }
-    else {
-      result += _sides();
-    }
+    result += `d${_die.sidesToString()}`;
 
     if (_lowHighCount() !== 0) {
       if (_lowHighCount() === -1) {
@@ -304,7 +380,6 @@ module.exports = (() => {
   return {
     parse: _parse,
     roll: _roll,
-    setRandomizer: _setRandomizer,
     toString: _toString,
   };
 });
