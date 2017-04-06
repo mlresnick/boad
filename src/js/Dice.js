@@ -12,7 +12,7 @@ module.exports = (() => {
   const _REPEATS = 8;
 
   /* eslint-disable max-len */
-  // Visual of this expression can be found at // http://tinyurl.com/kf85ogn
+  // Visual of this expression can be found at http://tinyurl.com/kf85ogn
   // It is meant to deal with two similar but subtly different expressions.
   const _REGEX =
     /^(!)?([1-9]\d*)?d([1-9]\d*|%|F)(?:(?:([+-](?:[1-9]\d*)?)(?=[LH])([LH])|k([+-]?[1-9]\d*))?([+-][1-9]\d*)?)(?:x([1-9]\d*))?$/;
@@ -108,16 +108,21 @@ module.exports = (() => {
   function _explode() { return (_parseResults[_EXPLODE] === '!'); }
 
   function _count() {
-    return (_parseResults[_COUNT] === undefined)
-              ? 1
-              : Number.parseInt(_parseResults[_COUNT],
-            10);
+    let result = 1;
+
+    if (_parseResults[_COUNT] !== undefined) {
+      result = Number.parseInt(_parseResults[_COUNT], 10);
+    }
+
+    return result;
   }
 
   function _modifier() {
-    return (_parseResults[_MODIFIER] !== undefined)
-      ? Number.parseInt(_parseResults[_MODIFIER], 10)
-      : 0;
+    let result = 0;
+    if (_parseResults[_MODIFIER] !== undefined) {
+      result = Number.parseInt(_parseResults[_MODIFIER], 10);
+    }
+    return result;
   }
 
   function _lowHighCount() {

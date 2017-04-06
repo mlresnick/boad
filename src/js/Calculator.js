@@ -209,12 +209,7 @@ module.exports = (($) => {
       let result = null;
 
       if (arg instanceof jQuery.Event) {
-        displayCategory =
-          $(arg.currentTarget)
-            .attr('class')
-            .split(' ')
-            .find(className => className.startsWith('key-'))
-            .substring(4);
+        displayCategory = _util.getTypeFromClass(arg.currentTarget, 'key-');
         text = arg.target.textContent;
       }
       else {

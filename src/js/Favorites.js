@@ -84,9 +84,7 @@ module.exports = (($) => {
         }
         else {
           // New
-          // TODO Have DieSpec constructor take arguments
-          dieSpec.isFavorite(true);
-          _favoritesList.push({ name, dieSpec });
+          _favoritesList.push({ name, dieSpec: dieSpec.toObject() });
         }
 
         _updateStorage();
@@ -121,14 +119,9 @@ module.exports = (($) => {
         return result;
       }
 
-      _favoritesList = _util.getLocalStorage(_FAVORITES, [], (key, value) => {
-        if (key === 'dieSpec') {
-          const dieSpec = DieSpec();
-          dieSpec.set(value);
-          return dieSpec;
-        }
-        return value;
-      });
+      _favoritesList = _util.getLocalStorage(_FAVORITES, [],
+        (key, value) => ((key === 'dieSpec') ? DieSpec(value) : value)
+      );
 
       return {
         // addOrModify: _addOrModify,
@@ -171,8 +164,7 @@ module.exports = (($) => {
         function _getFavorite() {
           const newName = $(_newNameEl).val();
           const currentName = _currentName();
-          const dieSpec = DieSpec();
-          dieSpec.set($(_dieSpecEl).html());
+          const dieSpec = DieSpec($(_dieSpecEl).html());
           return { newName, dieSpec, currentName };
         }
 
@@ -220,6 +212,7 @@ module.exports = (($) => {
         _util.boadApp.showTab('#calculator');
         _getCalculator().roll(_model.find(name));
       }
+
       function _refreshTab() {
         _favoritesList.empty();
 
