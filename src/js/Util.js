@@ -25,6 +25,14 @@ module.exports = ((Framework7) => {
       localStorage.setItem(key, JSON.stringify(value, replacer));
     }
 
+    function _getTypeFromClass(node, prefix) {
+      return $(node)
+          .attr('class')
+          .split(' ')
+          .find(className => className.startsWith(prefix))
+          .substring(prefix.length);
+    }
+
     _boadApp.boadSettings =
       _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
     _boadApp.addView('.view-main', { domCache: true });
@@ -32,6 +40,7 @@ module.exports = ((Framework7) => {
     return {
       boadApp: _boadApp,
       getLocalStorage: _getLocalStorage,
+      getTypeFromClass: _getTypeFromClass,
       RESULT_SYMBOL: _RESULT_SYMBOL,
       updateStorage: _updateStorage,
     };

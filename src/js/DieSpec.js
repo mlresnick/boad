@@ -1,13 +1,16 @@
 'use strict';
 
-module.exports = (() => {
+const Util = require('./Util.js');
+
+module.exports = ((arg) => {
+  const _util = Util.getInstance();
+
   let _parts;
   let _favorite;
 
-  function _set(arg, isFavorite) {
+  function _set() {
     if (typeof arg === 'object') {
-      _parts = arg._parts;
-      _favorite = arg._favorite;
+      _parts = arg.parts;
     }
     else {
       const html = arg;
@@ -16,13 +19,7 @@ module.exports = (() => {
 
       $(html).each((index, node) => {
         if (node.nodeType === node.ELEMENT_NODE) {
-          const newType =
-            $(arg.currentTarget)
-              .attr('class')
-              .split(' ')
-              .find(className => className.startsWith('display-'))
-              .substring(8);
-
+          const newType = _util.getTypeFromClass(node, 'display-');
           const newValue = $(node).text();
 
           if (newType !== currentPart.type) {
@@ -32,28 +29,22 @@ module.exports = (() => {
           currentPart.value += newValue;
         }
       });
-
-      if (isFavorite) {
-        _favorite = true;
-      }
     }
-  }
 
-  function _isFavorite(value) {
-    if (value !== undefined) {
-      _favorite = value;
-    }
-    return (_favorite === true);
   }
-
-  function _toJSON() { return { _parts, _favorite }; }
 
   function _toString() {
+    if (!_parts) {
+      return 'NULL';
+    }
     return _parts.reduce((result, part) => result.concat(part.value), '')
            + (_favorite ? '*' : '');
   }
 
   function _toHTML() {
+    if (!_parts) {
+      return 'NULL';
+    }
     return _parts.reduce(
       (result, part) =>
         result.concat(
@@ -101,14 +92,16 @@ module.exports = (() => {
     };
   }
 
+  function _toObject() { return { parts: _parts }; }
+
+  if (arg) {
+    _set();
+  }
+
   return {
-    set: _set,
+    toHTML: _toHTML,
     toString: _toString,
     newWalker: () => new Walker(),
-    parts: _parts,
-    toJSON: _toJSON,
-    toHTML: _toHTML,
-    isFavorite: _isFavorite,
-    type: 'DieSpec',
+    toObject: _toObject,
   };
 });
