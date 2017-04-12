@@ -4,7 +4,7 @@
   "description": "Best of All Dice - die roller for table top games",
   "main": "./app/boad.js",
   "directories": {
-    "doc": "./doc"
+    "doc": "doc"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -22,8 +22,12 @@
   "devDependencies": {
     "browserify": "^14.1.0",
     "chalk": "^1.1.3",
+    "glob": "^7.1.1",
     "gulp": "^3.9.1",
+    "gulp-changed": "^2.0.0",
     "gulp-connect": "^5.0.0",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-jasmine-browser": "^1.7.1",
     "gulp-rename": "^1.2.2",
     "gulp-rm": "^1.0.2",
     "gulp-sass": "^3.1.0",
@@ -31,6 +35,7 @@
     "gulp-sourcemaps": "^2.4.1",
     "gulp-spy": "^1.1.0",
     "gulp-util": "^3.0.8",
+    "jasmine": "^2.5.3",
     "node-notifier": "^5.0.2",
     "stream-browserify": "^2.0.1",
     "vinyl-buffer": "^1.0.0",
