@@ -11,12 +11,10 @@ module.exports = (() => {
   const _MODIFIER = 7;
   const _REPEATS = 8;
 
-  /* eslint-disable max-len */
   // Visual of this expression can be found at http://tinyurl.com/kf85ogn
   // It is meant to deal with two similar but subtly different expressions.
-  const _REGEX =
-    /^(!)?([1-9]\d*)?d([1-9]\d*|%|F)(?:(?:([+-](?:[1-9]\d*)?)(?=[LH])([LH])|k([+-]?[1-9]\d*))?([+-][1-9]\d*)?)(?:x([1-9]\d*))?$/;
-  /* eslint-enable maxlen */
+  // eslint-disable-next-line max-len
+  const _REGEX = /^(!)?([1-9]\d*)?d([1-9]\d*|%|F)(?:(?:([+-](?:[1-9]\d*)?)(?=[LH])([LH])|k([+-]?[1-9]\d*))?([+-][1-9]\d*)?)(?:x([1-9]\d*))?$/;
 
   let _parseResults = [];
   let _die;
