@@ -1,7 +1,9 @@
 'use strict';
 
 const Util = require('./Util.js');
-const Dice = require('./Dice.js');
+// const Dice = require('./Dice.js');
+// XXX: const DS = require('./ds.js');
+const stateMachine = require('./state-machine.js');
 const Favorites = require('./Favorites.js');
 const History = require('./History.js');
 
@@ -47,60 +49,60 @@ module.exports = (($) => {
     //       ('+'n'L') re-add lowest n
     //       ('+'n'h') re-add highest-n
     //
-    const _states = {
-      start:            {digit: 'count',            die: 'die',
-                                                    dx: 'dx'},
-      count:            {digit: 'count',            die: 'die',
-                                                    dx: 'dx'},
-      die:              {                                      k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
-      dx:               {digit: 'dxDigit' },
-      dxDigit:          {digit: 'dxDigit',                     k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
-      postDieOp:        {digit: 'postDieDigit',                lh: 'lh'},
-      k:                {digit: 'kCount',                                operator: 'kOperator'},
-      kOperator:        {digit: 'kCount'},
-      kCount:           {digit: 'kCount',                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-      postDieDigit:     {digit: 'postDieDigit',                lh: 'lh',                               x: 'x', roll: 'roll'},
-      lh:               {                                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-      modifierOperator: {digit: 'modifierDigit'},
-      modifierDigit:    {digit: 'modifierDigit',                                                       x: 'x', roll: 'roll'},
-      x:                {digit: 'xDigit'},
-      xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
-      roll:             {digit: 'count',            die: 'die',
-                                                    dx: 'dx',                                                  roll: 'roll'},
-      error:            { /* There's no escape, except to delete */ }
-    };
-
-    const _category = {
-      0: 'digit', 1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit',
-      5: 'digit', 6: 'digit', 7: 'digit', 8: 'digit', 9: 'digit',
-
-      d4: 'die', d6: 'die', d8: 'die', d10: 'die', d12: 'die',
-      d20: 'die', 'd%': 'die',
-      d: 'dx',
-
-      '+': 'operator', '-': 'operator',
-
-      k:    'k',
-      L:    'lh', H: 'lh',
-
-      x:    'x',
-
-      roll: 'roll',
-    };
-
-    const _displayClass = {
-      digit: 'digit',
-
-      die: 'die',
-      dx:  'die',
-
-      operator: 'operator',
-      x:        'operator',
-
-      k:  'keep',
-      lh: 'keep'
-    };
-    /* eslint-enable */
+    // const _states = {
+    //   start:            {digit: 'count',            die: 'die',
+    //                                                 dx: 'dx'},
+    //   count:            {digit: 'count',            die: 'die',
+    //                                                 dx: 'dx'},
+    //   die:              {                                      k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
+    //   dx:               {digit: 'dxDigit' },
+    //   dxDigit:          {digit: 'dxDigit',                     k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
+    //   postDieOp:        {digit: 'postDieDigit',                lh: 'lh'},
+    //   k:                {digit: 'kCount',                                operator: 'kOperator'},
+    //   kOperator:        {digit: 'kCount'},
+    //   kCount:           {digit: 'kCount',                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
+    //   postDieDigit:     {digit: 'postDieDigit',                lh: 'lh',                               x: 'x', roll: 'roll'},
+    //   lh:               {                                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
+    //   modifierOperator: {digit: 'modifierDigit'},
+    //   modifierDigit:    {digit: 'modifierDigit',                                                       x: 'x', roll: 'roll'},
+    //   x:                {digit: 'xDigit'},
+    //   xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
+    //   roll:             {digit: 'count',            die: 'die',
+    //                                                 dx: 'dx',                                                  roll: 'roll'},
+    //   error:            { /* There's no escape, except to delete */ }
+    // };
+    //
+    // const _category = {
+    //   0: 'digit', 1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit',
+    //   5: 'digit', 6: 'digit', 7: 'digit', 8: 'digit', 9: 'digit',
+    //
+    //   d4: 'die', d6: 'die', d8: 'die', d10: 'die', d12: 'die',
+    //   d20: 'die', 'd%': 'die',
+    //   d: 'dx',
+    //
+    //   '+': 'operator', '-': 'operator',
+    //
+    //   k:    'k',
+    //   L:    'lh', H: 'lh',
+    //
+    //   x:    'x',
+    //
+    //   roll: 'roll',
+    // };
+    //
+    // const _displayClass = {
+    //   digit: 'digit',
+    //
+    //   die: 'die',
+    //   dx:  'die',
+    //
+    //   operator: 'operator',
+    //   x:        'operator',
+    //
+    //   k:  'keep',
+    //   lh: 'keep'
+    // };
+    // /* eslint-enable */
 
     const UndoStack = (() => {
       const _stack = [{ state: 'count' }];
@@ -182,13 +184,14 @@ module.exports = (($) => {
       _isFavorite(_AUTO);
     }
 
-    function _getNextState(category) {
-      return _states[_getCurrentState()][category];
-    }
+    // XXX:
+    // function _getNextState(category) {
+    //   return _states[_getCurrentState()][category];
+    // }
 
-    function _transitionToNewState(category) {
+    function _transitionToNewState(category, char) {
       const newState =
-        (category !== _ERROR) ? _getNextState(category) : _ERROR;
+        (category !== _ERROR) ? stateMachine.nextState(category, char) : _ERROR;
 
       if (newState !== undefined) {
         _undoStack.push(newState);
@@ -198,6 +201,7 @@ module.exports = (($) => {
     }
 
     function _enterNew(arg) {
+      console.log('entering enterNew');
       const categoryMap = {
         die: { dx: 'dx' },
         operator: { x: 'x' },
@@ -224,11 +228,11 @@ module.exports = (($) => {
         category = displayCategory;
       }
 
-      const newState = _getNextState(category);
+      const newState = stateMachine.nextState(_getCurrentState(), text);
 
-      if (newState !== undefined) {
+      if (newState !== stateMachine.states.error) {
         // Are we starting a new die specification?
-        if (_getCurrentState() === _ROLL) {
+        if (_getCurrentState() === stateMachine.states.roll) {
           _clear();
         }
 
@@ -239,18 +243,18 @@ module.exports = (($) => {
         );
 
         // Test validity of diespec
-        if (_states[newState].roll !== undefined) {
+        if (stateMachine.canRoll(newState)) {
           const _testDice = Dice();
           result = _testDice.parse($(_displayDieSpecEl).text());
         }
 
         if (!result) {
-          _transitionToNewState(category);
+          _transitionToNewState(category, text);
           _isFavorite(_AUTO);
         }
         else {
           _util.boadApp.alert(result, 'BoAD');
-          _transitionToNewState(_ERROR);
+          _transitionToNewState(_ERROR, '');
           $(_displayDieSpecEl).find(':last-child').addClass('invalid');
         }
       }
@@ -278,7 +282,7 @@ module.exports = (($) => {
       }
 
       const currentState = _getCurrentState();
-      const newState = _getNextState(_ROLL);
+      const newState = stateMachine.nextState(_ROLL);
 
       if (newState !== undefined) {
         _dice = Dice();
@@ -288,13 +292,14 @@ module.exports = (($) => {
           _eraseDisplayResult();
         }
 
-        _transitionToNewState(_ROLL);
+        _transitionToNewState(_ROLL, _ROLL);
         _dice.parse($(_displayDieSpecEl).text());
         const result = _dice.roll();
 
         const resultHtml =
           '<span class="display-result">' +
-  `${_util.RESULT_SYMBOL}<span class="display-result-value">${result}</span>` +
+            `${_util.RESULT_SYMBOL}` +
+            `<span class="display-result-value">${result}</span>` +
           '</span>';
         $('.display').append(resultHtml);
         _history.add(_getDieSpecHtml(), resultHtml, favoriteName);
@@ -308,7 +313,7 @@ module.exports = (($) => {
 
     function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
-      if (_states[_getCurrentState()].roll !== undefined) {
+      if (stateMachine.canRoll(_getCurrentState())) {
         _favorites.add(_getDieSpecHtml());
       }
     }
