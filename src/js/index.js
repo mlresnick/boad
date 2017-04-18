@@ -12,10 +12,10 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   };
 
   $('head').append(
-    `<link rel="stylesheet" href="lib/css/framework7.${platform}.css">`
+    `<link rel="stylesheet" href="./lib/css/framework7.${platform}.css">`
   );
   $('head').append(
-    `<link rel="stylesheet" href="lib/css/framework7.${platform}.colors.css">`
+    `<link rel="stylesheet" href="./lib/css/framework7.${platform}.colors.css">`
   );
   $('head').append(meta[platform]);
 });

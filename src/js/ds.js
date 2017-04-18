@@ -4,7 +4,7 @@ const stateMachine = require('./state-machine.js');
 
 module.exports = ((arg) => {
   // XXX:
-  const _dieSpecString = arg;
+  // const _dieSpecString = arg;
   const _dieSpec = {
     count: '',
     sides: '',

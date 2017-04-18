@@ -8,9 +8,8 @@ const chalk = require('chalk');
 const connect = require('gulp-connect');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
-<<<<<<< HEAD
-=======
 const jasmine = require('gulp-jasmine');
+=======
 const notifier = require('node-notifier');
 >>>>>>> Create refactored die spec and state machine; create unit tests for same
 const rm = require('gulp-rm');
@@ -147,20 +146,6 @@ gulp.task(':build', buildDependencies);
 gulp.task(':clean',
   () => gulp.src(['./app/**/*', './app/**/.*'], { read: false }).pipe(rm())
 );
-
-const specs = './spec/**/*-spec.js';
-
-gulp.task('tests', ['js'], () =>
-  gulp.src(specs).pipe(jasmine({ verbose: true }))
-);
-
-// XXX gulp.task('jasmine', ['package-src', 'test-dev'], () => {
-//   const inputFiles = ['./app/js/alt-boad.js', './app/js/spec.js'];
-//   return gulp.src(inputFiles)
-//     .pipe(watch(inputFiles))
-//     .pipe(jasmineBrowser.specRunner())
-//     .pipe(jasmineBrowser.server({ port: 8080 }));
-// });
 
 gulp.task('watch', () => {
   gulp.watch(['./src/**/*.html'], ['html']);

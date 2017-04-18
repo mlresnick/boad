@@ -4,6 +4,7 @@ module.exports = (() => {
   let _instance;
 
   function _init() {
+    const _ROLL = 'roll';
 
     /* eslint-disable object-property-newline, key-spacing */
     const _category = {
@@ -95,18 +96,19 @@ error:            { /* There's no escape, except to delete */ },
     }; /* eslint-enable */
 
     /* eslint-disable key-spacing */
-    const _displayClass = {
-      digit: 'digit',
-      0:     'digit',
-
-      die: 'die',
-
-      operator: 'operator',
-      x:        'operator',
-
-      k:  'keep',
-      lh: 'keep',
-    }; /* eslint-enable */
+    // XXX:
+    // const _displayClass = {
+    //   digit: 'digit',
+    //   0:     'digit',
+    //
+    //   die: 'die',
+    //
+    //   operator: 'operator',
+    //   x:        'operator',
+    //
+    //   k:  'keep',
+    //   lh: 'keep',
+    // }; /* eslint-enable */
 
     function _nextState(originalState, chars) {
       let char;
@@ -156,9 +158,14 @@ error:            { /* There's no escape, except to delete */ },
       return result;
     }
 
+    function _canRoll(state) {
+      return (_nextState(state, _ROLL).state !== _states.error);
+    }
+
     return {
-      states: _states,
+      canRoll: _canRoll,
       nextState: _nextState,
+      states: _states,
     };
   }
 
