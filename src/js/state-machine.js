@@ -3,8 +3,15 @@
 module.exports = (() => {
   let _instance;
 
+  function _State(initialValues = {}) {
+    this.state = initialValues.state || '';
+    this.errorCode = initialValues.errorCode || 0;
+    this.value = initialValues.value || null;
+    this.previousState = initialValues.previousState || null;
+  }
+
   function _init() {
-    const _ROLL = 'roll';
+    const _ROLL = 'r';
 
     /* eslint-disable object-property-newline, key-spacing */
     const _category = {
@@ -26,7 +33,7 @@ module.exports = (() => {
 
       x:    'x',
 
-      roll: 'roll',
+      r:    'roll',
     }; /* eslint-enable */
 
 
@@ -66,14 +73,16 @@ module.exports = (() => {
     }; /* eslint-enable */
 
 
+    function _getInitialState() { return new _State({ state: 'start' }); }
+
     /* eslint-disable indent, key-spacing, no-multi-spaces, max-len */
     const _stateTable = {
 start:            { digit: 'countDigit',                  die: 'die' },
 countDigit:       { digit: 'countDigit', 0: 'countDigit', die: 'die' },
 
-die:              { digit: 'dieDigit',                'die-char': 'specialDie'                                                     },
-dieDigit:         { digit: 'dieDigit', 0: 'dieDigit',                          k: 'k', operator: 'postDieOp', x: 'x', roll: 'roll' },
-specialDie:       {                                                            k: 'k', operator: 'postDieOp', x: 'x', roll: 'roll' },
+die:              { digit: 'dieDigit',                'die-char': 'specialDie',                               x: 'dieDigit'              },
+dieDigit:         { digit: 'dieDigit', 0: 'dieDigit',                          k: 'k', operator: 'postDieOp', x: 'x',       roll: 'roll' },
+specialDie:       {                                                            k: 'k', operator: 'postDieOp', x: 'x',       roll: 'roll' },
 
 postDieOp:        { digit: 'postDieDigit',                    lh: 'lh'                       },
 postDieDigit:     { digit: 'postDieDigit', 0: 'postDieDigit', lh: 'lh', x: 'x', roll: 'roll' },
@@ -113,47 +122,50 @@ error:            { /* There's no escape, except to delete */ },
     function _nextState(originalState, chars) {
       let char;
       let charClass;
-      const result = {
-        state: null,
-        errorCode: 0,
-        value: '',
-        previousState: originalState.state,
-      };
-      let state = originalState;
+      let result = new _State(originalState);
 
-      if (typeof originalState === 'object') {
-        state = originalState.state;
-      }
-
-      for (let i = 0; i < chars.length && state !== _states.error; i++) {
+      for (
+        let i = 0;
+        (i < chars.length) && (result.state !== _states.error);
+        i++
+      ) {
         char = chars.charAt(i);
         charClass = _category[char];
+
         if (charClass) {
-          if (_stateTable[state]) {
-            if (_stateTable[state][charClass]) {
-              state = _stateTable[state][charClass];
+          if (_stateTable[result.state]) {
+            if (_stateTable[result.state][charClass]) {
+              result = new _State({
+                state: _stateTable[result.state][charClass],
+                value: char,
+                previousState: result.state,
+              });
             }
             else {
-              result.state = _states.error;
-              result.errorCode = _states.errorCode.invalidTransition;
-              result.value = `[${state}, ${char}]`;
+              result = new _State({
+                state: _states.error,
+                errorCode: _states.errorCode.invalidTransition,
+                value: `[${result.state}, ${char}]`,
+                previousState: result.state,
+              });
             }
           }
           else {
-            result.state = _states.error;
-            result.errorCode = _states.errorCode.invalidState;
-            result.value = state;
+            result = new _State({
+              state: _states.error,
+              errorCode: _states.errorCode.invalidState,
+              value: result.state,
+            });
           }
         }
         else {
-          result.state = _states.error;
-          result.errorCode = _states.errorCode.invalidChar;
-          result.value = char;
+          result = new _State({
+            state: _states.error,
+            errorCode: _states.errorCode.invalidChar,
+            value: char,
+            previousState: result.state,
+          });
         }
-      }
-      if (!result.state) {
-        result.state = state;
-        result.value = char;
       }
       return result;
     }
@@ -164,7 +176,10 @@ error:            { /* There's no escape, except to delete */ },
 
     return {
       canRoll: _canRoll,
+      getInitialState: _getInitialState,
       nextState: _nextState,
+      ROLL: _ROLL,
+      State: _State,
       states: _states,
     };
   }

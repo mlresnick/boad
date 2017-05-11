@@ -149,7 +149,8 @@ gulp.task(':clean',
 
 gulp.task('watch', () => {
   gulp.watch(['./src/**/*.html'], ['html']);
-  gulp.watch(['./src/**/js/**/*.js', './spec/**/*-spec.js'], ['tests']);
+  gulp.watch(['./src/**/js/**/*.js'], ['js']);
+  // gulp.watch(['./src/**/js/**/*.js', './spec/**/*-spec.js'], ['tests']);
   gulp.watch(['./src/scss/**/*.scss'], ['scss']);
   gulp.watch(['./node_modules/jquery/dist/jquery.js'], ['jquery']);
   gulp.watch(nodeList, ['node']);

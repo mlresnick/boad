@@ -8,9 +8,12 @@ const state = stateMachine.states;
 
 describe('State machine', () => {
 
-  describe('works properly by', () => {
+  const startState =
+    new stateMachine.State({ state: stateMachine.states.start });
 
-    it('actually imports', () => {
+  describe('properly', () => {
+
+    it('imports as a module', () => {
       expect(stateMachine).toBeDefined();
     });
 
@@ -19,51 +22,61 @@ describe('State machine', () => {
     });
 
     it('handles a single character', () => {
-      const newState = stateMachine.nextState(state.start, 'd');
-      expect(newState.state).toBe(state.die);
+      expect(stateMachine.nextState(startState, 'd').state).toBe(state.die);
     });
 
     it('handles a string of characters', () => {
-      expect(stateMachine.nextState(state.start, '4d6').state)
+      expect(stateMachine.nextState(startState, '4d6').state)
         .toBe(state.dieDigit);
     });
 
-    it('a state object', () => {
-      expect(stateMachine.nextState(
-          { state: state.start, errorCode: 0, value: '' },
-          '4d6'
-        ).state)
-        .toBe(state.dieDigit);
+    it('return a state object', () => {
+      const expectedState = new stateMachine.State({
+        state: 'dieDigit',
+        value: '6',
+        previousState: 'die',
+      });
+
+      expect(stateMachine.nextState(startState, '4d6'))
+        .toEqual(expectedState);
     });
   });
 
   describe('fails properly when it', () => {
 
     it('handles a bad character', () => {
-      expect(stateMachine.nextState(state.start, '#')).toEqual({
+      const expectedState = new stateMachine.State({
         state: state.error,
         errorCode: state.errorCode.invalidChar,
         value: '#',
-        previousState: undefined,
+        previousState: 'start',
       });
+      expect(stateMachine.nextState(startState, '#')).toEqual(expectedState);
     });
 
     it('handles a bad state', () => {
-      expect(stateMachine.nextState('#', 'd')).toEqual({
+      const initialStste = new stateMachine.State({ state: '#' });
+
+      const expectedState = new stateMachine.State({
         state: state.error,
         errorCode: state.errorCode.invalidState,
         value: '#',
-        previousState: undefined,
       });
+
+      expect(stateMachine.nextState(initialStste, 'd'))
+      .toEqual(expectedState);
     });
 
     it('handles a bad combination of legal values', () => {
-      expect(stateMachine.nextState(state.start, '+')).toEqual({
+      const expectedState = new stateMachine.State({
         state: state.error,
         errorCode: state.errorCode.invalidTransition,
-        value: `[${state.start}, +]`,
-        previousState: undefined,
+        value: `[${startState.state}, +]`,
+        previousState: stateMachine.states.start,
       });
+
+      expect(stateMachine.nextState(startState, '+'))
+      .toEqual(expectedState);
     });
   });
 });
