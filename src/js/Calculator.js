@@ -1,8 +1,7 @@
 'use strict';
 
 const Util = require('./Util.js');
-// const Dice = require('./Dice.js');
-// XXX: const DS = require('./ds.js');
+const DS = require('./ds.js');
 const stateMachine = require('./state-machine.js');
 const Favorites = require('./Favorites.js');
 const History = require('./History.js');
@@ -14,8 +13,6 @@ module.exports = (($) => {
   let _instance;
 
   function _init() {
-    const _ROLL = 'roll';
-    const _ERROR = 'error';
     const _AUTO = -1;
     const _displayDieSpecEl = $('.display .display-die-spec');
     let _dice;
@@ -23,7 +20,6 @@ module.exports = (($) => {
     const _favorites = Favorites.getInstance();
     const _util = Util.getInstance();
 
-    /* eslint-disable */
     //
     // [count]die[keep-drop][modifier][repetitions]
     //
@@ -49,63 +45,9 @@ module.exports = (($) => {
     //       ('+'n'L') re-add lowest n
     //       ('+'n'h') re-add highest-n
     //
-    // const _states = {
-    //   start:            {digit: 'count',            die: 'die',
-    //                                                 dx: 'dx'},
-    //   count:            {digit: 'count',            die: 'die',
-    //                                                 dx: 'dx'},
-    //   die:              {                                      k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
-    //   dx:               {digit: 'dxDigit' },
-    //   dxDigit:          {digit: 'dxDigit',                     k: 'k',   operator: 'postDieOp',        x: 'x', roll: 'roll'},
-    //   postDieOp:        {digit: 'postDieDigit',                lh: 'lh'},
-    //   k:                {digit: 'kCount',                                operator: 'kOperator'},
-    //   kOperator:        {digit: 'kCount'},
-    //   kCount:           {digit: 'kCount',                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-    //   postDieDigit:     {digit: 'postDieDigit',                lh: 'lh',                               x: 'x', roll: 'roll'},
-    //   lh:               {                                                operator: 'modifierOperator', x: 'x', roll: 'roll'},
-    //   modifierOperator: {digit: 'modifierDigit'},
-    //   modifierDigit:    {digit: 'modifierDigit',                                                       x: 'x', roll: 'roll'},
-    //   x:                {digit: 'xDigit'},
-    //   xDigit:           {digit: 'xDigit',                                                                      roll: 'roll'},
-    //   roll:             {digit: 'count',            die: 'die',
-    //                                                 dx: 'dx',                                                  roll: 'roll'},
-    //   error:            { /* There's no escape, except to delete */ }
-    // };
-    //
-    // const _category = {
-    //   0: 'digit', 1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit',
-    //   5: 'digit', 6: 'digit', 7: 'digit', 8: 'digit', 9: 'digit',
-    //
-    //   d4: 'die', d6: 'die', d8: 'die', d10: 'die', d12: 'die',
-    //   d20: 'die', 'd%': 'die',
-    //   d: 'dx',
-    //
-    //   '+': 'operator', '-': 'operator',
-    //
-    //   k:    'k',
-    //   L:    'lh', H: 'lh',
-    //
-    //   x:    'x',
-    //
-    //   roll: 'roll',
-    // };
-    //
-    // const _displayClass = {
-    //   digit: 'digit',
-    //
-    //   die: 'die',
-    //   dx:  'die',
-    //
-    //   operator: 'operator',
-    //   x:        'operator',
-    //
-    //   k:  'keep',
-    //   lh: 'keep'
-    // };
-    // /* eslint-enable */
 
     const UndoStack = (() => {
-      const _stack = [{ state: 'count' }];
+      const _stack = [stateMachine.getInitialState()];
 
 
       function _peek() {
@@ -121,9 +63,7 @@ module.exports = (($) => {
 
       function _pop() { return (_stack.length > 1) ? _stack.pop() : null; }
 
-      function _push(newState) {
-        _stack.push({ state: (newState || _peek().state) });
-      }
+      function _push(newState) { _stack.push(newState); }
 
       function _toString() { return JSON.stringify(_stack); }
 
@@ -138,7 +78,7 @@ module.exports = (($) => {
 
     const _undoStack = UndoStack;
 
-    function _getCurrentState() { return _undoStack.peek().state; }
+    function _getCurrentState() { return _undoStack.peek(); }
 
     function _eraseDisplayResult() {
       return ($('.display-result').remove().length !== 0);
@@ -184,33 +124,31 @@ module.exports = (($) => {
       _isFavorite(_AUTO);
     }
 
-    // XXX:
-    // function _getNextState(category) {
-    //   return _states[_getCurrentState()][category];
-    // }
-
-    function _transitionToNewState(category, char) {
-      const newState =
-        (category !== _ERROR) ? stateMachine.nextState(category, char) : _ERROR;
-
-      if (newState !== undefined) {
-        _undoStack.push(newState);
+    function _transitionToNewState(chars) {
+      const l = chars.length;
+      let newState = new stateMachine.State();
+      for (
+        let i = 0;
+        (i < l) && (newState.state !== stateMachine.states.error);
+        i++
+      ) {
+        const oldState = _getCurrentState();
+        if (oldState.state !== stateMachine.states.error) {
+          newState = stateMachine.nextState(oldState, chars.charAt(i));
+          if (newState !== undefined) {
+            _undoStack.push(newState);
+          }
+        }
+        else {
+          newState = oldState;
+        }
       }
-
       return newState;
     }
 
     function _enterNew(arg) {
-      console.log('entering enterNew');
-      const categoryMap = {
-        die: { dx: 'dx' },
-        operator: { x: 'x' },
-        keep: { k: 'k', L: 'lh', H: 'lh' },
-      };
       let displayCategory;
-      let category;
       let text;
-      let result = null;
 
       if (arg instanceof jQuery.Event) {
         displayCategory = _util.getTypeFromClass(arg.currentTarget, 'key-');
@@ -221,18 +159,13 @@ module.exports = (($) => {
         text = arg.value;
       }
 
-      if (categoryMap[displayCategory] && categoryMap[displayCategory][text]) {
-        category = categoryMap[displayCategory][text];
-      }
-      else {
-        category = displayCategory;
-      }
+      const currentState = _getCurrentState();
+      const newState = _transitionToNewState(text);
 
-      const newState = stateMachine.nextState(_getCurrentState(), text);
+      if (newState.state !== stateMachine.states.error) {
 
-      if (newState !== stateMachine.states.error) {
         // Are we starting a new die specification?
-        if (_getCurrentState() === stateMachine.states.roll) {
+        if (currentState.state === stateMachine.states.roll) {
           _clear();
         }
 
@@ -244,18 +177,8 @@ module.exports = (($) => {
 
         // Test validity of diespec
         if (stateMachine.canRoll(newState)) {
-          const _testDice = Dice();
-          result = _testDice.parse($(_displayDieSpecEl).text());
-        }
-
-        if (!result) {
-          _transitionToNewState(category, text);
+          // Figure out if the favorite symbol should b highlighted.
           _isFavorite(_AUTO);
-        }
-        else {
-          _util.boadApp.alert(result, 'BoAD');
-          _transitionToNewState(_ERROR, '');
-          $(_displayDieSpecEl).find(':last-child').addClass('invalid');
         }
       }
     }
@@ -282,24 +205,29 @@ module.exports = (($) => {
       }
 
       const currentState = _getCurrentState();
-      const newState = stateMachine.nextState(_ROLL);
+      if (stateMachine.canRoll(currentState)) {
 
-      if (newState !== undefined) {
-        _dice = Dice();
-
-        if (currentState === _ROLL) {
+        // If dice were just rolled, remove the old result before creating a new
+        // one
+        if (currentState.state === stateMachine.states.roll) {
           _undoStack.pop();
           _eraseDisplayResult();
         }
 
-        _transitionToNewState(_ROLL, _ROLL);
-        _dice.parse($(_displayDieSpecEl).text());
-        const result = _dice.roll();
+        _transitionToNewState(stateMachine.ROLL);
 
+        _dice = DS($(_displayDieSpecEl).text());
+        const result = _dice.roll();
+        let resultList = result[0].result.toString(10);
+        resultList = result.splice(1).reduce(
+          (list, currentResult) =>
+            `${list},${currentResult.result}`,
+          resultList
+        );
         const resultHtml =
           '<span class="display-result">' +
             `${_util.RESULT_SYMBOL}` +
-            `<span class="display-result-value">${result}</span>` +
+            `<span class="display-result-value">${resultList}</span>` +
           '</span>';
         $('.display').append(resultHtml);
         _history.add(_getDieSpecHtml(), resultHtml, favoriteName);
