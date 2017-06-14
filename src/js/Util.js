@@ -14,7 +14,7 @@ module.exports = ((Framework7) => {
     const _SETTINGS = 'settings';
 
     function _getLocalStorage(key, initialValue, reviver) {
-      if (localStorage.getItem(key) === null) {
+      if (!localStorage.getItem(key)) {
         localStorage.setItem(key, JSON.stringify(initialValue));
       }
 

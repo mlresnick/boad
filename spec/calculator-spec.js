@@ -5,35 +5,28 @@
 'use strict';
 
 const Nightmare = require('nightmare');
-const xutil = require('./util.js');
+const util = require('./util.js');
+
+let nightmare;
 
 // XXX: Is this really being used?
 const COMMON_TIMEOUT = 3000; // eslint-disable-line no-unused-vars
 
-const nightmare = Nightmare({
-  // openDevTools: true,
-  // show: true, // Display browser XXX comment out
-  // waitTimeout: COMMON_TIMEOUT,
-  // executionTimeout: COMMON_TIMEOUT,
-});
-// jasmine.DEFAULT_TIMEOUT_INTERVAL = COMMON_TIMEOUT;
-
 const dieSpec = '.display .display-die-spec';
-
-function logError(error) {
-  console.log(error); // eslint-disable-line no-console
-}
-
-nightmare.on(
-  'console',
-  // eslint-disable-next-line no-console
-  (log, msg) => console.log(`BROWSER CONSOLE(${log}): ${msg}`)
-);
 
 describe('Calculator', function () {
 
-  beforeEach(function () {
+  beforeAll((done) => {
+    // TODO:
+    nightmare = Nightmare();
+    // nightmare = Nightmare({ show: true });
+    util.init(nightmare);
+    done();
+  });
+
+  beforeEach(function (done) {
     nightmare.goto('http://localhost').wait('body');
+    done();
   });
 
   function clickButtons(arg) {
@@ -51,13 +44,15 @@ describe('Calculator', function () {
     return buttons.reduce((html, el) => {
       let result;
       const button = (typeof el === 'string') ? el : el[1];
-      if (button !== '') {
+
+      if (button) {
         const x = button.split('-');
         result = `${html}<span class="display-${x[0]}">${x[1] || '-'}</span>`;
       }
       else {
         result = html;
       }
+
       return result;
     },
     '');
@@ -71,11 +66,9 @@ describe('Calculator', function () {
       clickButtons('digit-1')
       .wait(`${dieSpec} span`)
       .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpec)
-      .then((text) => {
-        expect(text).toBe(expectedResult(button));
-        done();
-      })
-      .catch(logError);
+      .then(text => expect(text).toBe(expectedResult(button)))
+      .catch(util.logError)
+      .then(done);
     });
 
     it('can handle a single die', function (done) {
@@ -84,11 +77,9 @@ describe('Calculator', function () {
       clickButtons(button)
       .wait(`${dieSpec} span`)
       .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpec)
-      .then((text) => {
-        expect(text).toBe(expectedResult(button));
-        done();
-      })
-      .catch(logError);
+      .then(text => expect(text).toBe(expectedResult(button)))
+      .catch(util.logError)
+      .then(done);
     });
 
     it('should handle a dx die', (done) => {
@@ -98,11 +89,9 @@ describe('Calculator', function () {
       clickButtons(buttons)
       .wait(`${dieSpec} span:nth-of-type(${buttons.length})`)
       .evaluate(ds => $(ds).html(), dieSpec)
-      .then((text) => {
-        expect(text).toBe(expectedResult(buttons));
-        done();
-      })
-      .catch(logError);
+      .then(text => expect(text).toBe(expectedResult(buttons)))
+      .catch(util.logError)
+      .then(done);
     });
 
     it('should handle a full die specification', (done) => {
@@ -112,11 +101,9 @@ describe('Calculator', function () {
       clickButtons(buttons)
       .wait(`${dieSpec} span:nth-of-type(${buttons.length})`)
       .evaluate(ds => $(ds).html(), dieSpec)
-      .then((text) => {
-        expect(text).toBe(expectedResult(buttons));
-        done();
-      })
-      .catch(logError);
+      .then(text => expect(text).toBe(expectedResult(buttons)))
+      .catch(util.logError)
+      .then(done);
     });
 
     it('should handle the delete button', (done) => {
@@ -130,15 +117,31 @@ describe('Calculator', function () {
       ];
 
       clickButtons(buttons)
-      .wait(
-        `${dieSpec} span:nth-of-type(${buttons.length - 2})`
-      )
+      .wait(`${dieSpec} span:nth-of-type(${buttons.length - 2})`)
       .evaluate(ds => $(ds).html(), dieSpec)
-      .then((text) => {
-        expect(text).toBe(expectedResult(buttons));
-        done();
-      })
-      .catch(logError);
+      .then(text => expect(text).toBe(expectedResult(buttons)))
+      .catch(util.logError)
+      .then(done);
+    });
+
+    it('should handle a button after the delete button', (done) => {
+      const buttons = [
+        'digit-4',
+        ['die-dx', ''],
+        ['digit-4', ''],
+        ['digit-4', ''],
+        ['delete', ''],
+        ['delete', ''],
+        ['delete', ''],
+        'die-d6',
+      ];
+
+      clickButtons(buttons)
+      .wait(ds => $(ds).children().length === 2, dieSpec)
+      .evaluate(ds => $(ds).html(), dieSpec)
+      .then(text => expect(text).toBe(expectedResult(buttons)))
+      .catch(util.logError)
+      .then(done);
     });
 
     it('should handle the clear key', (done) => {
@@ -155,11 +158,9 @@ describe('Calculator', function () {
       clickButtons(buttons)
       .wait(dieSpec)
       .evaluate(ds => $(ds).html(), dieSpec)
-      .then((text) => {
-        expect(text).toBe(expectedResult(buttons));
-        done();
-      })
-      .catch(logError);
+      .then(text => expect(text).toBe(expectedResult(buttons)))
+      .catch(util.logError)
+      .then(done);
     });
 
     it('should handle the Roll key', (done) => {
@@ -168,37 +169,48 @@ describe('Calculator', function () {
       clickButtons(buttons)
       .wait('.display > span:nth-of-type(2)')
       .visible('.display-result')
-      .then(isVisible => expect(isVisible).toBeTruthy(
-        'because a result is visible after a roll'
-      ))
-      .then(() => nightmare.visible('.display-result-value')
-      .then(isVisible => expect(isVisible).toBeTruthy(
-        'because a result value is visible after a roll')
-      ))
-      .then(() => nightmare.evaluate(() => $('.display-result-value').text()))
+      .then(isVisible =>
+          expect(isVisible)
+          .toBeTruthy('because a result is visible after a roll')
+      )
+      .then(() => nightmare.visible('.display-result-value'))
+      .then(isVisible =>
+        expect(isVisible)
+        .toBeTruthy('because a result value is visible after a roll')
+      )
+      .then(() =>
+        nightmare.evaluate(() => $('.display-result-value').text())
+      )
       // 0, positive/negative, possibly comma separated
       .then(text => expect(text).toMatch(
         /^(0|-?[1-9]\d*)(,(0|-?[1-9]\d*))*$/,
         'because the result value is a number'
       ))
-      .catch(msg => logError(msg))
-      .then(() => done());
+      .catch(msg => util.logError(msg))
+      .then(done);
+    });
+  });
+
+  describe('tab bar', () => {
+
+    it('changes to favorites when link is clicked', (done) => {
+      nightmare
+      .goto('http://localhost')
+      .wait('body');
+
+      return util.testTabBarLink(nightmare, 'favorites')
+        .catch(util.logError)
+        .then(done);
     });
 
-    describe('tab bar', () => {
-      it('changes to favorites when link is clicked', (done) => {
-        nightmare.goto('http://localhost').wait('body');
+    it('changes to history when link is clicked', (done) => {
+      nightmare
+      .goto('http://localhost')
+      .wait('body');
 
-        return xutil.testTabBarLink(nightmare, 'favorites', done)
-          .catch(xutil.logError);
-      });
-
-      it('changes to history when link is clicked', (done) => {
-        nightmare.goto('http://localhost').wait('body');
-
-        return xutil.testTabBarLink(nightmare, 'history', done)
-          .catch(xutil.logError);
-      });
+      return util.testTabBarLink(nightmare, 'history')
+        .catch(util.logError)
+        .then(done);
     });
 
     // TODO: Roll an 'CdxR' dieSpec
@@ -206,6 +218,32 @@ describe('Calculator', function () {
     // TODO: Roll > digit
     // TODO: Roll > delete
     // TODO: Favorite key swichtes tab
+  });
+
+  it('saves a favorite correctly', (done) => {
+    const buttons = [
+      ['digit-4', ''],
+      ['die-d6', ''],
+      ['operator--', ''],
+      ['keep-L', ''],
+    ];
+
+    clickButtons(buttons)
+    .wait(
+      displayDieSpec => $(displayDieSpec).children('span').length === 4,
+      dieSpec)
+    .click('#calculator .favorite-status')
+    .wait(() => $('.panel.panel-right.active'))
+    .type('.panel.panel-right .item-input input', 'AutoGenned')
+    .click('.panel.panel-right a.save')
+    .wait('.panel.panel-right:not(.active)')
+    .evaluate(() => {
+      const favoritesList = JSON.parse(localStorage.getItem('favorites'));
+      return favoritesList[favoritesList.length - 1];
+    })
+    .then(obj => expect(obj).toEqual({ name: 'AutoGenned', dieSpec: '4d6-L' }))
+    .catch(util.logError)
+    .then(done);
   });
 
 });

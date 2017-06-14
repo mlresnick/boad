@@ -2,7 +2,7 @@
 
 'use strict';
 
-const xutil = require('./util.js');
+// const util = require('./util.js');
 
 module.exports = (() => {
 
@@ -18,16 +18,12 @@ module.exports = (() => {
     );
   }
 
-  function _testTabBarLink(nightmare, tabName, done) {
+  function _testTabBarLink(nightmare, tabName) {
     return nightmare
       .click(`a.tab-link[href="#${tabName}"]`)
       .wait(tName => ($(`#${tName}:visible`).length) !== 0, tabName)
       .evaluate(tName => $(`#${tName}:visible`).length, tabName)
-      .then((length) => {
-        expect(length).toBe(1);
-        done();
-      })
-      .catch(xutil.logError);
+      .then(length => expect(length).toBe(1));
   }
 
   return {
