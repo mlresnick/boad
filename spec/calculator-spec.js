@@ -19,7 +19,7 @@ describe('Calculator', function () {
   beforeAll((done) => {
     // TODO:
     nightmare = Nightmare();
-    // nightmare = Nightmare({ show: true });
+    // nightmare = Nightmare({ show: true } );
     util.init(nightmare);
     done();
   });
