@@ -41,10 +41,11 @@ module.exports = ((arg) => {
            + (_favorite ? '*' : '');
   }
 
-  function _toHTML() {
+  function _html() {
     if (!_parts) {
       return 'NULL';
     }
+// return 'foo';
     return _parts.reduce(
       (result, part) =>
         result.concat(
@@ -99,7 +100,7 @@ module.exports = ((arg) => {
   }
 
   return {
-    toHTML: _toHTML,
+    html: _html,
     toString: _toString,
     newWalker: () => new Walker(),
     toObject: _toObject,

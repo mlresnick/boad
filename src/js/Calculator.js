@@ -133,8 +133,11 @@ module.exports = (($) => {
         i++
       ) {
         const oldState = _getCurrentState();
-        if (oldState.state !== stateMachine.states.error) {
-          newState = stateMachine.nextState(oldState, chars.charAt(i));
+        const c = chars.charAt(i);
+        if (oldState.state !== stateMachine.states.error
+            && (oldState !== stateMachine.states.die
+                || c !== 'x')) {
+          newState = stateMachine.nextState(oldState, c);
           if (newState !== undefined) {
             _undoStack.push(newState);
           }
@@ -152,11 +155,15 @@ module.exports = (($) => {
 
       if (arg instanceof jQuery.Event) {
         displayCategory = _util.getTypeFromClass(arg.currentTarget, 'key-');
-        text = arg.target.textContent;
+        text = $(arg.currentTarget).text();
       }
       else {
         displayCategory = arg.type;
         text = arg.value;
+
+      }
+      if (text === 'dx') {
+        text = 'd';
       }
 
       const currentState = _getCurrentState();

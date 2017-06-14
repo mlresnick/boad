@@ -2,20 +2,231 @@
 
 const stateMachine = require('./state-machine.js');
 
+function reviveFunctions(k, v) { return (k === 'function') ? '[function]' : v; }
+// eslint-disable-next-line no-unused-vars
+function stringify(object, reviver = reviveFunctions, indent = 2) {
+  return JSON.stringify(object, reviver, indent);
+}
+
+function dumpObject(object) { // eslint-disable-line no-unused-vars
+  function cmp(a, b) {
+    let result = 0;
+    if (a < b) {
+      result = -1;
+    }
+    else if (a > b) {
+      result = 1;
+    }
+    return result;
+  }
+  const propertyList = Object.getOwnPropertyNames(object)
+  .filter(propertyName =>
+    [
+      /^AnalyserNode*/,
+      /^Animate7*/,
+      /^AnimationEvent*/,
+      /^ApplicationCache*/,
+      /^Array*/,
+      /^DOM*/,
+      /^Canvas*/,
+      /^CSS*/,
+      /^on.+/,
+      /^RTC*/,
+      /^Screen*/,
+      /^Presentation*/,
+      /^Performance*/,
+      /^MIDI*/,
+      /^Media*/,
+      /^Int*/,
+      /^IDB*/,
+      /^HTML*/,
+      /^WebGL*/,
+      /^Uint*/,
+      /\*Event$/,
+      /^SVG*/,
+      /^Text.+/,
+      /^WebKit*/,
+      /^webkit*/,
+      /^Worker/,
+      /^XMLDocument/,
+      /^XMLHttp*/,
+      /^XMLSerializer/,
+      /^XPath/,
+      /^XSLTProcessor/,
+      // /^[A-Z]*/,
+    ].find(pattern => pattern.test(propertyName)) === undefined)
+  .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
+   cmp(a, b));
+  console.log(propertyList.join('\n')); // eslint-disable-line no-console
+// console.log(`propertyList.length=${propertyList.length}`);
+//   console.log(
+//         `window.boadFavoritesModel.findByDieSpec('5d4+12')=${
+//     window.boadFavoritesModel
+//     .findByDieSpec('5d4+12')}`);
+// // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
+}
+
 module.exports = ((arg) => {
-  // XXX:
-  // const _dieSpecString = arg;
-  const _dieSpec = {
-    count: '',
-    sides: '',
-    lowHighCount: '',
-    lowHigh: '',
-    keepCount: '',
-    modifier: '',
-    repeats: '',
-  };
   let _die;
   let _random = Math.random;
+
+  // XXX:
+  // const _dieSpecString = arg;
+  const _spec = {
+    count: null,
+    sides: null,
+    lowHighCount: null,
+    lowHigh: null,
+    keepCount: null,
+    modifier: null,
+    repeats: null,
+
+    partToString: function _partToString(specPart) {
+      let result = '';
+
+      switch(specPart) {
+        case 'count':
+          if ((this.count !== null) && (this.count > 1)) {
+            result = this.count;
+          }
+          break;
+
+        case 'sides':
+          result = `d${_die.sidesToString()}`;
+          break;
+
+        case 'lowHighCount':
+          if (this.lowHighCount !== null) {
+            const value = Math.abs(this.lowHighCount);
+            if (this.lowHighCount > 0) {
+              result = '+';
+            }
+            else if (this.lowHighCount < 0) {
+              result = '-';
+            }
+            else {
+              throw new Error('lowHighCount cannot be 0');
+            }
+
+            if (value > 1) {
+              result += value;
+            }
+          }
+          break;
+
+        case 'lowHigh':
+          result = this.lowHigh || '';
+          break;
+
+        case 'keepCount':
+          if (this.keepCount !== null) {
+            result = `k${this.keepCount}`;
+          }
+          break;
+
+        case 'modifier':
+          if (this.modifier !== null) {
+            if (this.modifier > 0) {
+              result += '+';
+            }
+            result += this.modifier;
+          }
+          break;
+
+        case 'repeats':
+          if ((this.repeats !== null) && (this.repeats > 1)) {
+            result += `x${this.repeats}`;
+          }
+          break;
+
+        default:
+          throw new Error(`Unknown die specification part name: '${
+            JSON.stringify(specPart)
+          }'`);
+      }
+
+      return result;
+    },
+
+    partToHTML:
+    function _specPartToHTML(specPart, displayClass, wrapIndividual) {
+      let result = '';
+      let string = this.partToString(specPart);
+      let wrapList;
+      if (string !== '') {
+        switch(specPart) {
+          case 'lowHighCount':
+          case 'modifier':
+          case 'repeats':
+            result +=
+              `<span class="display-operator">${string.charAt(0)}</span>`;
+            string = string.substring(1);
+            break;
+
+          case 'keepCount':
+            result += `<span class="display-keep">${string.charAt(0)}</span>`;
+            string = string.substring(1);
+            break;
+
+          default:
+        }
+        if (string !== '') {
+          if (wrapIndividual && (displayClass !== 'die')) {
+            wrapList = string.toString().split('');
+          }
+          else {
+            wrapList = [string];
+          }
+          result +=
+            wrapList.reduce((partialResult, part) =>
+            `${partialResult}` +
+            `<span class="display-${displayClass}">${part}</span>`,
+            '');
+        }
+      }
+      return result;
+    },
+
+    getDropRange: function _getDropRange() {
+      let dropRange = null;
+      if (this.keepCount) {
+        if (this.keepCount < 0) {
+          dropRange = { start: 0, end: -this.keepCount };
+        }
+        else {
+          dropRange = { start: 0, end: (this.count - this.keepCount) };
+        }
+      }
+      else if (this.lowHighCount < 0) {
+        if (this.lowHigh === 'L') {
+          dropRange = { start: 0, end: -this.lowHighCount };
+        }
+        else {
+          dropRange = {
+            start: (this.count + this.lowHighCount),
+            end: this.count,
+          };
+        }
+      }
+      return dropRange;
+    },
+
+    getAddRange: function _getAddRange() {
+      let addRange = null;
+      if (this.lowHighCount > 0) {
+        if (this.lowHigh === 'L') {
+          addRange = { start: 0, end: this.lowHighCount };
+        }
+        else {
+          addRange = {
+            start: (this.count - this.lowHighCount),
+            end: this.count,
+          };
+        }
+      }
+      return addRange;
+    },
+  };
 
   // const explode = 'explode';
   const count = 'count';
@@ -26,7 +237,17 @@ module.exports = ((arg) => {
   const modifier = 'modifier';
   const repeats = 'repeats';
 
+  const _partsList = [
+    'count',
+    'sides',
+    'lowHighCount',
+    'lowHigh',
+    'keepCount',
+    'modifier',
+    'repeats',
+  ];
 
+// TODO: Giv 'y' a better name
   const y = { /* eslint-disable key-spacing */
     start:            null,
     countDigit:       count,
@@ -53,7 +274,7 @@ module.exports = ((arg) => {
     roll:             null,
 
     error:            null,
-  };  /* eslint-enable */
+  };  /* eslint-enable key-spacing */
 
   function _setRandom(rnd) { _random = rnd; }
 
@@ -65,24 +286,24 @@ module.exports = ((arg) => {
 
   // Base class for die definitions
   function DieDef(dieSpec) { this.dieSpec = dieSpec; }
-  DieDef.prototype.sides = function sidesImpl() { return this.dieSpec.sides; };
+  DieDef.prototype.sides = function sidesImpl() { return _spec.sides || ''; };
   DieDef.prototype.sidesToString =
     function sidesToStringImpl() { return this.sides().toString(); };
   DieDef.prototype.roll =
     function rollImpl() { return _randomInt(this.sides()); };
-  DieDef.prototype.exlodeValue =
-    function exlodeValueImpl() { return this.sides(); };
+  DieDef.prototype.explodeValue =
+    function explodeValueImpl() { return this.sides(); };
   DieDef.prototype.canExplode =
     function canExplodeImpl(roll) { return this.exlodeValue() === roll; };
   DieDef.prototype.constructor = DieDef;
 
-  // Fudge Dice (range of -1 - +1)
+  // Fudge Dice (range of [-1, +1])
   function DFDef(dieSpec) { DieDef.call(this, dieSpec); }
   DFDef.prototype = Object.create(DieDef.prototype);
   DFDef.prototype.sidesToString =
     function sidesToStringImpl() { return 'F'; };
   DFDef.prototype.roll = function rollImpl() { return _randomInt(-1, 1); };
-  DieDef.prototype.exlodeValue = function exlodeValueImpl() { return 1; };
+  DieDef.prototype.explodeValue = function explodeValueImpl() { return 1; };
   DFDef.prototype.constructor = DFDef;
 
   // Base class for die definitions where the final value is made up of
@@ -110,8 +331,8 @@ module.exports = ((arg) => {
     }
     return result;
   };
-  DrepDef.prototype.exlodeValue =
-    function exlodeValueImpl() { return this._explodeValue; };
+  DrepDef.prototype.explodeValue =
+    function explodeValueImpl() { return this._explodeValue; };
   DrepDef.prototype.constructor = DrepDef;
 
 
@@ -134,51 +355,53 @@ module.exports = ((arg) => {
   D1000Def.prototype.constructor = D1000Def;
 
   function _toString() {
-    let result = '';
-    // XXX:
-    // if (_explode()) {
-    //   result += '!';
-    // }
-    if (_dieSpec.count > 1) {
-      result += _dieSpec.count;
-    }
-    result += `d${_die.sidesToString()}`;
-
-    if (_dieSpec.lowHighCount !== 0) {
-      if (_dieSpec.lowHighCount === -1) {
-        result += '-';
-      }
-      else if (_dieSpec.lowHighCount === 1) {
-        result += '+';
-      }
-      else {
-        if (_dieSpec.lowHighCount > 0) {
-          result += '+';
-        }
-        result += _dieSpec.lowHighCount;
-      }
-      result += _dieSpec.lowHigh;
-    }
-
-    if (_dieSpec.keepCount !== 0) {
-      result += `k${_dieSpec.keepCount}`;
-    }
-
-    if (_dieSpec.modifier !== 0) {
-      if (_dieSpec.modifier > 0) {
-        result += '+';
-      }
-      result += _dieSpec.modifier;
-    }
-
-    if (_dieSpec.repeats > 1) {
-      result += `x${_dieSpec.repeats}`;
-    }
-
-    return result;
+    return [
+      // XXX:
+      // 'explode',
+      'count',
+      'sides',
+      'lowHighCount',
+      'lowHigh',
+      'keepCount',
+      'modifier',
+      'repeats',
+    ].reduce(
+      (partialResult, specPart) => partialResult + _spec.partToString(specPart),
+      ''
+    );
   }
 
-  function _toHTML() { }
+  const _partToDisplayClassMap = {
+    count: 'digit',
+    sides: 'die',
+    lowHighCount: 'digit',
+    lowHigh: 'keep',
+    keepCount: 'digit',
+    modifier: 'digit',
+    repeats: 'digit',
+  };
+
+  function _toHTML(wrapIndividual = false) {
+    return [
+      /* eslint-disable no-multi-spaces */
+      // XXX:
+      // { specPart: 'explode',      displayClass: 'explode' },
+      { specPart: 'count',        displayClass: 'digit'   },
+      { specPart: 'sides',        displayClass: 'die'     },
+      { specPart: 'lowHighCount', displayClass: 'digit'   },
+      { specPart: 'lowHigh',      displayClass: 'keep'    },
+      { specPart: 'keepCount',    displayClass: 'digit'   },
+      { specPart: 'modifier',     displayClass: 'digit'   },
+      { specPart: 'repeats',      displayClass: 'digit'   },
+      /* eslint-enable no-multi-spaces */
+    ].reduce(
+      (partialResult, el) =>
+        partialResult +
+
+        _spec.partToHTML(el.specPart, el.displayClass, wrapIndividual),
+      ''
+    );
+  }
 
   // Initialize
   function _parse(dieSpecString) {
@@ -199,27 +422,28 @@ module.exports = ((arg) => {
       }
       specpart = y[currentState.state];
       if (specpart) {
-        _dieSpec[specpart] += char;
+        _spec[specpart] = (_spec[specpart] || '') + String(char);
+        // this[`_${specpart}`] = (this[`_${specpart}`] || '') + String(char);
       }
     }
 
     // Because there's no look-ahead, if there is no Low/High, the modifier will
     // put in the wrong place.
-    if (!_dieSpec.lowHigh && _dieSpec.lowHighCount) {
-      _dieSpec.modifier = _dieSpec.lowHighCount;
-      _dieSpec.lowHighCount = 0;
+    if (!_spec.lowHigh && _spec.lowHighCount) {
+      _spec.modifier = _spec.lowHighCount;
+      _spec.lowHighCount = null;
     }
 
-    Object.getOwnPropertyNames(_dieSpec).forEach((propertyName) => {
-      const value = parseInt(_dieSpec[propertyName], 10);
+    _partsList.forEach((propertyName) => {
+      const value = parseInt(_spec[propertyName], 10);
       if (Number.isInteger(value)) {
-        _dieSpec[propertyName] = value;
+        _spec[propertyName] = value;
       }
       else {
         switch(propertyName) {
           case 'count':
           case 'repeats':
-            _dieSpec[propertyName] = 1;
+            // this[propertyName] = 1;
             break;
 
           case 'sides':
@@ -228,26 +452,23 @@ module.exports = ((arg) => {
             break;
 
           case 'lowHighCount':
-            if (_dieSpec.lowHighCount === '') {
-              _dieSpec.lowHighCount = 0;
-            }
-            else if ('+-'.includes(_dieSpec.lowHighCount)) {
-              _dieSpec.lowHighCount = Number(`${_dieSpec[propertyName]}1`);
+            if ('+-'.includes(_spec.lowHighCount)) {
+              _spec.lowHighCount = Number(`${_spec[propertyName]}1`);
             }
             break;
 
           default:
-            _dieSpec[propertyName] = 0;
+            // this[propertyName] = 0;
         }
       }
     });
 
-    switch(_dieSpec.sides) {
-      case '%': _die = new D100Def(_dieSpec); break;
-      case '66': _die = new D66Def(_dieSpec); break;
-      case '1000': _die = new D1000Def(_dieSpec); break;
-      case 'F': _die = new DFDef(_dieSpec); break;
-      default: _die = new DieDef(_dieSpec);
+    switch(_spec.sides) {
+      case '%': _die = new D100Def(this); break;
+      case '66': _die = new D66Def(this); break;
+      case '1000': _die = new D1000Def(this); break;
+      case 'F': _die = new DFDef(this); break;
+      default: _die = new DieDef(this);
     }
   }
 
@@ -265,58 +486,21 @@ module.exports = ((arg) => {
     }
   }
 
-  function _getDropRange() {
-    let dropRange = null;
-    if (_dieSpec.keepCount) {
-      if (_dieSpec.keepCount < 0) {
-        dropRange = { start: 0, end: -_dieSpec.keepCount };
-      }
-      else {
-        dropRange = { start: 0, end: (_dieSpec.count - _dieSpec.keepCount) };
-      }
-    }
-    else if (_dieSpec.lowHighCount < 0) {
-      if (_dieSpec.lowHigh === 'L') {
-        dropRange = { start: 0, end: -_dieSpec.lowHighCount };
-      }
-      else {
-        dropRange = {
-          start: (_dieSpec.count + _dieSpec.lowHighCount),
-          end: _dieSpec.count,
-        };
-      }
-    }
-    return dropRange;
-  }
-
-
-  function _getAddRange() {
-    let addRange = null;
-    if (_dieSpec.lowHighCount > 0) {
-      if (_dieSpec.lowHigh === 'L') {
-        addRange = { start: 0, end: _dieSpec.lowHighCount };
-      }
-      else {
-        addRange = {
-          start: (_dieSpec.count - _dieSpec.lowHighCount),
-          end: _dieSpec.count,
-        };
-      }
-    }
-    return addRange;
-  }
-
-  function _dropDice(result) { _adjust(result, _getDropRange(), -1); }
-  function _addDice(result) { _adjust(result, _getAddRange(), +1); }
+  function _dropDice(result) { _adjust(result, _spec.getDropRange(), -1); }
+  function _addDice(result) { _adjust(result, _spec.getAddRange(), +1); }
 
   function _roll() {
     const results = [];
 
-    for (let repeatIndex = 0; repeatIndex < _dieSpec.repeats; repeatIndex++) {
+    for (
+      let repeatIndex = 0;
+      repeatIndex < (_spec.repeats || 1);
+      repeatIndex++
+    ) {
 
       const result = { rolls: [], result: 0 };
 
-      for (let dieIndex = 0; dieIndex < _dieSpec.count; dieIndex++) {
+      for (let dieIndex = 0; dieIndex < (_spec.count || 1); dieIndex++) {
         result.rolls[dieIndex] = { roll: _die.roll(), adjust: 0 };
       }
 
@@ -328,20 +512,66 @@ module.exports = ((arg) => {
         total + dieRoll.roll + (dieRoll.roll * dieRoll.adjust),
         0);
 
-      result.result += _dieSpec.modifier;
+      result.result += _spec.modifier;
 
       results.push(result);
     }
     return results;
   }
 
+  function toJSON() { return _toString(); }
+  // this.toJSON = toJSON;
+
+  function Walker() {
+    this.partIndex = -1;
+    this.charIndex = 0;
+    this.partValue = '';
+    this.partName = '';
+    this.value = '';
+    this.type = '';
+
+    this.next = () => {
+      let result = false;
+      let value;
+      // let partName;
+
+      while (this.partIndex === -1
+            || (this.charIndex === this.partValue.length)) {
+        this.partIndex += 1;
+        if (this.partIndex === _partsList.length) {
+          break;
+        }
+        this.charIndex = 0;
+        this.partName = _partsList[this.partIndex];
+        this.partValue = (_spec.partToString(this.partName) || '');
+      }
+
+      if (this.partIndex < _partsList.length) {
+        if (this.partName === 'sides') {
+          value = this.partValue;
+        }
+        else {
+          value = this.partValue.charAt(this.charIndex);
+        }
+        this.value = {
+          type: _partToDisplayClassMap[this.partName],
+          value,
+        };
+        this.charIndex += this.partValue.length;
+        result = true;
+      }
+      return result;
+    };
+  }
+
   _parse(arg);
 
   return {
-    dieSpec: _dieSpec,
+    newWalker: () => new Walker(),
     roll: _roll,
     setRandom: _setRandom,
     toHTML: _toHTML,
+    toJSON,
     toString: _toString,
   };
 });

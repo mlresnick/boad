@@ -1,0 +1,11 @@
+{
+  "spec_dir": "spec",
+  "spec_files": [
+    "state-machine-spec.js",
+    "ds-spec.js",
+    "favorite-spec.js",
+    "calculator-spec.js",
+    "favorites-spec.js"
+  ],
+  "helpers": ["helpers/**/*.js"]
+}

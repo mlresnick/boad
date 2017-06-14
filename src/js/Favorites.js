@@ -1,10 +1,21 @@
 'use strict';
 
+// TODO: Find/creat a favicon
 // TODO: Merge Favorite and DieSpec objects
 // TODO: Possibly make DieSpec the model for Dice
 
+// TODO: Put this in a central location, but not in js/Util.js...
+// That file can't be used for local testing (that is, without Nightmare)
+function reviveFunctions(k, v) { return (k === 'function') ? '[function]' : v; }
+// eslint-disable-next-line no-unused-vars
+function stringify(object, reviver = reviveFunctions, indent = 2) {
+  return JSON.stringify(object, reviver, indent);
+}
+
 const Util = require('./Util.js');
-const DieSpec = require('./DieSpec.js');
+// const DieSpec = require('./DieSpec.js');
+const DS = require('./ds.js');
+const Favorite = require('./favorite.js');
 
 module.exports = (($) => {
   const _NAME_OK = 0;
@@ -38,17 +49,16 @@ module.exports = (($) => {
 
       function _findIndexByName(name) {
         return _favoritesList.findIndex(
-          favorite => favorite.name === name.toString()
+          favorite => (favorite.name === name.toString())
         );
       }
 
-      function _findByDieSpec(dieSpec) {
-        return _favoritesList.find(
-          favorite => (favorite.dieSpec.toString() === `${dieSpec}*`)
-        );
+      function findByDieSpec(dieSpec) {
+        return _favoritesList
+          .find(favorite => (favorite.dieSpec.toString() === `${dieSpec}`));
       }
 
-      function _find(arg) {
+      function find(arg) {
         let result;
         switch(typeof arg) {
           case 'number':
@@ -71,10 +81,17 @@ module.exports = (($) => {
       }
 
       function _updateStorage() {
-        _util.updateStorage(_FAVORITES, _favoritesList);
+        _util.updateStorage(
+          _FAVORITES,
+          _favoritesList
+          // _favoritesList.map(favorite => ({
+          //   name: favorite.name,
+          //   dieSpec: favorite.toString(),
+          // }))
+        );
       }
 
-      function _setFavorite(name, dieSpec, currentName) {
+      function setFavorite(name, dieSpec, currentName) {
         // Presence of currentName indicates whether this is a new Favorite or
         // an edit.
         if (currentName) {
@@ -84,13 +101,19 @@ module.exports = (($) => {
         }
         else {
           // New
-          _favoritesList.push({ name, dieSpec: dieSpec.toObject() });
+          // XXX:
+          // _favoritesList.push({ name, dieSpec: dieSpec.toObject() });
+          const newFavorite = Favorite;
+          newFavorite.name = name;
+          newFavorite.dieSpec = dieSpec;
+          _favoritesList.push(newFavorite);
+          // _favoritesList.push({ name, dieSpec: dieSpec.toString() });
         }
 
         _updateStorage();
       }
 
-      function _delete(name) {
+      function remove(name) {
         const index = _findIndexByName(name);
         _favoritesList.splice(index, 1);
         _updateStorage();
@@ -102,37 +125,40 @@ module.exports = (($) => {
         _updateStorage();
       }
 
-      function _nameInUse(name) { return _findIndexByName(name) !== -1; }
+      function nameInUse(name) { return _findIndexByName(name) !== -1; }
 
-      function _forEach(cb) { return _favoritesList.forEach(cb); }
+      function forEach(cb) { return _favoritesList.forEach(cb); }
 
-      function _validateName(name) {
+      function validateName(name) {
         let result = _NAME_OK;
 
         if (!name || (name === '')) {
           result = _NAME_BLANK;
         }
-        else if (_nameInUse(name)) {
+        else if (nameInUse(name)) {
           result = _NAME_IN_USE;
         }
 
         return result;
       }
 
-      _favoritesList = _util.getLocalStorage(_FAVORITES, [],
-        (key, value) => ((key === 'dieSpec') ? DieSpec(value) : value)
+      _favoritesList = _util.getLocalStorage(
+        _FAVORITES,
+        [],
+        Favorite.reviver
       );
 
       return {
         // addOrModify: _addOrModify,
-        delete: _delete,
-        find: _find,
-        findByDieSpec: _findByDieSpec,
-        forEach: _forEach,
-        move: _move,
-        nameInUse: _nameInUse,
-        setFavorite: _setFavorite,
-        validateName: _validateName,
+        remove,
+        find,
+        findByDieSpec,
+        forEach,
+        _move,
+        nameInUse,
+        setFavorite,
+        validateName,
+        toJSON: () => _favoritesList,
       };
     })();
 
@@ -164,7 +190,7 @@ module.exports = (($) => {
         function _getFavorite() {
           const newName = $(_newNameEl).val();
           const currentName = _currentName();
-          const dieSpec = DieSpec($(_dieSpecEl).html());
+          const dieSpec = DS($(_dieSpecEl).text().trim());
           return { newName, dieSpec, currentName };
         }
 
@@ -213,9 +239,25 @@ module.exports = (($) => {
         _getCalculator().roll(_model.find(name));
       }
 
-      function _refreshTab() {
-        _favoritesList.empty();
+      // XXX
+      /* eslint-disable */
+      function getMethods(obj) {
+        var result = [];
+        for (var id in obj) {
+          try {
+            if (typeof(obj[id]) == "function") {
+              result.push(id + ": " + obj[id].toString());
+            }
+          } catch (err) {
+            result.push(id + ": inaccessible");
+          }
+        }
+        return result;
+      }
+      /* eslint-enable */
 
+      function _refreshTab() {
+        // _favoritesList.empty();
         _model.forEach((favorite) => {
           _favoritesList.append(
             `<li class="swipeout" data-name="${favorite.name}">
@@ -239,6 +281,7 @@ module.exports = (($) => {
             </li>`
           );
         });
+
 
         // TODO: Refactor part A - can we avoid having to do this for every
         // refreshTab call
@@ -415,12 +458,10 @@ module.exports = (($) => {
       };
     })();
 
-
     return {
       add: _view.add,
       delete: _model.delete,
       findByDieSpec: _model.findByDieSpec,
-      initialize: _model.initialize,
       nameInUse: _model.nameInUse,
       refreshTab: _view.refreshTab,
       validateAndSave: _validateAndSave,
@@ -430,6 +471,9 @@ module.exports = (($) => {
   function _getInstance() {
     if (!_instance) {
       _instance = _init();
+      if (window.__nightmare) {
+        window.boadFavoritesModel = _model; // for testing
+      }
     }
     return _instance;
   }
