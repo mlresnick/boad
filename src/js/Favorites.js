@@ -6,16 +6,18 @@
 
 // TODO: Put this in a central location, but not in js/Util.js...
 // That file can't be used for local testing (that is, without Nightmare)
-function reviveFunctions(k, v) { return (k === 'function') ? '[function]' : v; }
+function replaceFunctions(k, v) {
+  return (k === 'function') ? '[function]' : v;
+}
 // eslint-disable-next-line no-unused-vars
-function stringify(object, reviver = reviveFunctions, indent = 2) {
-  return JSON.stringify(object, reviver, indent);
+function stringify(object, replacer = replaceFunctions, indent = 2) {
+  return JSON.stringify(object, replacer, indent);
 }
 
 const Util = require('./Util.js');
-// const DieSpec = require('./DieSpec.js');
 const DS = require('./ds.js');
 const Favorite = require('./favorite.js');
+const FavoritesReviver = require('./favorites-reviver.js');
 
 module.exports = (($) => {
   const _NAME_OK = 0;
@@ -100,14 +102,10 @@ module.exports = (($) => {
           _favoritesList[index].name = name;
         }
         else {
-          // New
-          // XXX:
-          // _favoritesList.push({ name, dieSpec: dieSpec.toObject() });
-          const newFavorite = Favorite;
+          const newFavorite = Favorite();
           newFavorite.name = name;
           newFavorite.dieSpec = dieSpec;
           _favoritesList.push(newFavorite);
-          // _favoritesList.push({ name, dieSpec: dieSpec.toString() });
         }
 
         _updateStorage();
@@ -142,23 +140,41 @@ module.exports = (($) => {
         return result;
       }
 
-      _favoritesList = _util.getLocalStorage(
-        _FAVORITES,
-        [],
-        Favorite.reviver
-      );
+      const reviver = FavoritesReviver.reviver;
+
+      // function reviver(key, value) {
+      //   let result = value;
+      //   console.log(`key=${key}`);
+      //   if (key !== ''
+      //       && !Number.isNaN(Number.parseInt(key, 10))
+      //       && (typeof value === 'object')) {
+      //     // It's an array element.
+      //     result = Favorite();
+      //     result.name = value.name;
+      //     result.dieSpec = value.dieSpec;
+      //   }
+      //   else if (key === 'dieSpec') {
+      //     // It's a die spec. Return a die spec object
+      //     result = DS(value);
+      //     console.log(`DS(${value})=${JSON.stringify(result, null, 2)}`);
+      //   }
+      //   return result;
+      // }
+
+      _favoritesList = _util.getLocalStorage(_FAVORITES, [], reviver);
 
       return {
         // addOrModify: _addOrModify,
-        remove,
         find,
         findByDieSpec,
         forEach,
         _move,
         nameInUse,
+        remove,
+        reviver,
         setFavorite,
-        validateName,
         toJSON: () => _favoritesList,
+        validateName,
       };
     })();
 
@@ -257,7 +273,7 @@ module.exports = (($) => {
       /* eslint-enable */
 
       function _refreshTab() {
-        // _favoritesList.empty();
+        _favoritesList.empty();
         _model.forEach((favorite) => {
           _favoritesList.append(
             `<li class="swipeout" data-name="${favorite.name}">
@@ -324,8 +340,8 @@ module.exports = (($) => {
           const innerItems = _favoritesList.find('.item-content .item-inner');
           $(innerItems).each((i, innerItem) => {
             $(innerItem)
-            .children(':not(.item-after)')
-            .wrapAll('<a href="#" class="item-link favorite-edit"></a>');
+              .children(':not(.item-after)')
+              .wrapAll('<a href="#" class="item-link favorite-edit"></a>');
           });
 
           const li = _favoritesList.children('li');
@@ -344,8 +360,8 @@ module.exports = (($) => {
           });
 
           li.on('mouseup touchend',
-                '.item-inner',
-                event => $(event.delegateTarget).removeClass('active-state'));
+            '.item-inner',
+            event => $(event.delegateTarget).removeClass('active-state'));
 
           li.on('swipeout:open', () => {
             _favoritesList
@@ -441,7 +457,7 @@ module.exports = (($) => {
         .on(
           'swipeout:delete',
           'li.swipeout',
-          event => _model.delete($(event.target).data('name'))
+          event => _model.remove($(event.target).data('name'))
         );
 
       $('.panel.panel-right a.save').on('click', _validateAndSave);
@@ -464,6 +480,7 @@ module.exports = (($) => {
       findByDieSpec: _model.findByDieSpec,
       nameInUse: _model.nameInUse,
       refreshTab: _view.refreshTab,
+      reviver: _model.reviver,
       validateAndSave: _validateAndSave,
     };
   }

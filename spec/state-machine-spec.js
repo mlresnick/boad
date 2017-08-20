@@ -64,7 +64,7 @@ describe('State machine', () => {
       });
 
       expect(stateMachine.nextState(initialStste, 'd'))
-      .toEqual(expectedState);
+        .toEqual(expectedState);
     });
 
     it('handles a bad combination of legal values', () => {
@@ -76,7 +76,7 @@ describe('State machine', () => {
       });
 
       expect(stateMachine.nextState(startState, '+'))
-      .toEqual(expectedState);
+        .toEqual(expectedState);
     });
   });
 });

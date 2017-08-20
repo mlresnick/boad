@@ -45,18 +45,18 @@ module.exports = ((arg) => {
     if (!_parts) {
       return 'NULL';
     }
-// return 'foo';
+    // return 'foo';
     return _parts.reduce(
       (result, part) =>
         result.concat(
           `<span class="display-${part.type}">${part.value}</span>`),
-          '')
+      '')
       + (_favorite
-          ? '<span class="display-favorite">' +
+        ? '<span class="display-favorite">' +
               '<i class="icon icon-android ion-android-star"></i>' +
               '<i class="icon icon-ios ion-ios-star"></i>' +
             '</span>'
-          : '');
+        : '');
   }
 
   function Walker() {

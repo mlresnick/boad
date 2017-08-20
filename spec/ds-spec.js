@@ -459,55 +459,55 @@ describe('New DieSpec class', () => {
 
     it('a count', () =>
       expect(DS('3d6').toHTML())
-      .toBe(
-        '<span class="display-digit">3</span>' +
-        '<span class="display-die">d6</span>'
-      )
+        .toBe(
+          '<span class="display-digit">3</span>' +
+          '<span class="display-die">d6</span>'
+        )
     );
 
     it('a modifier', () => {
 
       expect(DS('d8+2').toHTML())
-      .toBe(
-        '<span class="display-die">d8</span>' +
-        '<span class="display-operator">+</span>' +
-        '<span class="display-digit">2</span>'
-      );
+        .toBe(
+          '<span class="display-die">d8</span>' +
+          '<span class="display-operator">+</span>' +
+          '<span class="display-digit">2</span>'
+        );
 
       expect(DS('d8-4').toHTML())
-      .toBe(
-        '<span class="display-die">d8</span>' +
-        '<span class="display-operator">-</span>' +
-        '<span class="display-digit">4</span>'
-      );
+        .toBe(
+          '<span class="display-die">d8</span>' +
+          '<span class="display-operator">-</span>' +
+          '<span class="display-digit">4</span>'
+        );
 
     });
 
     it('a complex spec', () => {
 
       expect(DS('4d6-L+2x3').toHTML())
-      .toBe(
-        '<span class="display-digit">4</span>' +
-        '<span class="display-die">d6</span>' +
-        '<span class="display-operator">-</span>' +
-        '<span class="display-keep">L</span>' +
-        '<span class="display-operator">+</span>' +
-        '<span class="display-digit">2</span>' +
-        '<span class="display-operator">x</span>' +
-        '<span class="display-digit">3</span>'
-      );
+        .toBe(
+          '<span class="display-digit">4</span>' +
+          '<span class="display-die">d6</span>' +
+          '<span class="display-operator">-</span>' +
+          '<span class="display-keep">L</span>' +
+          '<span class="display-operator">+</span>' +
+          '<span class="display-digit">2</span>' +
+          '<span class="display-operator">x</span>' +
+          '<span class="display-digit">3</span>'
+        );
 
       expect(DS('40d6k10-5x6').toHTML())
-      .toBe(
-        '<span class="display-digit">40</span>' +
-        '<span class="display-die">d6</span>' +
-        '<span class="display-keep">k</span>' +
-        '<span class="display-digit">10</span>' +
-        '<span class="display-operator">-</span>' +
-        '<span class="display-digit">5</span>' +
-        '<span class="display-operator">x</span>' +
-        '<span class="display-digit">6</span>'
-      );
+        .toBe(
+          '<span class="display-digit">40</span>' +
+          '<span class="display-die">d6</span>' +
+          '<span class="display-keep">k</span>' +
+          '<span class="display-digit">10</span>' +
+          '<span class="display-operator">-</span>' +
+          '<span class="display-digit">5</span>' +
+          '<span class="display-operator">x</span>' +
+          '<span class="display-digit">6</span>'
+        );
 
     });
   });
@@ -521,51 +521,51 @@ describe('New DieSpec class', () => {
 
     it('a count', () =>
       expect(DS('33d6').toHTML(true))
-      .toBe(
-        '<span class="display-digit">3</span>' +
-        '<span class="display-digit">3</span>' +
-        '<span class="display-die">d6</span>'
-      )
+        .toBe(
+          '<span class="display-digit">3</span>' +
+          '<span class="display-digit">3</span>' +
+          '<span class="display-die">d6</span>'
+        )
     );
 
     it('a modifier', () => {
 
       expect(DS('d8+23').toHTML(true))
-      .toBe(
-        '<span class="display-die">d8</span>' +
-        '<span class="display-operator">+</span>' +
-        '<span class="display-digit">2</span>' +
-        '<span class="display-digit">3</span>'
-      );
+        .toBe(
+          '<span class="display-die">d8</span>' +
+          '<span class="display-operator">+</span>' +
+          '<span class="display-digit">2</span>' +
+          '<span class="display-digit">3</span>'
+        );
 
       expect(DS('d8-49').toHTML(true))
-      .toBe(
-        '<span class="display-die">d8</span>' +
-        '<span class="display-operator">-</span>' +
-        '<span class="display-digit">4</span>' +
-        '<span class="display-digit">9</span>'
-      );
+        .toBe(
+          '<span class="display-die">d8</span>' +
+          '<span class="display-operator">-</span>' +
+          '<span class="display-digit">4</span>' +
+          '<span class="display-digit">9</span>'
+        );
 
     });
 
     it('a complex spec', () => {
 
       expect(DS('41d6-10L+20x32').toHTML(true))
-      .toBe(
-        '<span class="display-digit">4</span>' +
-        '<span class="display-digit">1</span>' +
-        '<span class="display-die">d6</span>' +
-        '<span class="display-operator">-</span>' +
-        '<span class="display-digit">1</span>' +
-        '<span class="display-digit">0</span>' +
-        '<span class="display-keep">L</span>' +
-        '<span class="display-operator">+</span>' +
-        '<span class="display-digit">2</span>' +
-        '<span class="display-digit">0</span>' +
-        '<span class="display-operator">x</span>' +
-        '<span class="display-digit">3</span>' +
-        '<span class="display-digit">2</span>'
-      );
+        .toBe(
+          '<span class="display-digit">4</span>' +
+          '<span class="display-digit">1</span>' +
+          '<span class="display-die">d6</span>' +
+          '<span class="display-operator">-</span>' +
+          '<span class="display-digit">1</span>' +
+          '<span class="display-digit">0</span>' +
+          '<span class="display-keep">L</span>' +
+          '<span class="display-operator">+</span>' +
+          '<span class="display-digit">2</span>' +
+          '<span class="display-digit">0</span>' +
+          '<span class="display-operator">x</span>' +
+          '<span class="display-digit">3</span>' +
+          '<span class="display-digit">2</span>'
+        );
     });
   });
 

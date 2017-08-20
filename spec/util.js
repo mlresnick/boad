@@ -30,6 +30,7 @@ module.exports = (() => {
     init: _init,
     logError: _logError,
     testTabBarLink: _testTabBarLink,
+    url: 'http://localhost:8080',
   };
 
 })();
