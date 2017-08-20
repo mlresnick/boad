@@ -100,7 +100,8 @@ userAgentString.ios = {
 
 
 function initialize(done) {
-  nightmare = Nightmare(/* { show: true } */);
+  nightmare = Nightmare();
+  // nightmare = Nightmare({ show: true });
   util.init(nightmare);
 
   return nightmare
@@ -309,4 +310,30 @@ describe('favorites tab', () => {
       .then(done);
   });
 
+  it('changes the name', (done) => {
+    nightmare
+      .click(`#favorites .link.edit.${platform}`)
+      .wait(
+        '#favorites .page.edit-mode .list-block ul ' +
+        'li:nth-of-type(2) .favorite-edit'
+      )
+      .click(
+        '#favorites .page.edit-mode .list-block ul ' +
+        'li:nth-of-type(2) .favorite-edit'
+      )
+      .wait(() => $('.panel.panel-right.active'))
+      .type('.panel.panel-right .item-input input', 'AutoGenned')
+      .click('.panel.panel-right a.save')
+      .wait('.panel.panel-right:not(.active)')
+      .evaluate(() => {
+        const favoritesList = JSON.parse(localStorage.getItem('favorites'));
+        return favoritesList[1];
+      })
+      .then((obj) => {
+        expect(obj).toEqual({ name: 'AutoGenned', dieSpec: '5d4+1' });
+      })
+      .catch(util.logError)
+      .then(done);
+
+  });
 });
