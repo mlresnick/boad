@@ -100,8 +100,8 @@ userAgentString.ios = {
 
 
 function initialize(done) {
-  nightmare = Nightmare();
-  // nightmare = Nightmare({ show: true });
+  // nightmare = Nightmare();
+  nightmare = Nightmare({ show: true });
   util.init(nightmare);
 
   return nightmare
@@ -334,6 +334,27 @@ describe('favorites tab', () => {
       })
       .catch(util.logError)
       .then(done);
+  });
 
+  it('rolls dice', (done) => {
+    nightmare
+      .click(
+        '#favorites .pages .list-block ul li .roll-favorite .item-content ' +
+        '.item-inner'
+      )
+      .wait(() => $('#calculator:visible').length > 0)
+      .evaluate(() => $('#calculator .display-die-spec').text())
+      .then(dieSpec => expect(dieSpec).toBe('d4'))
+      // .then(() => nightmare.wait(10000))
+      .catch(util.logError)
+      .then(done);
+  });
+
+
+  // Nightmare.js dioes n it support drag and drop
+  xit('supports the rearrangement of favorites', (done) => {
+    nightmare
+      .catch(util.logError)
+      .then(done);
   });
 });
