@@ -4,16 +4,6 @@
 // TODO: Merge Favorite and DieSpec objects
 // TODO: Possibly make DieSpec the model for Dice
 
-// TODO: Put this in a central location, but not in js/Util.js...
-// That file can't be used for local testing (that is, without Nightmare)
-function replaceFunctions(k, v) {
-  return (k === 'function') ? '[function]' : v;
-}
-// eslint-disable-next-line no-unused-vars
-function stringify(object, replacer = replaceFunctions, indent = 2) {
-  return JSON.stringify(object, replacer, indent);
-}
-
 const Util = require('./Util.js');
 const DS = require('./ds.js');
 const Favorite = require('./favorite.js');

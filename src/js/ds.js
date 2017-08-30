@@ -4,14 +4,6 @@
 // E.g. d4 results in values [1,3],  d6 results in values  [1,5]
 const stateMachine = require('./state-machine.js');
 
-function replaceFunctions(k, v) {
-  return (k === 'function') ? '[function]' : v;
-}
-// eslint-disable-next-line no-unused-vars
-function stringify(object, replacer = replaceFunctions, indent = 2) {
-  return JSON.stringify(object, replacer, indent);
-}
-
 function dumpObject(object) { // eslint-disable-line no-unused-vars
   function cmp(a, b) {
     let result = 0;

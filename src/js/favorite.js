@@ -1,14 +1,5 @@
 'use strict';
 
-// eslint-disable-next-line no-unused-vars
-function stringify(object, replacer, indent = 2) {
-  return JSON.stringify(
-    object,
-    replacer
-    || ((k, v) => ((typeof k === 'function') ? '[function]' : v)),
-    indent);
-}
-
 // SETTINGS Deal with configuring bottom row on calculator - add/removee/order
 // SETTINGS Maybe use list of cards with sections for each page
 

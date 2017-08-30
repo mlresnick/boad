@@ -4,16 +4,6 @@
 
 const util = require('../spec/util.js');
 
-// TODO: Put this in a central location, but not in js/Util.js...
-// That file can't be used for local testing (that is, without Nightmare)
-function replaceFunctions(k, v) {
-  return (k === 'function') ? '[function]' : v;
-}
-// eslint-disable-next-line no-unused-vars
-function stringify(object, replacer = replaceFunctions, indent = 2) {
-  return JSON.stringify(object, replacer, indent);
-}
-
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
 // TODO: maybe move this to a new debug/test library library
