@@ -59,8 +59,8 @@ function dumpObject(object) { // eslint-disable-line no-unused-vars
   console.log(propertyList.join('\n')); // eslint-disable-line no-console
 // console.log(`propertyList.length=${propertyList.length}`);
 //   console.log(
-//         `window.boadFavoritesModel.findByDieSpec('5d4+12')=${
-//     window.boadFavoritesModel
+//         `window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')=${
+//     window.__nightmare.boadFavoritesModel
 //     .findByDieSpec('5d4+12')}`);
 // // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
 }
@@ -90,8 +90,8 @@ userAgentString.ios = {
 
 
 function initialize(done) {
-  // nightmare = Nightmare();
-  nightmare = Nightmare({ show: true });
+  nightmare = Nightmare();
+  // nightmare = Nightmare({ show: true });
   util.init(nightmare);
 
   return nightmare
@@ -115,7 +115,13 @@ function initialize(done) {
 
 describe('favorites model', () => {
   beforeAll(initialize);
-  afterAll(done => nightmare.end().catch(util.logError).then(done));
+
+  afterAll(done =>
+    nightmare
+      .end()
+      .catch(util.logError)
+      .then(done)
+  );
 
   beforeEach((done) => {
     nightmare
@@ -129,7 +135,9 @@ describe('favorites model', () => {
   it('can find by dieSpec', (done) => {
     nightmare
       .evaluate(() =>
-        JSON.stringify(window.boadFavoritesModel.findByDieSpec('5d4+12'))
+        JSON.stringify(
+          window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')
+        )
       )
       .then((favoriteString) => {
         expect(favoriteString.toString())
@@ -141,7 +149,7 @@ describe('favorites model', () => {
 
   it('can tell if a name is in use', (done) => {
     nightmare
-      .evaluate(() => window.boadFavoritesModel.nameInUse('b'))
+      .evaluate(() => window.__nightmare.boadFavoritesModel.nameInUse('b'))
       .then(result => expect(result).toBe(true))
       .catch(util.logError)
       .then(done);
@@ -149,7 +157,7 @@ describe('favorites model', () => {
 
   it('can tell if a name is NOT in use', (done) => {
     nightmare
-      .evaluate(() => window.boadFavoritesModel.nameInUse('unused'))
+      .evaluate(() => window.__nightmare.boadFavoritesModel.nameInUse('unused'))
       .then(result => expect(result).toBe(false))
       .catch(util.logError)
       .then(done);
@@ -159,15 +167,15 @@ describe('favorites model', () => {
     nightmare
       .evaluate(() => {
         const fname = 'toBeDeleted';
-        if (!window.boadFavoritesModel.nameInUse(fname)) {
-          window.boadFavoritesModel.setFavorite(fname, '3d20');
-          if (!window.boadFavoritesModel.nameInUse(fname)) {
+        if (!window.__nightmare.boadFavoritesModel.nameInUse(fname)) {
+          window.__nightmare.boadFavoritesModel.setFavorite(fname, '3d20');
+          if (!window.__nightmare.boadFavoritesModel.nameInUse(fname)) {
             return Promise.reject('didn\'t add new favorite');
           }
         }
 
-        window.boadFavoritesModel.remove(fname);
-        return window.boadFavoritesModel.nameInUse(fname);
+        window.__nightmare.boadFavoritesModel.remove(fname);
+        return window.__nightmare.boadFavoritesModel.nameInUse(fname);
       })
       .then(result => expect(result).toBe(false))
       .catch(fail)
@@ -341,10 +349,10 @@ describe('favorites tab', () => {
   });
 
 
-  // Nightmare.js dioes n it support drag and drop
-  xit('supports the rearrangement of favorites', (done) => {
-    nightmare
-      .catch(util.logError)
-      .then(done);
-  });
+  // // TODO: Nightmare.js doesn't support drag and drop
+  // xit('supports the rearrangement of favorites', (done) => {
+  //   nightmare
+  //     .catch(util.logError)
+  //     .then(done);
+  // });
 });

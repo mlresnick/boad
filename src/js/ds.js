@@ -57,8 +57,8 @@ function dumpObject(object) { // eslint-disable-line no-unused-vars
   console.log(propertyList.join('\n')); // eslint-disable-line no-console
 // console.log(`propertyList.length=${propertyList.length}`);
 //   console.log(
-//         `window.boadFavoritesModel.findByDieSpec('5d4+12')=${
-//     window.boadFavoritesModel
+//         `window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')=${
+//     window.__nightmare.boadFavoritesModel
 //     .findByDieSpec('5d4+12')}`);
 // // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
 }

@@ -73,14 +73,7 @@ module.exports = (($) => {
       }
 
       function _updateStorage() {
-        _util.updateStorage(
-          _FAVORITES,
-          _favoritesList
-          // _favoritesList.map(favorite => ({
-          //   name: favorite.name,
-          //   dieSpec: favorite.toString(),
-          // }))
-        );
+        _util.updateStorage(_FAVORITES, _favoritesList);
       }
 
       function setFavorite(name, dieSpec, currentName) {
@@ -229,7 +222,8 @@ module.exports = (($) => {
 
       function _getCalculator() {
         if (!_calculator) {
-          _calculator = require('./Calculator.js').getInstance(); // eslint-disable-line global-require, max-len
+          // eslint-disable-next-line global-require, max-len
+          _calculator = require('./Calculator.js').getInstance();
         }
         return _calculator;
       }
@@ -479,7 +473,7 @@ module.exports = (($) => {
     if (!_instance) {
       _instance = _init();
       if (window.__nightmare) {
-        window.boadFavoritesModel = _model; // for testing
+        window.__nightmare.boadFavoritesModel = _model; // for testing
       }
     }
     return _instance;
