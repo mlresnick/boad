@@ -1,64 +1,18 @@
 'use strict';
 
 const Util = require('./Util.js');
+const historyModel = require('./history-model');
 
 // IDEA: Store (and display) intermediate steps during a roll
 // IDEA: How to incorporate intermediate steps in the calculator display
 
 module.exports = (($) => {
+  const _util = Util.getInstance();
+
   let _instance;
 
   function _init() {
-    const _util = Util.getInstance();
-
-    const _model = (() => {
-      const _HISTORY = 'history';
-      let _historyList;
-
-      function _updateStorage() {
-        _util.updateStorage(_HISTORY, _historyList);
-      }
-
-      function _add(dieSpecHtml, resultHtml, favoriteName = null) {
-        let dieSpec = dieSpecHtml;
-        if (favoriteName) {
-          dieSpec = `${favoriteName} - ${dieSpec}`;
-        }
-        _historyList.push({
-          dieSpec,
-          result: resultHtml,
-        });
-
-        while (_historyList.length > _util.boadApp.boadSettings.history.limit) {
-          _historyList.shift();
-        }
-
-        _updateStorage();
-      }
-
-      function _clear() {
-        _historyList.length = 0;
-        _updateStorage();
-      }
-
-      function _delete(index) {
-        _historyList.splice(index, 1);
-        _updateStorage();
-      }
-
-      function _forEach(cb) {
-        return _historyList.forEach(cb);
-      }
-
-      _historyList = _util.getLocalStorage(_HISTORY, []);
-
-      return {
-        add: _add,
-        clear: _clear,
-        delete: _delete,
-        forEach: _forEach,
-      };
-    })();
+    const _model = historyModel.getInstance();
 
     const _view = (() => {
       const _historyView = $('#history');
@@ -115,6 +69,11 @@ module.exports = (($) => {
   function _getInstance() {
     if (!_instance) {
       _instance = _init();
+      if (window.__nightmare) {
+        window.__nightmare.boadHistoryModel = // for testing
+          // eslint-disable-next-line global-require
+          require('./history-model').getInstance();
+      }
     }
     return _instance;
   }
