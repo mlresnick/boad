@@ -149,8 +149,8 @@ const userAgentString = {
 
 
 function initialize(done) {
-  // nightmare = Nightmare();
-  nightmare = Nightmare({ show: true });
+  nightmare = Nightmare();
+  // nightmare = Nightmare({ show: true });
   util.init(nightmare);
 
   nightmare
