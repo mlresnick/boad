@@ -63,7 +63,6 @@
     "core-js": "^2.5.0",
     "debug": "^2.6.8",
     "duplexify": "^3.5.1",
-    "electron": "^1.7.6",
     "extend": "^3.0.1",
     "fined": "^1.1.0",
     "framework7": "^1.6.4",
