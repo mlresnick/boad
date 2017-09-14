@@ -1,7 +1,5 @@
 'use strict';
 
-// FIXME: Default roll implementaton has wrong range.
-// E.g. d4 results in values [1,3],  d6 results in values  [1,5]
 const stateMachine = require('./state-machine.js');
 
 function dumpObject(object) { // eslint-disable-line no-unused-vars
@@ -275,7 +273,7 @@ module.exports = ((arg) => {
 
   function _randomInt(first, second) {
     const low = second ? first : 1;
-    const high = second || first;
+    const high = (second || first) + 1;
     return Math.floor(_random() * (high - low)) + low;
   }
 

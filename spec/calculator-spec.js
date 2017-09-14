@@ -9,12 +9,11 @@ const util = require('./util.js');
 
 let nightmare;
 
-const dieSpec = '.display .display-die-spec';
+const dieSpecSelector = '.display .display-die-spec';
 // TODO: rearrange nightmare calls so end() is called in after all
 describe('Calculator', function () {
 
   beforeAll((done) => {
-    // TODO:
     nightmare = Nightmare();
     // nightmare = Nightmare({ show: true });
     util.init(nightmare);
@@ -72,8 +71,8 @@ describe('Calculator', function () {
       const button = 'digit-1';
 
       clickButtons('digit-1')
-        .wait(`${dieSpec} span`)
-        .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpec)
+        .wait(`${dieSpecSelector} span`)
+        .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(button)))
         .catch(util.logError)
         .then(done);
@@ -83,8 +82,8 @@ describe('Calculator', function () {
       const button = 'die-d4';
 
       clickButtons(button)
-        .wait(`${dieSpec} span`)
-        .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpec)
+        .wait(`${dieSpecSelector} span`)
+        .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(button)))
         .catch(util.logError)
         .then(done);
@@ -95,8 +94,8 @@ describe('Calculator', function () {
         ['digit-4', ['die-dx', 'die-d'], 'digit-4', 'digit-4', 'digit-6'];
 
       clickButtons(buttons)
-        .wait(`${dieSpec} span:nth-of-type(${buttons.length})`)
-        .evaluate(ds => $(ds).html(), dieSpec)
+        .wait(`${dieSpecSelector} span:nth-of-type(${buttons.length})`)
+        .evaluate(ds => $(ds).html(), dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -107,8 +106,8 @@ describe('Calculator', function () {
       ['digit-4', 'die-d6', 'operator--', 'keep-L', 'operator-x', 'digit-6'];
 
       clickButtons(buttons)
-        .wait(`${dieSpec} span:nth-of-type(${buttons.length})`)
-        .evaluate(ds => $(ds).html(), dieSpec)
+        .wait(`${dieSpecSelector} span:nth-of-type(${buttons.length})`)
+        .evaluate(ds => $(ds).html(), dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -125,8 +124,8 @@ describe('Calculator', function () {
       ];
 
       clickButtons(buttons)
-        .wait(`${dieSpec} span:nth-of-type(${buttons.length - 2})`)
-        .evaluate(ds => $(ds).html(), dieSpec)
+        .wait(`${dieSpecSelector} span:nth-of-type(${buttons.length - 2})`)
+        .evaluate(ds => $(ds).html(), dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -145,8 +144,8 @@ describe('Calculator', function () {
       ];
 
       clickButtons(buttons)
-        .wait(ds => $(ds).children().length === 2, dieSpec)
-        .evaluate(ds => $(ds).html(), dieSpec)
+        .wait(ds => $(ds).children().length === 2, dieSpecSelector)
+        .evaluate(ds => $(ds).html(), dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -164,8 +163,8 @@ describe('Calculator', function () {
       ];
 
       clickButtons(buttons)
-        .wait(dieSpec)
-        .evaluate(ds => $(ds).html(), dieSpec)
+        .wait(dieSpecSelector)
+        .evaluate(ds => $(ds).html(), dieSpecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -228,98 +227,56 @@ describe('Calculator', function () {
     // TODO: Favorite key swichtes tab
   });
 
-  // function saveFavorite(favoriteName, favoriteDieSpec) {
-  //   return nightmare
-  //   .wait(
-  //     displayDieSpec => $(displayDieSpec).children('span').length === 4,
-  //     dieSpec)
-  //   .then(() => {
-  //     console.log('about to click favorite start');
-  //     return nightmare;
-  //   })
-  //   .click('#calculator .favorite-status')
-  //   .wait(() => $('.panel.panel-right.active'))
-  //   .type('.panel.panel-right .item-input input', favoriteName)
-  //   .click('.panel.panel-right a.save')
-  //   .wait('.panel.panel-right:not(.active)')
-  //   .evaluate(() => {
-  //     const favoritesList = JSON.parse(localStorage.getItem('favorites'));
-  //     console.log(`favoritesList[${favoritesList.length - 1}]=${
-  //       favoritesList[favoritesList.length - 1]}`);
-  //     return favoritesList[favoritesList.length - 1];
-  //   })
-  //   .then(obj =>
-  //     expect(obj)
-  //     .toEqual({ name: favoriteName, dieSpec: favoriteDieSpec })
-  //   );
-  // }
-
-
-  it('saves two favorites correctly', (done) => {
-    const buttons = [[
-      ['digit-4', ''],
-      ['die-d6', ''],
-      ['operator--', ''],
-      ['keep-L', ''],
-    ],
-    [
-      ['digit-3', ''],
-      ['die-d4', ''],
-      ['operator-plus', ''],
-      ['digit-3', ''],
-    ]];
-    clickButtons(buttons[0])
-    // .then(() => {    //   saveFavorite('AutoGenned', '4d6-L');    // })
+  function saveFavorite(args, timeout = 0) {
+    return clickButtons(args.buttons)
       .wait(
-        displayDieSpec => $(displayDieSpec).children('span').length === 4,
-        dieSpec)
+        subargs => $(subargs.selector).text() === subargs.text,
+        { selector: dieSpecSelector, text: args.favorite.dieSpec }
+      )
+      .wait(timeout)
       .click('#calculator .favorite-status')
-      .wait(() => $('.panel.panel-right.active'))
-      .type('.panel.panel-right .item-input input', 'AutoGenned')
+      .wait('.panel.panel-right.active')
+      .type('.panel.panel-right .item-input input', args.favorite.name)
       .click('.panel.panel-right a.save')
       .wait('.panel.panel-right:not(.active)')
-      .evaluate(() => {
-        const favoritesList = JSON.parse(localStorage.getItem('favorites'));
-        return favoritesList[favoritesList.length - 1];
-      })
-      .then((obj) => {
-        expect(obj).toEqual({ name: 'AutoGenned', dieSpec: '4d6-L' });
-      })
+      .evaluate(() => JSON.parse(localStorage.getItem('favorites')).pop())
+      .then((obj) => { expect(obj).toEqual(args.favorite); });
+  }
+
+  it('saves two favorites correctly', (done) => {
+    const b = [
+      {
+        buttons: [
+          ['digit-4', ''],
+          ['die-d6', ''],
+          ['operator--', ''],
+          ['keep-L', ''],
+        ],
+        favorite: { dieSpec: '4d6-L', name: 'AutoGenned' },
+      },
+      {
+        buttons: [
+          ['digit-3', ''],
+          ['die-d4', ''],
+          ['operator-plus', ''],
+          ['digit-3', ''],
+        ],
+        favorite: { dieSpec: '3d4+3', name: 'AutoGenned-2' },
+      },
+    ];
+
+    saveFavorite(b[0])
       .then(() =>
         nightmare
           .wait(() => $('#calculator:visible').length > 0)
           .click('.keypad .key-clear')
           .wait(() => $('#window .display-die-spec *').length === 0)
-          .then(() =>
-            clickButtons(buttons[1])
-              .wait(
-                displayDieSpec =>
-                  $(displayDieSpec).children('span').length === 4,
-                dieSpec
-              )
-              // FIXME: The following shouldn't be necessary.
-              //        What do we really need to wait for?
-              .wait(1000)
-              .click('#calculator .favorite-status')
-              .wait(() => $('.panel.panel-right.active'))
-              .type('.panel.panel-right .item-input input', 'AutoGenned-2')
-              .click('.panel.panel-right a.save')
-              .wait('.panel.panel-right:not(.active)')
-              // .wait(10000)
-              .evaluate(() => {
-                const favoritesList =
-                JSON.parse(localStorage.getItem('favorites'));
-                return favoritesList[favoritesList.length - 1];
-              })
-              .then(obj =>
-                expect(obj).toEqual({ name: 'AutoGenned-2', dieSpec: '3d4+3' })
-              )
-              .catch(util.logError)
-              .then(done)
-          )
-          .catch(util.logError)
-          .then(done)
       )
+      /*
+       * Don't why the timeout is needed. Without it, the click on the favorite
+       * star is not seen.
+       */
+      .then(() => saveFavorite(b[1], 500))
       .catch(util.logError)
       .then(done);
   });
