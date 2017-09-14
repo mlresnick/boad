@@ -188,12 +188,16 @@ describe('history model', () => {
   it('can traverse values', (done) => {
     nightmare
       .evaluate(() => {
-        const currentList = JSON.parse(localStorage.getItem('history'));
-        window.__nightmare.boadHistoryModel.forEach((entry, index) => {
-          expect(JSON.stringify(entry))
-            .toEqual(JSON.stringify(currentList[index]));
+        const result = { reconstructedList: [] };
+        result.currentList = JSON.parse(localStorage.getItem('history'));
+        window.__nightmare.boadHistoryModel.forEach((entry/* , index */) => {
+          result.reconstructedList.push(entry);
         });
+        return result;
       })
+      .then(result =>
+        expect(result.reconstructedList).toEqual(result.currentList)
+      )
       .catch(util.logError)
       .then(done);
   });
