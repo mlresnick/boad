@@ -7,7 +7,7 @@
 module.exports = (() => {
 
   function _logError(...error) {
-    console.error(...error); // eslint-disable-line no-console
+    fail(...error);
   }
 
   function _init(nightmare) {
