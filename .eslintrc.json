@@ -1,16 +1,15 @@
 {
-  "parserOptions": {
-    "sourceType": "script"
-  },
-
-  "plugins": [ "eslint-plugin-html" ],
+  "parserOptions": { "sourceType": "script" },
 
   "env": {
     "browser": true,
     "jquery": true
   },
 
+  "plugins": [ "eslint-plugin-html" ],
+
   "extends": "airbnb-base",
+
   "rules": {
     "brace-style": [ "error", "stroustrup", { "allowSingleLine": true } ],
     "comma-dangle": [
@@ -24,7 +23,7 @@
       }
     ],
     "func-names": [ "warn", "as-needed" ],
-    "linebreak-style": [ "error", "windows" ],
+    "linebreak-style": [ "error", "unix" ],
     "max-len": [ "error", 80, { "ignoreComments": true } ],
     "no-param-reassign": [ "error", { "props": false } ],
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],

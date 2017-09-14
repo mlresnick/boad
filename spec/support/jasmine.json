@@ -5,7 +5,8 @@
     "ds-spec.js",
     "favorite-spec.js",
     "calculator-spec.js",
-    "favorites-spec.js"
+    "favorites-spec.js",
+    "history-spec.js"
   ],
   "helpers": ["helpers/**/*.js"]
 }

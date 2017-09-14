@@ -1,5 +1,6 @@
 *~
 .archive/
+.DS_Store
 app/
 bower_components/
 node_modules/

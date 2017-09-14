@@ -26,10 +26,20 @@ module.exports = (() => {
       .then(length => expect(length).toBe(1));
   }
 
+  function _replaceFunctions(k, v) {
+    return (k === 'function') ? '[function]' : v;
+  }
+
+  function _stringify(object, replacer = _replaceFunctions, indent = 2) {
+    return JSON.stringify(object, replacer, indent);
+  }
+
   return {
     init: _init,
     logError: _logError,
+    stringify: _stringify,
     testTabBarLink: _testTabBarLink,
+    url: 'http://localhost:8080',
   };
 
 })();

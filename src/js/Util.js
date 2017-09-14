@@ -27,15 +27,15 @@ module.exports = ((Framework7) => {
 
     function _getTypeFromClass(node, prefix) {
       return $(node)
-          .attr('class')
-          .split(' ')
-          .find(className => className.startsWith(prefix))
-          .substring(prefix.length);
+        .attr('class')
+        .split(' ')
+        .find(className => className.startsWith(prefix))
+        .substring(prefix.length);
     }
 
     _boadApp.boadSettings =
       _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
-      // XXX:
+    // XXX:
     // _boadApp.addView('.view-main', { domCache: true });
     // _boadApp.addView('.view', { domCache: true });
 

@@ -1,12 +1,8 @@
 'use strict';
 
+// FIXME: Default roll implementaton has wrong range.
+// E.g. d4 results in values [1,3],  d6 results in values  [1,5]
 const stateMachine = require('./state-machine.js');
-
-function reviveFunctions(k, v) { return (k === 'function') ? '[function]' : v; }
-// eslint-disable-next-line no-unused-vars
-function stringify(object, reviver = reviveFunctions, indent = 2) {
-  return JSON.stringify(object, reviver, indent);
-}
 
 function dumpObject(object) { // eslint-disable-line no-unused-vars
   function cmp(a, b) {
@@ -20,48 +16,49 @@ function dumpObject(object) { // eslint-disable-line no-unused-vars
     return result;
   }
   const propertyList = Object.getOwnPropertyNames(object)
-  .filter(propertyName =>
-    [
-      /^AnalyserNode*/,
-      /^Animate7*/,
-      /^AnimationEvent*/,
-      /^ApplicationCache*/,
-      /^Array*/,
-      /^DOM*/,
-      /^Canvas*/,
-      /^CSS*/,
-      /^on.+/,
-      /^RTC*/,
-      /^Screen*/,
-      /^Presentation*/,
-      /^Performance*/,
-      /^MIDI*/,
-      /^Media*/,
-      /^Int*/,
-      /^IDB*/,
-      /^HTML*/,
-      /^WebGL*/,
-      /^Uint*/,
-      /\*Event$/,
-      /^SVG*/,
-      /^Text.+/,
-      /^WebKit*/,
-      /^webkit*/,
-      /^Worker/,
-      /^XMLDocument/,
-      /^XMLHttp*/,
-      /^XMLSerializer/,
-      /^XPath/,
-      /^XSLTProcessor/,
-      // /^[A-Z]*/,
-    ].find(pattern => pattern.test(propertyName)) === undefined)
-  .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
-   cmp(a, b));
+    .filter(propertyName =>
+      [
+        /^AnalyserNode*/,
+        /^Animate7*/,
+        /^AnimationEvent*/,
+        /^ApplicationCache*/,
+        /^Array*/,
+        /^DOM*/,
+        /^Canvas*/,
+        /^CSS*/,
+        /^on.+/,
+        /^RTC*/,
+        /^Screen*/,
+        /^Presentation*/,
+        /^Performance*/,
+        /^MIDI*/,
+        /^Media*/,
+        /^Int*/,
+        /^IDB*/,
+        /^HTML*/,
+        /^WebGL*/,
+        /^Uint*/,
+        /\*Event$/,
+        /^SVG*/,
+        /^Text.+/,
+        /^Text.+/,
+        /^WebKit*/,
+        /^webkit*/,
+        /^Worker/,
+        /^XMLDocument/,
+        /^XMLHttp*/,
+        /^XMLSerializer/,
+        /^XPath/,
+        /^XSLTProcessor/,
+        // /^[A-Z]*/,
+      ].find(pattern => pattern.test(propertyName)) === undefined)
+    .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
+      cmp(a, b));
   console.log(propertyList.join('\n')); // eslint-disable-line no-console
 // console.log(`propertyList.length=${propertyList.length}`);
 //   console.log(
-//         `window.boadFavoritesModel.findByDieSpec('5d4+12')=${
-//     window.boadFavoritesModel
+//         `window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')=${
+//     window.__nightmare.boadFavoritesModel
 //     .findByDieSpec('5d4+12')}`);
 // // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
 }
@@ -179,8 +176,8 @@ module.exports = ((arg) => {
           }
           result +=
             wrapList.reduce((partialResult, part) =>
-            `${partialResult}` +
-            `<span class="display-${displayClass}">${part}</span>`,
+              `${partialResult}` +
+              `<span class="display-${displayClass}">${part}</span>`,
             '');
         }
       }
@@ -247,7 +244,7 @@ module.exports = ((arg) => {
     'repeats',
   ];
 
-// TODO: Giv 'y' a better name
+  // TODO: Giv 'y' a better name
   const y = { /* eslint-disable key-spacing */
     start:            null,
     countDigit:       count,
@@ -274,7 +271,7 @@ module.exports = ((arg) => {
     roll:             null,
 
     error:            null,
-  };  /* eslint-enable key-spacing */
+  }; /* eslint-enable key-spacing */
 
   function _setRandom(rnd) { _random = rnd; }
 
@@ -510,7 +507,7 @@ module.exports = ((arg) => {
 
       result.result = result.rolls.reduce((total, dieRoll) =>
         total + dieRoll.roll + (dieRoll.roll * dieRoll.adjust),
-        0);
+      0);
 
       result.result += _spec.modifier;
 

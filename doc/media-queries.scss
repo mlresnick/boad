@@ -1,0 +1,40 @@
+@media only screen and (max-density: 120dpi) {
+  // ldpi
+}
+@media only screen and (max-density: 160dpi) {
+  // mdpi
+}
+@media only screen and (max-density: 213dpi) {
+  // tvdpi
+}
+@media only screen and (max-density: 240dpi) {
+  // hdpi
+}
+@media only screen and (max-density: 320dpi) {
+  // xhdpi
+}
+@media only screen and (max-density: 480dpi) {
+  // xxhdpi
+}
+@media only screen and (max-density: 640dpi) {
+  // xxxhdpi
+}
+@media only screen and (min-width: 320px) {
+  // Custom, iPhone Retina
+}
+@media only screen and (min-width: 480px) {
+  // Extra Small Devices, Phones
+}
+@media only screen and (min-width: 768px) {
+  // Small Devices, Tablets
+  html.xyzzy {
+    width: 480px;
+    height: (480px * 568px / 329px);
+  }
+}
+@media only screen and (min-width: 992px) {
+  // Medium Devices, Desktops
+}
+@media only screen and (min-width: 1200px) {
+  // Large Devices, Wide Screens
+}

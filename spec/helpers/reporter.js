@@ -4,7 +4,8 @@
 
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
-jasmine.getEnv().clearReporters();               // remove default reporter logs
-jasmine.getEnv().addReporter(new SpecReporter({  // add jasmine-spec-reporter
+jasmine.getEnv().clearReporters(); // remove default reporter logs
+// add jasmine-spec-reporter
+jasmine.getEnv().addReporter(new SpecReporter({
   spec: { displayPending: true },
 }));
