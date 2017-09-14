@@ -239,23 +239,6 @@ module.exports = (($) => {
         _getCalculator().roll(_model.find(name));
       }
 
-      // XXX
-      /* eslint-disable */
-      function getMethods(obj) {
-        var result = [];
-        for (var id in obj) {
-          try {
-            if (typeof(obj[id]) == "function") {
-              result.push(id + ": " + obj[id].toString());
-            }
-          } catch (err) {
-            result.push(id + ": inaccessible");
-          }
-        }
-        return result;
-      }
-      /* eslint-enable */
-
       function _refreshTab() {
         _favoritesList.empty();
         _model.forEach((favorite) => {

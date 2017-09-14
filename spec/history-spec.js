@@ -4,9 +4,6 @@
 
 const util = require('../spec/util.js');
 
-// XXX: Comment out
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-
 // TODO: maybe move this to a new debug/test library library
 function dumpObject(object) { // eslint-disable-line no-unused-vars
   function cmp(a, b) {

@@ -7,13 +7,7 @@
 const Nightmare = require('nightmare');
 const util = require('./util.js');
 
-// XXX:
-// jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
-
 let nightmare;
-
-// XXX: Is this really being used?
-const COMMON_TIMEOUT = 3000; // eslint-disable-line no-unused-vars
 
 const dieSpec = '.display .display-die-spec';
 // TODO: rearrange nightmare calls so end() is called in after all

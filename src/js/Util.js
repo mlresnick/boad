@@ -35,9 +35,6 @@ module.exports = ((Framework7) => {
 
     _boadApp.boadSettings =
       _getLocalStorage(_SETTINGS, { history: { limit: 10 } });
-    // XXX:
-    // _boadApp.addView('.view-main', { domCache: true });
-    // _boadApp.addView('.view', { domCache: true });
 
     return {
       boadApp: _boadApp,

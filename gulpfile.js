@@ -2,9 +2,10 @@
 
 'use strict';
 
+const address = require('address');
 const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
-// const chalk = require('chalk');
+const chalk = require('chalk');
 const connect = require('gulp-connect');
 const gulp = require('gulp');
 const gutil = require('gulp-util');
@@ -12,7 +13,6 @@ const notifier = require('node-notifier');
 const rm = require('gulp-rm');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
-// const spawn = require('child_process').spawn;
 const source = require('vinyl-source-stream');
 
 function audibleLog(errorMessage, plugin) {
@@ -43,50 +43,6 @@ function copyGlobs(src, dst) {
     .pipe(connect.reload());
 }
 
-// function runCmd(cmd, args, callBack) {
-//   const child = spawn(cmd, args);
-//   let resp = '';
-//
-//   child.stdout.on('data',
-//     (outputBuffer) => { resp += outputBuffer.toString(); }
-//   );
-//   child.stdout.on('end', () => callBack(resp));
-// }
-
-// XXX function rebundle(b, output) {
-//   return b
-//     .require('./src/js/index.js' /* XXX , { expose: 'globalNamespace' } */)
-//     .on('error', (err) => {
-//       console.error(err); // eslint-disable-line no-console
-//       this.emit('end');
-//     })
-//     // .transform(babelify)
-//     .bundle()
-//     .pipe(source(output))
-//     .pipe(buffer()) // required for sourcemaps
-//     .pipe(sourcemaps.init())
-//     .pipe(sourcemaps.write('.'))
-//     .pipe(gulp.dest('./app/js'));
-// }
-//
-// function doBrowserify(sources) {
-//   const filenames = glob.sync(sources);
-//   const browserified = browserify({
-//     entries: filenames,
-//     debug: true,
-//   });
-//   return browserified;
-// }
-//
-// function bundle(sources, output) {
-//   return rebundle(doBrowserify(sources), output);
-// }
-//
-// gulp.task('package-src',
-//   () => bundle('./src/js/**/*.js', 'alt-boad.js'));
-//
-// gulp.task('test-dev', () => bundle('./spec/**/*-spec.js', 'spec.js'));
-
 gulp.task('webserver', () => {
   connect.server({
     // port: 80,
@@ -95,26 +51,13 @@ gulp.task('webserver', () => {
   });
 });
 
-// XXX:
-// gulp.task('getPrivateIP', () => {
-//   runCmd('ipconfig', [], (result) => {
-//     const lines = result.split('\n');
-//     let sawSection = false;
-//     lines.forEach((line) => {
-//       if (line.includes('Wireless LAN adapter Wi-Fi')) {
-//         sawSection = true;
-//       }
-//       else if (sawSection && line.includes('IPv4')) {
-//         process.stdout.write(
-//           chalk.magenta(
-//             ` *****\n *\n *  Wi-Fi IPv4:${line.split(':')[1]}\n *\n *****\n`
-//           )
-//         );
-//       }
-//     });
-//   });
-// });
-
+gulp.task('getPrivateIP', () => {
+  process.stdout.write(
+    chalk.magenta(
+      ` *****\n *\n *  Wi-Fi IPv4:${address.ip()}\n *\n *****\n`
+    )
+  );
+});
 
 gulp.task('html', () => copyGlobs('./src/**/*.html', './app/'));
 gulp.task('jquery',
@@ -161,4 +104,4 @@ gulp.task('watch', () => {
 });
 
 
-gulp.task('default', [/* 'getPrivateIP', */'webserver', 'watch']);
+gulp.task('default', ['getPrivateIP', 'webserver', 'watch']);

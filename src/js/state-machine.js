@@ -104,21 +104,6 @@ roll:             { digit: 'countDigit', die: 'die', roll: 'roll' },
 error:            { /* There's no escape, except to delete */ },
     }; /* eslint-enable */
 
-    /* eslint-disable key-spacing */
-    // XXX:
-    // const _displayClass = {
-    //   digit: 'digit',
-    //   0:     'digit',
-    //
-    //   die: 'die',
-    //
-    //   operator: 'operator',
-    //   x:        'operator',
-    //
-    //   k:  'keep',
-    //   lh: 'keep',
-    // }; /* eslint-enable */
-
     function _nextState(originalState, chars) {
       let char;
       let charClass;

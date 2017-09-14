@@ -4,8 +4,6 @@
 
 const util = require('../spec/util.js');
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-
 // TODO: maybe move this to a new debug/test library library
 function dumpObject(object) { // eslint-disable-line no-unused-vars
   function cmp(a, b) {
@@ -201,11 +199,6 @@ describe('favorites tab', () => {
   beforeEach(done =>
     nightmare
       .goto(util.url, userAgentString[platform])
-      // XXX
-      // .goto(util.url, {
-      //   // eslint-disable-next-line max-len
-      //   'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-      // })
       .wait('body')
       .click('a.tab-link[href="#favorites"]')
       .wait(() => $('#favorites:visible').length > 0)

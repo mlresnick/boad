@@ -67,8 +67,6 @@ module.exports = ((arg) => {
   let _die;
   let _random = Math.random;
 
-  // XXX:
-  // const _dieSpecString = arg;
   const _spec = {
     count: null,
     sides: null,
@@ -353,7 +351,7 @@ module.exports = ((arg) => {
 
   function _toString() {
     return [
-      // XXX:
+      // TODO: Part of explode implementation
       // 'explode',
       'count',
       'sides',
@@ -381,7 +379,7 @@ module.exports = ((arg) => {
   function _toHTML(wrapIndividual = false) {
     return [
       /* eslint-disable no-multi-spaces */
-      // XXX:
+      // TODO: Part of explode implementation
       // { specPart: 'explode',      displayClass: 'explode' },
       { specPart: 'count',        displayClass: 'digit'   },
       { specPart: 'sides',        displayClass: 'die'     },
