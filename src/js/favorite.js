@@ -51,7 +51,7 @@ module.exports = (() => {
 
   function toString() { return JSON.stringify(toJSON()); }
 
-e  pseudoPrototype = function () {
+  pseudoPrototype = function () {
     return {
       // create,
       // dieSpec,

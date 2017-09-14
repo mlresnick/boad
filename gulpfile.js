@@ -4,7 +4,6 @@
 
 const browserify = require('browserify');
 const buffer = require('vinyl-buffer');
-const notifier = require('node-notifier');
 // const chalk = require('chalk');
 const connect = require('gulp-connect');
 const gulp = require('gulp');
@@ -24,7 +23,6 @@ function audibleLog(errorMessage, plugin) {
     sound: false,
   });
   gutil.log(new gutil.PluginError(plugin, errorMessage).toString());
->>>>>>> reworkModels
   this.emit('end');
 }
 
@@ -117,6 +115,7 @@ gulp.task('webserver', () => {
 //   });
 // });
 
+
 gulp.task('html', () => copyGlobs('./src/**/*.html', './app/'));
 gulp.task('jquery',
   () => copyGlobs('./node_modules/jquery/dist/jquery.js', './app/lib/js')
@@ -134,7 +133,6 @@ gulp.task('js', () =>
     .pipe(gulp.dest('./app/js/'))
     .pipe(connect.reload())
 );
-
 gulp.task('scss', () =>
   gulp
     .src('./src/scss/*.scss')
@@ -161,5 +159,6 @@ gulp.task('watch', () => {
   gulp.watch(['./node_modules/jquery/dist/jquery.js'], ['jquery']);
   gulp.watch(nodeList, ['node']);
 });
+
 
 gulp.task('default', [/* 'getPrivateIP', */'webserver', 'watch']);
