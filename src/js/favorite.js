@@ -1,6 +1,5 @@
 'use strict';
 
-// SETTINGS Deal with configuring bottom row on calculator - add/removee/order
 // SETTINGS Maybe use list of cards with sections for each page
 
 // TODO: funky casing on purpose, now what was the reason?

@@ -1,5 +1,7 @@
 'use strict';
 
+// SETTINGS: Allow user to configure bottom 4 buttons - add/removee/order
+
 const Util = require('./Util.js');
 const DS = require('./ds.js');
 const stateMachine = require('./state-machine.js');
@@ -8,7 +10,8 @@ const History = require('./History.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
 // IDEA: Split view from model
-
+// FIXME: d12 > Roll > + > ⌫ > + doesn't work, need to tap C
+// TODO: Look for commented out code that can be removed.
 module.exports = (($) => {
   let _instance;
 
