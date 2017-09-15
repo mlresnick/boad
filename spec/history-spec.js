@@ -4,65 +4,6 @@
 
 const util = require('../spec/util.js');
 
-// TODO: maybe move this to a new debug/test library library
-function dumpObject(object) { // eslint-disable-line no-unused-vars
-  function cmp(a, b) {
-    let result = 0;
-    if (a < b) {
-      result = -1;
-    }
-    else if (a > b) {
-      result = 1;
-    }
-    return result;
-  }
-  const propertyList = Object.getOwnPropertyNames(object)
-    .filter(propertyName =>
-      [
-        /^AnalyserNode*/,
-        /^Animate7*/,
-        /^AnimationEvent*/,
-        /^ApplicationCache*/,
-        /^Array*/,
-        /^DOM*/,
-        /^Canvas*/,
-        /^CSS*/,
-        /^on.+/,
-        /^RTC*/,
-        /^Screen*/,
-        /^Presentation*/,
-        /^Performance*/,
-        /^MIDI*/,
-        /^Media*/,
-        /^Int*/,
-        /^IDB*/,
-        /^HTML*/,
-        /^WebGL*/,
-        /^Uint*/,
-        /\*Event$/,
-        /^SVG*/,
-        /^Text.+/,
-        /^WebKit*/,
-        /^webkit*/,
-        /^Worker/,
-        /^XMLDocument/,
-        /^XMLHttp*/,
-        /^XMLSerializer/,
-        /^XPath/,
-        /^XSLTProcessor/,
-        // /^[A-Z]*/,
-      ].find(pattern => pattern.test(propertyName)) === undefined)
-    .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
-      cmp(a, b));
-  console.log(propertyList.join('\n')); // eslint-disable-line no-console
-// console.log(`propertyList.length=${propertyList.length}`);
-//   console.log(
-//         `window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')=${
-//     window.__nightmare.boadFavoritesModel
-//     .findByDieSpec('5d4+12')}`);
-// // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
-}
-
 const Nightmare = require('nightmare');
 // const History = require('../src/js/History');
 // const util = require('./util.js');
@@ -314,8 +255,14 @@ describe('history model', () => {
 describe('history tab', () => {
 
   beforeAll(initialize);
-  afterAll(done => nightmare.end().catch(util.logError).then(done));
-  // TODO: Do this everywhere
+
+  afterAll(done =>
+    nightmare
+      .end()
+      .catch(util.logError)
+      .then(done)
+  );
+
   // TODO: modify to test android too
   beforeEach(done =>
     nightmare
@@ -394,7 +341,7 @@ describe('history tab', () => {
   //     .then(done);
   // });
 
-  // TODO: Nightmare doesn't support swipe
+  // NOTE: Nightmare doesn't support swipe
   // it('deletes an entry', (done) => {
   //
   //   nightmare

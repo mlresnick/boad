@@ -2,65 +2,6 @@
 
 const stateMachine = require('./state-machine.js');
 
-function dumpObject(object) { // eslint-disable-line no-unused-vars
-  function cmp(a, b) {
-    let result = 0;
-    if (a < b) {
-      result = -1;
-    }
-    else if (a > b) {
-      result = 1;
-    }
-    return result;
-  }
-  const propertyList = Object.getOwnPropertyNames(object)
-    .filter(propertyName =>
-      [
-        /^AnalyserNode*/,
-        /^Animate7*/,
-        /^AnimationEvent*/,
-        /^ApplicationCache*/,
-        /^Array*/,
-        /^DOM*/,
-        /^Canvas*/,
-        /^CSS*/,
-        /^on.+/,
-        /^RTC*/,
-        /^Screen*/,
-        /^Presentation*/,
-        /^Performance*/,
-        /^MIDI*/,
-        /^Media*/,
-        /^Int*/,
-        /^IDB*/,
-        /^HTML*/,
-        /^WebGL*/,
-        /^Uint*/,
-        /\*Event$/,
-        /^SVG*/,
-        /^Text.+/,
-        /^Text.+/,
-        /^WebKit*/,
-        /^webkit*/,
-        /^Worker/,
-        /^XMLDocument/,
-        /^XMLHttp*/,
-        /^XMLSerializer/,
-        /^XPath/,
-        /^XSLTProcessor/,
-        // /^[A-Z]*/,
-      ].find(pattern => pattern.test(propertyName)) === undefined)
-    .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
-      cmp(a, b));
-  console.log(propertyList.join('\n')); // eslint-disable-line no-console
-// console.log(`propertyList.length=${propertyList.length}`);
-//   console.log(
-//         `window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')=${
-//     window.__nightmare.boadFavoritesModel
-//     .findByDieSpec('5d4+12')}`);
-// // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
-}
-
 module.exports = ((arg) => {
   let _die;
   let _random = Math.random;
@@ -240,8 +181,8 @@ module.exports = ((arg) => {
     'repeats',
   ];
 
-  // TODO: Giv 'y' a better name
-  const y = { /* eslint-disable key-spacing */
+  const stateToSpecPart = {
+    /* eslint-disable key-spacing */
     start:            null,
     countDigit:       count,
 
@@ -267,7 +208,8 @@ module.exports = ((arg) => {
     roll:             null,
 
     error:            null,
-  }; /* eslint-enable key-spacing */
+    /* eslint-enable key-spacing */
+  };
 
   function _setRandom(rnd) { _random = rnd; }
 
@@ -349,7 +291,7 @@ module.exports = ((arg) => {
 
   function _toString() {
     return [
-      // TODO: Part of explode implementation
+      // TODO: Part of explode (!) implementation
       // 'explode',
       'count',
       'sides',
@@ -377,7 +319,7 @@ module.exports = ((arg) => {
   function _toHTML(wrapIndividual = false) {
     return [
       /* eslint-disable no-multi-spaces */
-      // TODO: Part of explode implementation
+      // TODO: Part of explode (!) implementation
       // { specPart: 'explode',      displayClass: 'explode' },
       { specPart: 'count',        displayClass: 'digit'   },
       { specPart: 'sides',        displayClass: 'die'     },
@@ -413,7 +355,7 @@ module.exports = ((arg) => {
           `${currentState.previousState}`
         );
       }
-      specpart = y[currentState.state];
+      specpart = stateToSpecPart[currentState.state];
       if (specpart) {
         _spec[specpart] = (_spec[specpart] || '') + String(char);
         // this[`_${specpart}`] = (this[`_${specpart}`] || '') + String(char);

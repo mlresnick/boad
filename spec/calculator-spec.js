@@ -1,7 +1,5 @@
 /* eslint-env jasmine */
 
-/* eslint-disable func-names, prefer-arrow-callback */
-
 'use strict';
 
 const Nightmare = require('nightmare');
@@ -10,8 +8,8 @@ const util = require('./util.js');
 let nightmare;
 
 const dieSpecSelector = '.display .display-die-spec';
-// TODO: rearrange nightmare calls so end() is called in after all
-describe('Calculator', function () {
+
+describe('Calculator', () => {
 
   beforeAll((done) => {
     nightmare = Nightmare();
@@ -20,7 +18,14 @@ describe('Calculator', function () {
     nightmare.then(done);
   });
 
-  beforeEach(function (done) {
+  afterAll(done =>
+    nightmare
+      .end()
+      .catch(util.logError)
+      .then(done)
+  );
+
+  beforeEach((done) => {
     nightmare
       .goto(util.url)
       .wait('body')
@@ -65,9 +70,9 @@ describe('Calculator', function () {
     '');
   }
 
-  describe('keypad', function () {
+  describe('keypad', () => {
 
-    it('can handle a single click', function (done) {
+    it('can handle a single click', (done) => {
       const button = 'digit-1';
 
       clickButtons('digit-1')
@@ -78,7 +83,7 @@ describe('Calculator', function () {
         .then(done);
     });
 
-    it('can handle a single die', function (done) {
+    it('can handle a single die', (done) => {
       const button = 'die-d4';
 
       clickButtons(button)
@@ -224,7 +229,6 @@ describe('Calculator', function () {
     // TODO: Roll > Roll
     // TODO: Roll > digit
     // TODO: Roll > delete
-    // TODO: Favorite key swichtes tab
   });
 
   function saveFavorite(args, timeout = 0) {

@@ -1,6 +1,6 @@
 'use strict';
 
-// TODO: Implement !
+// TODO: Implement explode (!)
 module.exports = (() => {
   const _EXPLODE = 1;
   const _COUNT = 2;

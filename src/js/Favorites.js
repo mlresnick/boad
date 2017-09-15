@@ -1,8 +1,7 @@
 'use strict';
 
-// TODO: Find/creat a favicon
-// TODO: Merge Favorite and DieSpec objects
-// TODO: Possibly make DieSpec the model for Dice
+// IDEA: Merge Favorite and DieSpec objects
+// IDEA: Possibly make DieSpec the model for Dice
 
 const Util = require('./Util.js');
 const DS = require('./ds.js');

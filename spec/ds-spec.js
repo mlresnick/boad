@@ -71,7 +71,7 @@ describe('New DieSpec class', () => {
 
     describe('a simple die', () => {
       beforeEach(() => {
-        spyOn(mockRandomizer, 'random').and.returnValue(2 / 4);
+        spyOn(mockRandomizer, 'random').and.returnValue(1 / 4);
       });
 
       it('(d4)', () => {
@@ -87,7 +87,7 @@ describe('New DieSpec class', () => {
     describe('multple dice', () => {
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (2 / 6), (5 / 6), (6 / 6)
+          (1 / 6), (4 / 6), (5 / 6)
         );
       });
 
@@ -108,10 +108,10 @@ describe('New DieSpec class', () => {
     describe('multple dice with modifier', () => {
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (8 / 8), (4 / 8), (3 / 8)
+          (7 / 8), (3 / 8), (2 / 8)
         );
         spyOn(mockRandomizer, 'random2').and.returnValues(
-          (4 / 10), (2 / 10), (1 / 10)
+          (3 / 10), (1 / 10), (0 / 10)
         );
       });
 
@@ -145,7 +145,7 @@ describe('New DieSpec class', () => {
     describe('dice with "k"', () => {
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (4 / 6), (2 / 6), (1 / 6), (6 / 6)
+          (3 / 6), (1 / 6), (0 / 6), (5 / 6)
         );
       });
 
@@ -181,16 +181,16 @@ describe('New DieSpec class', () => {
     describe('dice with "-L/-H"', () => {
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (4 / 12), (2 / 12), (1 / 12), (6 / 12), (3 / 12)
+          (3 / 12), (1 / 12), (0 / 12), (5 / 12), (2 / 12)
         );
         spyOn(mockRandomizer, 'random2').and.returnValues(
-          (6 / 12), (10 / 12), (2 / 12), (8 / 12), (4 / 12)
+          (5 / 12), (9 / 12), (1 / 12), (7 / 12), (3 / 12)
         );
         spyOn(mockRandomizer, 'random3').and.returnValues(
-          (10 / 20), (15 / 20), (2 / 20), (5 / 20), (17 / 20)
+          (9 / 20), (14 / 20), (1 / 20), (4 / 20), (16 / 20)
         );
         spyOn(mockRandomizer, 'random4').and.returnValues(
-          (17 / 20), (5 / 20), (2 / 20), (15 / 20), (10 / 20)
+          (16 / 20), (4 / 20), (1 / 20), (14 / 20), (9 / 20)
         );
       });
       it('(5d12-L)', () => {
@@ -257,10 +257,10 @@ describe('New DieSpec class', () => {
     describe('dice with "+L/+H"', () => {
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (17 / 20), (5 / 20), (2 / 20), (15 / 20), (10 / 20)
+          (16 / 20), (4 / 20), (1 / 20), (14 / 20), (9 / 20)
         );
         spyOn(mockRandomizer, 'random2').and.returnValues(
-          (10 / 20), (15 / 20), (2 / 20), (5 / 20), (17 / 20)
+          (9 / 20), (14 / 20), (1 / 20), (4 / 20), (16 / 20)
         );
       });
 
@@ -328,7 +328,7 @@ describe('New DieSpec class', () => {
     describe('dice with "x"', () => {
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (17 / 20), (5 / 20), (2 / 20), (15 / 20), (10 / 20), (9 / 20)
+          (16 / 20), (4 / 20), (1 / 20), (14 / 20), (9 / 20), (8 / 20)
         );
       });
 
@@ -379,12 +379,12 @@ describe('New DieSpec class', () => {
     describe('complex die specifications', () => {
       beforeEach(() =>
         spyOn(mockRandomizer, 'random').and.returnValues(
-          (4 / 6), (6 / 6), (1 / 6), (6 / 6),
-          (2 / 6), (5 / 6), (3 / 6), (4 / 6),
-          (6 / 6), (6 / 6), (5 / 6), (3 / 6),
-          (1 / 6), (6 / 6), (2 / 6), (4 / 6),
-          (5 / 6), (4 / 6), (2 / 6), (3 / 6),
-          (1 / 6), (3 / 6), (5 / 6), (2 / 6)
+          (3 / 6), (5 / 6), (0 / 6), (5 / 6),
+          (1 / 6), (4 / 6), (2 / 6), (3 / 6),
+          (5 / 6), (5 / 6), (4 / 6), (2 / 6),
+          (0 / 6), (5 / 6), (1 / 6), (3 / 6),
+          (4 / 6), (3 / 6), (1 / 6), (2 / 6),
+          (0 / 6), (2 / 6), (4 / 6), (1 / 6)
         )
       );
 
