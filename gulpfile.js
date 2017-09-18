@@ -53,7 +53,7 @@ gulp.task('webserver', () => {
 
 gulp.task('getPrivateIP', () => {
   process.stdout.write(
-    chalk.magenta(
+    chalk.magenta.bold(
       ` *****\n *\n *  Wi-Fi IPv4:${address.ip()}\n *\n *****\n`
     )
   );
