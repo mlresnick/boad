@@ -1,8 +1,5 @@
 'use strict';
 
-// IDEA: Merge Favorite and DieSpec objects
-// IDEA: Possibly make DieSpec the model for Dice
-
 const Util = require('./Util.js');
 const DS = require('./ds.js');
 const Favorite = require('./favorite.js');

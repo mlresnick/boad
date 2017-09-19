@@ -3,9 +3,6 @@
 const Util = require('./Util.js');
 const historyModel = require('./history-model');
 
-// IDEA: Store (and display) intermediate steps during a roll
-// IDEA: How to incorporate intermediate steps in the calculator display
-
 module.exports = (($) => {
   const _util = Util.getInstance();
 
