@@ -2,7 +2,8 @@
 
 'use strict';
 
-const DS = require('../src/js/ds.js');
+// TODO change references to 'DS' tp 'Diespec' and 'ds' to 'diespec'
+const DS = require('../src/js/diespec.js');
 
 describe('New DieSpec class', () => {
   it('can be referenced as a module', () => {

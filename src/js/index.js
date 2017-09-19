@@ -1,7 +1,7 @@
 'use strict';
 
-const Util = require('./Util.js');
-require('./Calculator.js').getInstance();
+const Util = require('./util.js');
+require('./calculator.js').getInstance();
 
 document.addEventListener('DOMContentLoaded', (/* event */) => {
   const _util = Util.getInstance();

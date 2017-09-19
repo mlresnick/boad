@@ -1,7 +1,7 @@
 'use strict';
 
-const Util = require('./Util.js');
-const DS = require('./ds.js');
+const Util = require('./util.js');
+const DS = require('./diespec.js');
 const Favorite = require('./favorite.js');
 const FavoritesReviver = require('./favorites-reviver.js');
 
@@ -219,7 +219,7 @@ module.exports = (($) => {
       function _getCalculator() {
         if (!_calculator) {
           // eslint-disable-next-line global-require, max-len
-          _calculator = require('./Calculator.js').getInstance();
+          _calculator = require('./calculator.js').getInstance();
         }
         return _calculator;
       }

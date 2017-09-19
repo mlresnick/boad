@@ -2,11 +2,11 @@
 
 // SETTINGS: Allow user to configure bottom 4 buttons - add/removee/order
 
-const Util = require('./Util.js');
-const DS = require('./ds.js');
+const Util = require('./util.js');
+const DS = require('./diespec.js');
 const stateMachine = require('./state-machine.js');
-const Favorites = require('./Favorites.js');
-const History = require('./History.js');
+const Favorites = require('./favorites.js');
+const History = require('./history.js');
 
 // TODO: Look for commented out code that can be removed.
 module.exports = (($) => {

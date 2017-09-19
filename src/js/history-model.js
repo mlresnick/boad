@@ -1,6 +1,6 @@
 'use strict';
 
-const Util = require('./Util.js');
+const Util = require('./util.js');
 
 module.exports = (() => {
   const _util = Util.getInstance();

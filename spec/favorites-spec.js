@@ -2,12 +2,10 @@
 
 'use strict';
 
-const util = require('../spec/util.js');
+const util = require('./helpers/util.js');
 
 const Nightmare = require('nightmare');
-const DS = require('../src/js/ds');
-// const util = require('./util.js');
-// const favorites = require('../src/js/Favorites.js');
+const DS = require('../src/js/diespec.js');
 
 let nightmare;
 

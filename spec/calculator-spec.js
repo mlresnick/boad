@@ -3,7 +3,7 @@
 'use strict';
 
 const Nightmare = require('nightmare');
-const util = require('./util.js');
+const util = require('./helpers/util.js');
 
 let nightmare;
 

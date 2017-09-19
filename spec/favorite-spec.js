@@ -2,7 +2,7 @@
 
 'use strict';
 
-const DS = require('../src/js/ds.js');
+const DS = require('../src/js/diespec.js');
 const Favorite = require('../src/js/favorite.js');
 
 function getArgs(func) {

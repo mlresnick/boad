@@ -1,6 +1,6 @@
 'use strict';
 
-const DS = require('./ds.js');
+const DS = require('./diespec.js');
 const Favorite = require('./favorite.js');
 
 module.exports = (() => {
