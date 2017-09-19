@@ -12,8 +12,9 @@ const dieSpecSelector = '.display .display-die-spec';
 describe('Calculator', () => {
 
   beforeAll((done) => {
-    nightmare = Nightmare();
-    // nightmare = Nightmare({ show: true });
+    const nightmareOpts = {};
+    nightmareOpts.show = true;
+    nightmare = Nightmare(nightmareOpts);
     util.init(nightmare);
     nightmare.then(done);
   });
@@ -198,9 +199,152 @@ describe('Calculator', () => {
           /^(0|-?[1-9]\d*)(,(0|-?[1-9]\d*))*$/,
           'because the result value is a number'
         ))
-        .catch(msg => util.logError(msg))
+        .catch(util.logError)
         .then(done);
     });
+
+    it('should handle the Roll key more than once', (done) => {
+      const buttons = ['digit-4', 'die-d6', 'operator--', 'keep-L', 'roll'];
+
+      clickButtons(buttons)
+        .wait('.display > span:nth-of-type(2)')
+        .visible('.display-result')
+        .then(isVisible =>
+          expect(isVisible)
+            .toBeTruthy('because a result is visible after a roll')
+        )
+        .then(() =>
+          nightmare
+            .evaluate(() => {
+              const info = {};
+              info.firstRoll = JSON.parse(localStorage.getItem('history'));
+              info.historyLimit
+                = JSON.parse(localStorage.getItem('settings')).history.limit;
+              return info;
+            })
+        )
+        .then((info) => {
+          clickButtons('roll');
+          return nightmare
+            .evaluate((i) => {
+              i.secondRoll = JSON.parse(localStorage.getItem('history'));
+              i.newResult = {};
+              i.newResult.result = $('.display .display-result')[0].outerHTML;
+              i.newResult.dieSpec =
+                $('.display > span:not(:last-child)').html();
+              return i;
+            }, info);
+        })
+        .then((info) => {
+          expect(info.firstRoll.length + 1).toBe(info.secondRoll.length);
+          expect(info.secondRoll[info.secondRoll.length - 1])
+            .toEqual(info.newResult);
+        })
+        .catch(util.logError)
+        .then(done);
+    });
+
+    it('should handle Roll > digit', (done) => {
+      const buttons = ['digit-4', 'die-d6', 'operator--', 'keep-L', 'roll'];
+      clickButtons(buttons)
+        .wait('.display > span:nth-of-type(2)')
+        .click('.keypad .key-digit-8')
+        .evaluate(() => $('.display').text().trim())
+        .then(result => expect(result).toBe('8'))
+        //   clickButtons(['digit-8'])
+        // })click
+        .catch(util.logError)
+        .then(done);
+    });
+
+    it('should handle Roll > delete', (done) => {
+      const buttons = ['die-d8', 'operator--', 'digit-1', 'roll'];
+      clickButtons(buttons)
+        .wait('.display > span:nth-of-type(2)')
+        .click('.keypad .key-delete')
+        .evaluate(() => $('.display').text().trim())
+        .then((result) => {
+          expect(result).toBe('d8-1');
+          return clickButtons(['operator-x', 'digit-2'])
+            .evaluate(() => $('.display').text().trim())
+            .then(r => expect(r).toBe('d8-1x2'));
+        })
+        .catch(util.logError)
+        .then(done);
+    });
+
+    function enterStuff(args) { // buttons, waitCondition, expected) {
+      return clickButtons(args.buttons)
+        .wait(args.waitCondition)
+        .evaluate(() => $('.display').text().trim())
+        .then((actual) => {
+          switch(typeof args.expected) {
+            case 'string': expect(actual).toBe(args.expected); break;
+
+            case 'object':
+              if (args.expected instanceof RegExp) {
+                expect(actual).toMatch(args.expected);
+              }
+              else {
+                expect(actual).toEqual(args.expected);
+              }
+              break;
+
+            default:
+              throw Error(`Unexpected datatype for expected value: ${
+                typeof args.expecterd
+              }`);
+          }
+        });
+    }
+
+    it('should handle Roll > bad-key > delete', (done) => {
+      const buttons = ['die-d12', 'roll'];
+      enterStuff({
+        buttons,
+        waitCondition: '.display > span:nth-of-type(2)',
+        expected: /d12\s+⇒\s+[1-9]\d*/,
+      })
+        .then(() => enterStuff({
+          buttons: 'operator-plus',
+          waitCondition: 250,
+          expected: /d12\s+⇒\s+[1-9]\d*/,
+        }))
+        .then(() => enterStuff({
+          buttons: 'delete',
+          waitCondition: 250,
+          expected: 'd12',
+        }))
+        .catch(util.logError)
+        .then(done);
+    });
+
+    // FIXME: should handle roll > bad-key > delete > correction
+    // it('should handle Roll > bad-key > delete > correction', (done) => {
+    //   const buttons = ['die-d12', 'roll'];
+    //   enterStuff({
+    //     buttons,
+    //     waitCondition: '.display > span:nth-of-type(2)',
+    //     expected: /d12\s+⇒\s+[1-9]\d*/,
+    //   })
+    //     .then(() => enterStuff({
+    //       buttons: 'operator-plus',
+    //       waitCondition: 250,
+    //       expected: /d12\s+⇒\s+[1-9]\d*/,
+    //     }))
+    //     .then(() => enterStuff({
+    //       buttons: 'delete',
+    //       waitCondition: 250,
+    //       expected: 'd12',
+    //     }))
+    //     // .then(() => enterStuff({
+    //     //   buttons: ['operator-plus', 'digit-1'],
+    //     //   waitCondition: 250,
+    //     //   expected: 'd12+1',
+    //     // }))
+    //     .catch(util.logError)
+    //     .then(done);
+    // });
   });
 
   describe('tab bar', () => {
@@ -226,9 +370,6 @@ describe('Calculator', () => {
     });
 
     // TODO: Roll an 'CdxR' dieSpec
-    // TODO: Roll > Roll
-    // TODO: Roll > digit
-    // TODO: Roll > delete
   });
 
   function saveFavorite(args, timeout = 0) {

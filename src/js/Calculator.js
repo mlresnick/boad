@@ -9,8 +9,7 @@ const Favorites = require('./Favorites.js');
 const History = require('./History.js');
 
 // IDEA: Add cursor keys to allow editing of dieSpecHtml
-// IDEA: Split view from model
-// FIXME: d12 > Roll > + > ⌫ > + doesn't work, need to tap C
+// IDEA: Split calculator view from model
 // TODO: Look for commented out code that can be removed.
 module.exports = (($) => {
   let _instance;
