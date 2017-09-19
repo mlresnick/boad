@@ -13,7 +13,7 @@ describe('Calculator', () => {
 
   beforeAll((done) => {
     const nightmareOpts = {};
-    nightmareOpts.show = true;
+    // nightmareOpts.show = true;
     nightmare = Nightmare(nightmareOpts);
     util.init(nightmare);
     nightmare.then(done);
