@@ -5,7 +5,7 @@
 // TODO change references to 'ds' to 'diespec'
 const Diespec = require('../src/js/diespec.js');
 
-describe('New DieSpec class', () => {
+describe('New Diespec class', () => {
   it('can be referenced as a module', () => {
     expect(Diespec).toBeDefined();
   });

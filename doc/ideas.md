@@ -10,9 +10,9 @@ Split calculator view from model
 
 Favorites
 ---------
-Merge Favorite and DieSpec objects
+Merge Favorite and Diespec objects
 
-Possibly make DieSpec the model for Dice
+Possibly make Diespec the model for Dice
 
 History
 -------
