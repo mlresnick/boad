@@ -4,7 +4,7 @@ Consolidation of "IDEA" comments that were entered on the spur of the moment.
 
 Calculator
 ----------
-Add cursor keys to allow editing of dieSpecHtml
+Add cursor keys to allow editing of diespecHtml
 
 Split calculator view from model
 
