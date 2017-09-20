@@ -2,7 +2,7 @@
 
 'use strict';
 
-const DS = require('../src/js/diespec.js');
+const Diespec = require('../src/js/diespec.js');
 const Favorite = require('../src/js/favorite.js');
 
 function getArgs(func) {
@@ -80,7 +80,7 @@ describe('Favorite object', () => {
     ]) {
       const expectedValue = Favorite();
       expectedValue.name = expectedRawValue.name;
-      expectedValue.dieSpec = DS(expectedRawValue.dieSpec);
+      expectedValue.dieSpec = Diespec(expectedRawValue.dieSpec);
       expectedFavoriteList.push(expectedValue);
     }
     const actualFavoriteList =
@@ -91,9 +91,9 @@ describe('Favorite object', () => {
 
   it('can be serialized', () => {
     const favoriteList = [
-      { name: 'First', dieSpec: DS('d6') },
-      { name: 'Second', dieSpec: DS('4d12+2') },
-      { name: 'Third', dieSpec: DS('4d6-Lx6') },
+      { name: 'First', dieSpec: Diespec('d6') },
+      { name: 'Second', dieSpec: Diespec('4d12+2') },
+      { name: 'Third', dieSpec: Diespec('4d6-Lx6') },
     ];
     const favoriteListString =
     '[' +
@@ -104,7 +104,7 @@ describe('Favorite object', () => {
     ']';
     const newFavorite = Favorite();
     newFavorite.name = 'Next';
-    newFavorite.dieSpec = DS('3d10');
+    newFavorite.dieSpec = Diespec('3d10');
     favoriteList.push(newFavorite);
     expect(JSON.stringify(favoriteList)).toBe(favoriteListString);
   });

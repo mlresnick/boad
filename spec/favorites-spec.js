@@ -5,7 +5,7 @@
 const util = require('./helpers/util.js');
 
 const Nightmare = require('nightmare');
-const DS = require('../src/js/diespec.js');
+const Diespec = require('../src/js/diespec.js');
 
 let nightmare;
 
@@ -140,7 +140,7 @@ describe('favorites tab', () => {
       .then(done)
   );
 
-  // TODO: Do this everywhere
+  // TODO: Do this (usage of userAgentString) everywhere
   // TODO: modify to test android too
   beforeEach(done =>
     nightmare
@@ -166,7 +166,7 @@ describe('favorites tab', () => {
       .then((favoriteObj) => {
         expect(favoriteObj.name).toBe(initialFavorites[0].name);
         expect(favoriteObj.dieSpecHtml)
-          .toBe(DS(initialFavorites[0].dieSpec).toHTML());
+          .toBe(Diespec(initialFavorites[0].dieSpec).toHTML());
       })
       .catch(util.logError)
       .then(done);

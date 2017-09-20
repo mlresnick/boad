@@ -2,18 +2,18 @@
 
 'use strict';
 
-// TODO change references to 'DS' tp 'Diespec' and 'ds' to 'diespec'
-const DS = require('../src/js/diespec.js');
+// TODO change references to 'ds' to 'diespec'
+const Diespec = require('../src/js/diespec.js');
 
 describe('New DieSpec class', () => {
   it('can be referenced as a module', () => {
-    expect(DS).toBeDefined();
+    expect(Diespec).toBeDefined();
   });
 
   describe('parsing', () => {
 
     function test(dieSpecString, differentExpected) {
-      expect(DS(dieSpecString).toString())
+      expect(Diespec(dieSpecString).toString())
         .toBe(differentExpected || dieSpecString);
     }
 
@@ -76,7 +76,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(d4)', () => {
-        const ds = DS('d4');
+        const ds = Diespec('d4');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [{ roll: 2, adjust: 0 }],
@@ -93,7 +93,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(3d6)', () => {
-        const ds = DS('3d6');
+        const ds = Diespec('3d6');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -117,7 +117,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(3d8+2)', () => {
-        const ds = DS('3d8+2');
+        const ds = Diespec('3d8+2');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -130,7 +130,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(3d10-2)', () => {
-        const ds = DS('3d10-2');
+        const ds = Diespec('3d10-2');
         ds.setRandom(mockRandomizer.random2);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -151,7 +151,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(4d6k3)', () => {
-        const ds = DS('4d6k3');
+        const ds = Diespec('4d6k3');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -165,7 +165,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(4d6k-1)', () => {
-        const ds = DS('4d6k-1');
+        const ds = Diespec('4d6k-1');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -195,7 +195,7 @@ describe('New DieSpec class', () => {
         );
       });
       it('(5d12-L)', () => {
-        const ds = DS('5d12-L');
+        const ds = Diespec('5d12-L');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -210,7 +210,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(4d12-2L)', () => {
-        const ds = DS('5d12-2L');
+        const ds = Diespec('5d12-2L');
         ds.setRandom(mockRandomizer.random2);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -225,7 +225,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(5d20-H)', () => {
-        const ds = DS('5d20-H');
+        const ds = Diespec('5d20-H');
         ds.setRandom(mockRandomizer.random3);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -240,7 +240,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(5d20-2H)', () => {
-        const ds = DS('5d20-2H');
+        const ds = Diespec('5d20-2H');
         ds.setRandom(mockRandomizer.random4);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -266,7 +266,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(5d20+L)', () => {
-        const ds = DS('5d20+L');
+        const ds = Diespec('5d20+L');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -281,7 +281,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(5d20+3L)', () => {
-        const ds = DS('5d20+3L');
+        const ds = Diespec('5d20+3L');
         ds.setRandom(mockRandomizer.random2);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -296,7 +296,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(5d20+H)', () => {
-        const ds = DS('5d20+H');
+        const ds = Diespec('5d20+H');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -311,7 +311,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(5d20+3H)', () => {
-        const ds = DS('5d20+3H');
+        const ds = Diespec('5d20+3H');
         ds.setRandom(mockRandomizer.random2);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -334,7 +334,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(d20x3)', () => {
-        const ds = DS('d20x3');
+        const ds = Diespec('d20x3');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [{ roll: 17, adjust: 0 }],
@@ -351,7 +351,7 @@ describe('New DieSpec class', () => {
       });
 
       it('(2d20x3)', () => {
-        const ds = DS('2d20x3');
+        const ds = Diespec('2d20x3');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -390,7 +390,7 @@ describe('New DieSpec class', () => {
       );
 
       it('(4d6k3x6)', () => {
-        const ds = DS('4d6k3x6');
+        const ds = Diespec('4d6k3x6');
         ds.setRandom(mockRandomizer.random);
         expect(ds.roll()).toEqual([{
           rolls: [
@@ -455,11 +455,12 @@ describe('New DieSpec class', () => {
     it(
       'a simple die',
       () =>
-        expect(DS('d4').toHTML()).toBe('<span class="display-die">d4</span>')
+        expect(Diespec('d4').toHTML())
+          .toBe('<span class="display-die">d4</span>')
     );
 
     it('a count', () =>
-      expect(DS('3d6').toHTML())
+      expect(Diespec('3d6').toHTML())
         .toBe(
           '<span class="display-digit">3</span>' +
           '<span class="display-die">d6</span>'
@@ -468,14 +469,14 @@ describe('New DieSpec class', () => {
 
     it('a modifier', () => {
 
-      expect(DS('d8+2').toHTML())
+      expect(Diespec('d8+2').toHTML())
         .toBe(
           '<span class="display-die">d8</span>' +
           '<span class="display-operator">+</span>' +
           '<span class="display-digit">2</span>'
         );
 
-      expect(DS('d8-4').toHTML())
+      expect(Diespec('d8-4').toHTML())
         .toBe(
           '<span class="display-die">d8</span>' +
           '<span class="display-operator">-</span>' +
@@ -486,7 +487,7 @@ describe('New DieSpec class', () => {
 
     it('a complex spec', () => {
 
-      expect(DS('4d6-L+2x3').toHTML())
+      expect(Diespec('4d6-L+2x3').toHTML())
         .toBe(
           '<span class="display-digit">4</span>' +
           '<span class="display-die">d6</span>' +
@@ -498,7 +499,7 @@ describe('New DieSpec class', () => {
           '<span class="display-digit">3</span>'
         );
 
-      expect(DS('40d6k10-5x6').toHTML())
+      expect(Diespec('40d6k10-5x6').toHTML())
         .toBe(
           '<span class="display-digit">40</span>' +
           '<span class="display-die">d6</span>' +
@@ -517,11 +518,12 @@ describe('New DieSpec class', () => {
     it(
       'a simple die',
       () =>
-        expect(DS('d4').toHTML()).toBe('<span class="display-die">d4</span>')
+        expect(Diespec('d4').toHTML())
+          .toBe('<span class="display-die">d4</span>')
     );
 
     it('a count', () =>
-      expect(DS('33d6').toHTML(true))
+      expect(Diespec('33d6').toHTML(true))
         .toBe(
           '<span class="display-digit">3</span>' +
           '<span class="display-digit">3</span>' +
@@ -531,7 +533,7 @@ describe('New DieSpec class', () => {
 
     it('a modifier', () => {
 
-      expect(DS('d8+23').toHTML(true))
+      expect(Diespec('d8+23').toHTML(true))
         .toBe(
           '<span class="display-die">d8</span>' +
           '<span class="display-operator">+</span>' +
@@ -539,7 +541,7 @@ describe('New DieSpec class', () => {
           '<span class="display-digit">3</span>'
         );
 
-      expect(DS('d8-49').toHTML(true))
+      expect(Diespec('d8-49').toHTML(true))
         .toBe(
           '<span class="display-die">d8</span>' +
           '<span class="display-operator">-</span>' +
@@ -551,7 +553,7 @@ describe('New DieSpec class', () => {
 
     it('a complex spec', () => {
 
-      expect(DS('41d6-10L+20x32').toHTML(true))
+      expect(Diespec('41d6-10L+20x32').toHTML(true))
         .toBe(
           '<span class="display-digit">4</span>' +
           '<span class="display-digit">1</span>' +

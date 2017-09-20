@@ -1,6 +1,6 @@
 'use strict';
 
-const DS = require('./diespec.js');
+const Diespec = require('./diespec.js');
 const Favorite = require('./favorite.js');
 
 module.exports = (() => {
@@ -17,7 +17,7 @@ module.exports = (() => {
     }
     else if (key === 'dieSpec') {
       // It's a die spec. Return a die spec object
-      result = DS(value);
+      result = Diespec(value);
     }
     return result;
   }

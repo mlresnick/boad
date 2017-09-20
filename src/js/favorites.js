@@ -1,7 +1,7 @@
 'use strict';
 
 const Util = require('./util.js');
-const DS = require('./diespec.js');
+const Diespec = require('./diespec.js');
 const Favorite = require('./favorite.js');
 const FavoritesReviver = require('./favorites-reviver.js');
 
@@ -134,8 +134,8 @@ module.exports = (($) => {
       //   }
       //   else if (key === 'dieSpec') {
       //     // It's a die spec. Return a die spec object
-      //     result = DS(value);
-      //     console.log(`DS(${value})=${JSON.stringify(result, null, 2)}`);
+      //     result = Diespec(value);
+      //     console.log(`Diespec(${value})=${JSON.stringify(result, null, 2)}`);
       //   }
       //   return result;
       // }
@@ -185,7 +185,7 @@ module.exports = (($) => {
         function _getFavorite() {
           const newName = $(_newNameEl).val();
           const currentName = _currentName();
-          const dieSpec = DS($(_dieSpecEl).text().trim());
+          const dieSpec = Diespec($(_dieSpecEl).text().trim());
           return { newName, dieSpec, currentName };
         }
 

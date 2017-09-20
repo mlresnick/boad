@@ -3,7 +3,7 @@
 // SETTINGS: Allow user to configure bottom 4 buttons - add/removee/order
 
 const Util = require('./util.js');
-const DS = require('./diespec.js');
+const Diespec = require('./diespec.js');
 const stateMachine = require('./state-machine.js');
 const Favorites = require('./favorites.js');
 const History = require('./history.js');
@@ -223,7 +223,7 @@ module.exports = (($) => {
 
         _transitionToNewState(stateMachine.ROLL);
 
-        _dice = DS($(_displayDieSpecEl).text());
+        _dice = Diespec($(_displayDieSpecEl).text());
         const result = _dice.roll();
         let resultList = result[0].result.toString(10);
         resultList = result.splice(1).reduce(
