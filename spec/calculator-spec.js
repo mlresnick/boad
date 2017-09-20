@@ -7,7 +7,7 @@ const util = require('./helpers/util.js');
 
 let nightmare;
 
-const dieSpecSelector = '.display .display-die-spec';
+const diespecSelector = '.display .display-die-spec';
 
 describe('Calculator', () => {
 
@@ -78,8 +78,8 @@ describe('Calculator', () => {
       const button = 'digit-1';
 
       clickButtons('digit-1')
-        .wait(`${dieSpecSelector} span`)
-        .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpecSelector)
+        .wait(`${diespecSelector} span`)
+        .evaluate(ds => $(`${ds} span`)[0].outerHTML, diespecSelector)
         .then(text => expect(text).toBe(expectedResult(button)))
         .catch(util.logError)
         .then(done);
@@ -89,8 +89,8 @@ describe('Calculator', () => {
       const button = 'die-d4';
 
       clickButtons(button)
-        .wait(`${dieSpecSelector} span`)
-        .evaluate(ds => $(`${ds} span`)[0].outerHTML, dieSpecSelector)
+        .wait(`${diespecSelector} span`)
+        .evaluate(ds => $(`${ds} span`)[0].outerHTML, diespecSelector)
         .then(text => expect(text).toBe(expectedResult(button)))
         .catch(util.logError)
         .then(done);
@@ -101,8 +101,8 @@ describe('Calculator', () => {
         ['digit-4', ['die-dx', 'die-d'], 'digit-4', 'digit-4', 'digit-6'];
 
       clickButtons(buttons)
-        .wait(`${dieSpecSelector} span:nth-of-type(${buttons.length})`)
-        .evaluate(ds => $(ds).html(), dieSpecSelector)
+        .wait(`${diespecSelector} span:nth-of-type(${buttons.length})`)
+        .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -113,8 +113,8 @@ describe('Calculator', () => {
       ['digit-4', 'die-d6', 'operator--', 'keep-L', 'operator-x', 'digit-6'];
 
       clickButtons(buttons)
-        .wait(`${dieSpecSelector} span:nth-of-type(${buttons.length})`)
-        .evaluate(ds => $(ds).html(), dieSpecSelector)
+        .wait(`${diespecSelector} span:nth-of-type(${buttons.length})`)
+        .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -131,8 +131,8 @@ describe('Calculator', () => {
       ];
 
       clickButtons(buttons)
-        .wait(`${dieSpecSelector} span:nth-of-type(${buttons.length - 2})`)
-        .evaluate(ds => $(ds).html(), dieSpecSelector)
+        .wait(`${diespecSelector} span:nth-of-type(${buttons.length - 2})`)
+        .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -151,8 +151,8 @@ describe('Calculator', () => {
       ];
 
       clickButtons(buttons)
-        .wait(ds => $(ds).children().length === 2, dieSpecSelector)
-        .evaluate(ds => $(ds).html(), dieSpecSelector)
+        .wait(ds => $(ds).children().length === 2, diespecSelector)
+        .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -170,8 +170,8 @@ describe('Calculator', () => {
       ];
 
       clickButtons(buttons)
-        .wait(dieSpecSelector)
-        .evaluate(ds => $(ds).html(), dieSpecSelector)
+        .wait(diespecSelector)
+        .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
         .catch(util.logError)
         .then(done);
@@ -370,14 +370,14 @@ describe('Calculator', () => {
         .then(done);
     });
 
-    // TODO: Roll an 'CdxR' dieSpec
+    // TODO: Roll an 'CdxR' diespec
   });
 
   function saveFavorite(args, timeout = 0) {
     return clickButtons(args.buttons)
       .wait(
         subargs => $(subargs.selector).text() === subargs.text,
-        { selector: dieSpecSelector, text: args.favorite.dieSpec }
+        { selector: diespecSelector, text: args.favorite.dieSpec }
       )
       .wait(timeout)
       .click('#calculator .favorite-status')
