@@ -296,7 +296,7 @@ describe('history tab', () => {
       .then(done);
   });
 
-  // TODO: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
+  // FIXME: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
   // fit('does not display more than the set max', (done) => {
   //   nightmare
   //     .evaluate(() => {

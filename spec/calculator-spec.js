@@ -12,6 +12,7 @@ const dieSpecSelector = '.display .display-die-spec';
 describe('Calculator', () => {
 
   beforeAll((done) => {
+    // TODO: change nightmare init to this format everywhere
     const nightmareOpts = {};
     // nightmareOpts.show = true;
     nightmare = Nightmare(nightmareOpts);
