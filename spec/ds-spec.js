@@ -2,7 +2,6 @@
 
 'use strict';
 
-// TODO change references to 'ds' to 'diespec'
 const Diespec = require('../src/js/diespec.js');
 
 describe('New Diespec class', () => {
@@ -76,9 +75,9 @@ describe('New Diespec class', () => {
       });
 
       it('(d4)', () => {
-        const ds = Diespec('d4');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('d4');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [{ roll: 2, adjust: 0 }],
           result: 2,
         }]);
@@ -93,9 +92,9 @@ describe('New Diespec class', () => {
       });
 
       it('(3d6)', () => {
-        const ds = Diespec('3d6');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('3d6');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 2, adjust: 0 },
             { roll: 5, adjust: 0 },
@@ -117,9 +116,9 @@ describe('New Diespec class', () => {
       });
 
       it('(3d8+2)', () => {
-        const ds = Diespec('3d8+2');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('3d8+2');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 8, adjust: 0 },
             { roll: 4, adjust: 0 },
@@ -130,9 +129,9 @@ describe('New Diespec class', () => {
       });
 
       it('(3d10-2)', () => {
-        const ds = Diespec('3d10-2');
-        ds.setRandom(mockRandomizer.random2);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('3d10-2');
+        diespec.setRandom(mockRandomizer.random2);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 4, adjust: 0 },
             { roll: 2, adjust: 0 },
@@ -151,9 +150,9 @@ describe('New Diespec class', () => {
       });
 
       it('(4d6k3)', () => {
-        const ds = Diespec('4d6k3');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('4d6k3');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 4, adjust: 0 },
             { roll: 2, adjust: 0 },
@@ -165,9 +164,9 @@ describe('New Diespec class', () => {
       });
 
       it('(4d6k-1)', () => {
-        const ds = Diespec('4d6k-1');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('4d6k-1');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 4, adjust: 0 },
             { roll: 2, adjust: 0 },
@@ -195,9 +194,9 @@ describe('New Diespec class', () => {
         );
       });
       it('(5d12-L)', () => {
-        const ds = Diespec('5d12-L');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d12-L');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 4, adjust: 0 },
             { roll: 2, adjust: 0 },
@@ -210,9 +209,9 @@ describe('New Diespec class', () => {
       });
 
       it('(4d12-2L)', () => {
-        const ds = Diespec('5d12-2L');
-        ds.setRandom(mockRandomizer.random2);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d12-2L');
+        diespec.setRandom(mockRandomizer.random2);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 6, adjust: 0 },
             { roll: 10, adjust: 0 },
@@ -225,9 +224,9 @@ describe('New Diespec class', () => {
       });
 
       it('(5d20-H)', () => {
-        const ds = Diespec('5d20-H');
-        ds.setRandom(mockRandomizer.random3);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d20-H');
+        diespec.setRandom(mockRandomizer.random3);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 10, adjust: 0 },
             { roll: 15, adjust: 0 },
@@ -240,9 +239,9 @@ describe('New Diespec class', () => {
       });
 
       it('(5d20-2H)', () => {
-        const ds = Diespec('5d20-2H');
-        ds.setRandom(mockRandomizer.random4);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d20-2H');
+        diespec.setRandom(mockRandomizer.random4);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 17, adjust: -1 },
             { roll: 5, adjust: 0 },
@@ -266,9 +265,9 @@ describe('New Diespec class', () => {
       });
 
       it('(5d20+L)', () => {
-        const ds = Diespec('5d20+L');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d20+L');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 17, adjust: 0 },
             { roll: 5, adjust: 0 },
@@ -281,9 +280,9 @@ describe('New Diespec class', () => {
       });
 
       it('(5d20+3L)', () => {
-        const ds = Diespec('5d20+3L');
-        ds.setRandom(mockRandomizer.random2);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d20+3L');
+        diespec.setRandom(mockRandomizer.random2);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 10, adjust: 1 },
             { roll: 15, adjust: 0 },
@@ -296,9 +295,9 @@ describe('New Diespec class', () => {
       });
 
       it('(5d20+H)', () => {
-        const ds = Diespec('5d20+H');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d20+H');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 17, adjust: 1 },
             { roll: 5, adjust: 0 },
@@ -311,9 +310,9 @@ describe('New Diespec class', () => {
       });
 
       it('(5d20+3H)', () => {
-        const ds = Diespec('5d20+3H');
-        ds.setRandom(mockRandomizer.random2);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('5d20+3H');
+        diespec.setRandom(mockRandomizer.random2);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 10, adjust: 1 },
             { roll: 15, adjust: 1 },
@@ -334,9 +333,9 @@ describe('New Diespec class', () => {
       });
 
       it('(d20x3)', () => {
-        const ds = Diespec('d20x3');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('d20x3');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [{ roll: 17, adjust: 0 }],
           result: 17,
         },
@@ -351,9 +350,9 @@ describe('New Diespec class', () => {
       });
 
       it('(2d20x3)', () => {
-        const ds = Diespec('2d20x3');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('2d20x3');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 17, adjust: 0 },
             { roll: 5, adjust: 0 },
@@ -390,9 +389,9 @@ describe('New Diespec class', () => {
       );
 
       it('(4d6k3x6)', () => {
-        const ds = Diespec('4d6k3x6');
-        ds.setRandom(mockRandomizer.random);
-        expect(ds.roll()).toEqual([{
+        const diespec = Diespec('4d6k3x6');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
           rolls: [
             { roll: 4, adjust: 0 },
             { roll: 6, adjust: 0 },
