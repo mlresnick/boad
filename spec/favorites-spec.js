@@ -188,7 +188,7 @@ describe('favorites tab', () => {
           .click('#favorites .list-block li a')
           .wait(() => $('#calculator:visible').length !== 0)
           .evaluate(() => {
-            const y = $('#calculator .display .display-die-spec').html();
+            const y = $('#calculator .display .display-diespec').html();
             const x = y && y.trim();
             // console.log(`x=${x}`);
             return x;
@@ -280,7 +280,7 @@ describe('favorites tab', () => {
         '.item-inner'
       )
       .wait(() => $('#calculator:visible').length > 0)
-      .evaluate(() => $('#calculator .display-die-spec').text())
+      .evaluate(() => $('#calculator .display-diespec').text())
       .then(dieSpec => expect(dieSpec).toBe('d4'))
       // .then(() => nightmare.wait(10000))
       .catch(util.logError)

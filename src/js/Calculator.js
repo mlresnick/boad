@@ -14,7 +14,7 @@ module.exports = (($) => {
 
   function _init() {
     const _AUTO = -1;
-    const _displayDieSpecEl = $('.display .display-die-spec');
+    const _displayDieSpecEl = $('.display .display-diespec');
     let _dice;
     const _history = History.getInstance();
     const _favorites = Favorites.getInstance();
@@ -93,7 +93,7 @@ module.exports = (($) => {
 
       if (isFavorite === _AUTO) {
         flag =
-          (_favorites.findByDieSpec($('.display .display-die-spec').text())
+          (_favorites.findByDieSpec($('.display .display-diespec').text())
             !== undefined);
       }
 
@@ -109,7 +109,7 @@ module.exports = (($) => {
     function _clear() {
       _undoStack.reinit();
       _isFavorite(false);
-      $('.display .display-die-spec').children().remove();
+      $('.display .display-diespec').children().remove();
       $('.display .display-result').remove();
     }
 
@@ -118,7 +118,7 @@ module.exports = (($) => {
 
       // If there's a result remove it. If not, remove the last die spec bit
       if (!_eraseDisplayResult()) {
-        $('.display .display-die-spec :last-child').remove();
+        $('.display .display-diespec :last-child').remove();
       }
 
       _isFavorite(_AUTO);

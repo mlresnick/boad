@@ -7,7 +7,7 @@ const util = require('./helpers/util.js');
 
 let nightmare;
 
-const diespecSelector = '.display .display-die-spec';
+const diespecSelector = '.display .display-diespec';
 
 describe('Calculator', () => {
 
@@ -416,7 +416,7 @@ describe('Calculator', () => {
         nightmare
           .wait(() => $('#calculator:visible').length > 0)
           .click('.keypad .key-clear')
-          .wait(() => $('#window .display-die-spec *').length === 0)
+          .wait(() => $('#window .display-diespec *').length === 0)
       )
       /*
        * Don't why the timeout is needed. Without it, the click on the favorite

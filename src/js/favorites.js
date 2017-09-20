@@ -165,7 +165,7 @@ module.exports = (($) => {
       let _calculator;
 
       const _panel = (() => {
-        const _dieSpecEl = $('.panel.panel-right .die-spec')[0];
+        const _dieSpecEl = $('.panel.panel-right .diespec')[0];
 
         const _newNameEl =
           $('.panel.panel-right ' +

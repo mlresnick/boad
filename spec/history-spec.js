@@ -313,7 +313,7 @@ describe('history tab', () => {
   //         .wait(() => $('#calculator:visible').length > 0)
   //         // .then(() => console.log('foo ok'), () => console.log('foo err'))
   //         .click('#calculator a.key-die-d6')
-  //         .wait(() => $('#window .display-die-spec:visible'))
+  //         .wait(() => $('#window .display-diespec:visible'))
   //         .then(() => {
   //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
   //             nightmare
