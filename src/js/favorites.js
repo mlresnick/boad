@@ -17,13 +17,13 @@ module.exports = (($) => {
   let _model;
 
   function _validateAndSave() {
-    const { newName, dieSpec, currentName } = _view.panel.getFavorite();
+    const { newName, diespec, currentName } = _view.panel.getFavorite();
     const returnCode = _model.validateName(newName);
     if (returnCode) {
       _view.reportNameError(returnCode, newName);
     }
     else {
-      _model.setFavorite(newName, dieSpec, currentName);
+      _model.setFavorite(newName, diespec, currentName);
       _view.updateListItem(currentName, newName);
       _view.getCalculator().isFavorite(true);
       _util.boadApp.closePanel('right', true);
@@ -41,9 +41,9 @@ module.exports = (($) => {
         );
       }
 
-      function findByDieSpec(dieSpec) {
+      function findByDiespec(diespec) {
         return _favoritesList
-          .find(favorite => (favorite.dieSpec.toString() === `${dieSpec}`));
+          .find(favorite => (favorite.diespec.toString() === `${diespec}`));
       }
 
       function find(arg) {
@@ -72,7 +72,7 @@ module.exports = (($) => {
         _util.updateStorage(_FAVORITES, _favoritesList);
       }
 
-      function setFavorite(name, dieSpec, currentName) {
+      function setFavorite(name, diespec, currentName) {
         // Presence of currentName indicates whether this is a new Favorite or
         // an edit.
         if (currentName) {
@@ -83,7 +83,7 @@ module.exports = (($) => {
         else {
           const newFavorite = Favorite();
           newFavorite.name = name;
-          newFavorite.dieSpec = dieSpec;
+          newFavorite.diespec = diespec;
           _favoritesList.push(newFavorite);
         }
 
@@ -130,9 +130,9 @@ module.exports = (($) => {
       //     // It's an array element.
       //     result = Favorite();
       //     result.name = value.name;
-      //     result.dieSpec = value.dieSpec;
+      //     result.diespec = value.diespec;
       //   }
-      //   else if (key === 'dieSpec') {
+      //   else if (key === 'diespec') {
       //     // It's a die spec. Return a die spec object
       //     result = Diespec(value);
       //     console.log(`Diespec(${value})=${JSON.stringify(result, null, 2)}`);
@@ -145,7 +145,7 @@ module.exports = (($) => {
       return {
         // addOrModify: _addOrModify,
         find,
-        findByDieSpec,
+        findByDiespec,
         forEach,
         _move,
         nameInUse,
@@ -165,7 +165,7 @@ module.exports = (($) => {
       let _calculator;
 
       const _panel = (() => {
-        const _dieSpecEl = $('.panel.panel-right .diespec')[0];
+        const _diespecEl = $('.panel.panel-right .diespec')[0];
 
         const _newNameEl =
           $('.panel.panel-right ' +
@@ -174,34 +174,34 @@ module.exports = (($) => {
 
         function _currentName(arg) {
           return (arg !== undefined)
-            ? $(_dieSpecEl).data('currentName', arg)
-            : $(_dieSpecEl).data('currentName');
+            ? $(_diespecEl).data('currentName', arg)
+            : $(_diespecEl).data('currentName');
         }
 
         function _removeCurrentName() {
-          $(_dieSpecEl).removeData('currentName');
+          $(_diespecEl).removeData('currentName');
         }
 
         function _getFavorite() {
           const newName = $(_newNameEl).val();
           const currentName = _currentName();
-          const dieSpec = Diespec($(_dieSpecEl).text().trim());
-          return { newName, dieSpec, currentName };
+          const diespec = Diespec($(_diespecEl).text().trim());
+          return { newName, diespec, currentName };
         }
 
-        function _setDieSpec(arg) {
-          let dieSpec;
+        function _setDiespec(arg) {
+          let diespec;
           if (typeof arg === 'string') {
-            dieSpec = arg;
+            diespec = arg;
           }
           else if (typeof arg === 'object') {
             const favorite = arg;
-            dieSpec = favorite.dieSpec.toHTML();
+            diespec = favorite.diespec.toHTML();
             _currentName(favorite.name);
           }
 
-          $(_dieSpecEl).children().remove();
-          $(_dieSpecEl).append(dieSpec);
+          $(_diespecEl).children().remove();
+          $(_diespecEl).append(diespec);
         }
 
         function _reset() {
@@ -211,7 +211,7 @@ module.exports = (($) => {
 
         return {
           getFavorite: _getFavorite,
-          setDieSpec: _setDieSpec,
+          setDiespec: _setDiespec,
           reset: _reset,
         };
       })();
@@ -224,8 +224,8 @@ module.exports = (($) => {
         return _calculator;
       }
 
-      function _add(dieSpecHtml) {
-        _panel.setDieSpec(dieSpecHtml);
+      function _add(diespecHtml) {
+        _panel.setDiespec(diespecHtml);
         _util.boadApp.openPanel('right', true);
       }
 
@@ -250,7 +250,7 @@ module.exports = (($) => {
                       <div class="item-title">${favorite.name}</div>
                     </div>
                     <div class="item-subtitle">
-                      ${favorite.dieSpec.toHTML()}
+                      ${favorite.diespec.toHTML()}
                     </div>
                   </div>
                 </div>
@@ -351,7 +351,7 @@ module.exports = (($) => {
               if (currentTarget.matches('a.item-link.favorite-edit')) {
                 const listItem = $(currentTarget).closest('li');
                 const favorite = _model.find($(listItem).data('name'));
-                _panel.setDieSpec(favorite);
+                _panel.setDiespec(favorite);
                 _util.boadApp.openPanel('right', true);
               }
             });
@@ -440,7 +440,7 @@ module.exports = (($) => {
     return {
       add: _view.add,
       delete: _model.delete,
-      findByDieSpec: _model.findByDieSpec,
+      findByDiespec: _model.findByDiespec,
       nameInUse: _model.nameInUse,
       refreshTab: _view.refreshTab,
       reviver: _model.reviver,

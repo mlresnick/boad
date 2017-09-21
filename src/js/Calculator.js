@@ -8,13 +8,14 @@ const stateMachine = require('./state-machine.js');
 const Favorites = require('./favorites.js');
 const History = require('./history.js');
 
-// TODO: Look for commented out code that can be removed.
+// TODO: Make internal class members consistent (always use "_" prefix)
+// TODO: Look for commented out code (both "// ..." and "/* ... */") that can be removed.
 module.exports = (($) => {
   let _instance;
 
   function _init() {
     const _AUTO = -1;
-    const _displayDieSpecEl = $('.display .display-diespec');
+    const _displayDiespecEl = $('.display .display-diespec');
     let _dice;
     const _history = History.getInstance();
     const _favorites = Favorites.getInstance();
@@ -93,7 +94,7 @@ module.exports = (($) => {
 
       if (isFavorite === _AUTO) {
         flag =
-          (_favorites.findByDieSpec($('.display .display-diespec').text())
+          (_favorites.findByDiespec($('.display .display-diespec').text())
             !== undefined);
       }
 
@@ -176,7 +177,7 @@ module.exports = (($) => {
           _clear();
         }
 
-        $(_displayDieSpecEl).append(
+        $(_displayDiespecEl).append(
           `<span class="display-${displayCategory}">` +
             `${text === 'dx' ? 'd' : text}` +
           '</span>'
@@ -190,19 +191,19 @@ module.exports = (($) => {
       }
     }
 
-    function _getDieSpecHtml() {
-      return $(_displayDieSpecEl).html();
+    function _getDiespecHtml() {
+      return $(_displayDiespecEl).html();
     }
 
     function _roll(arg) {
       let favoriteName = null;
 
-      if (arg.dieSpec) {
+      if (arg.diespec) {
         favoriteName = arg.name;
         // Feed the spec to the interpreter one character at
         // a time to get to the correct state.
         _clear();
-        const c = arg.dieSpec.newWalker();
+        const c = arg.diespec.newWalker();
         while (c.next()) {
           _enterNew(c.value);
         }
@@ -223,7 +224,7 @@ module.exports = (($) => {
 
         _transitionToNewState(stateMachine.ROLL);
 
-        _dice = Diespec($(_displayDieSpecEl).text());
+        _dice = Diespec($(_displayDiespecEl).text());
         const result = _dice.roll();
         let resultList = result[0].result.toString(10);
         resultList = result.splice(1).reduce(
@@ -237,7 +238,7 @@ module.exports = (($) => {
             `<span class="display-result-value">${resultList}</span>` +
           '</span>';
         $('.display').append(resultHtml);
-        _history.add(_getDieSpecHtml(), resultHtml, favoriteName);
+        _history.add(_getDiespecHtml(), resultHtml, favoriteName);
       }
     }
 
@@ -249,7 +250,7 @@ module.exports = (($) => {
     function _addFavorite() {
       // If it's ok to roll at this point, it's ok to save a favorite
       if (stateMachine.canRoll(_getCurrentState())) {
-        _favorites.add(_getDieSpecHtml());
+        _favorites.add(_getDiespecHtml());
       }
     }
 
@@ -274,7 +275,7 @@ module.exports = (($) => {
       isFavorite: _isFavorite,
       roll: _roll,
       addFavorite: _addFavorite,
-      getDieSpecHtml: _getDieSpecHtml,
+      getDiespecHtml: _getDiespecHtml,
     };
   }
 

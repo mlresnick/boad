@@ -11,7 +11,7 @@ let nightmare;
 
 const initialHistory = [
   {
-    dieSpec: 'first - <span class="display-die">d4</span>',
+    diespec: 'first - <span class="display-die">d4</span>',
     result:
       '<span class="display-result"> ' +
         '⇒ ' +
@@ -19,7 +19,7 @@ const initialHistory = [
       '</span>',
   },
   {
-    dieSpec:
+    diespec:
       'second - ' +
       '<span class="display-digit">5</span>' +
       '<span class="display-die">d4</span>',
@@ -30,7 +30,7 @@ const initialHistory = [
       '</span>',
   },
   {
-    dieSpec:
+    diespec:
       'third - ' +
       '<span class="display-digit">5</span>' +
       '<span class="display-die">d4</span>' +
@@ -43,7 +43,7 @@ const initialHistory = [
       '</span>',
   },
   {
-    dieSpec:
+    diespec:
       'fourth - ' +
       '<span class="display-digit">5</span>' +
       '<span class="display-die">d4</span>' +
@@ -57,7 +57,7 @@ const initialHistory = [
       '</span>',
   },
   {
-    dieSpec:
+    diespec:
       'fifth - ' +
       '<span class="display-digit">5</span>' +
       '<span class="display-die">d4</span>' +
@@ -141,7 +141,7 @@ describe('history model', () => {
   it('can add entries', (done) => {
     const newVals = [
       {
-        dieSpec:
+        diespec:
           '<span class="display-die">d6</span>' +
           '<span class="display-operator">+</span>' +
           '<span class="display-digit">1</span>',
@@ -153,7 +153,7 @@ describe('history model', () => {
       },
       {
         favoriteName: 'fooFav',
-        dieSpec:
+        diespec:
           '<span class="display-die">d6</span>' +
           '<span class="display-operator">+</span>' +
           '<span class="display-digit">12</span>',
@@ -172,13 +172,13 @@ describe('history model', () => {
         nvs.forEach((nv) => {
           if (Object.prototype.hasOwnProperty.call(nv, 'favoriteName')) {
             window.__nightmare.boadHistoryModel.add(
-              nv.dieSpec,
+              nv.diespec,
               nv.result,
               nv.favoriteName
             );
           }
           else {
-            window.__nightmare.boadHistoryModel.add(nv.dieSpec, nv.result);
+            window.__nightmare.boadHistoryModel.add(nv.diespec, nv.result);
           }
         });
         result.after = localStorage.getItem('history');
@@ -197,7 +197,7 @@ describe('history model', () => {
               retVal = undefined;
               break;
 
-            case 'dieSpec':
+            case 'diespec':
               retVal = value;
               if (fn !== undefined) {
                 retVal = `${fn} - ${retVal}`;
@@ -284,7 +284,7 @@ describe('history tab', () => {
         JSON
           .parse(localStorage.getItem('history'))
           .forEach((elt) => {
-            retVal.expected.push(elt.dieSpec + elt.result);
+            retVal.expected.push(elt.diespec + elt.result);
           });
         return retVal;
       })

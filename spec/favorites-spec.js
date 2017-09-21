@@ -10,11 +10,11 @@ const Diespec = require('../src/js/diespec.js');
 let nightmare;
 
 const initialFavorites = [
-  { name: 'a', dieSpec: 'd4' },
-  { name: 'b', dieSpec: '5d4' },
-  { name: 'c', dieSpec: '5d4+1' },
-  { name: 'd', dieSpec: '5d4+12' },
-  { name: 'f', dieSpec: '5d4+123' },
+  { name: 'a', diespec: 'd4' },
+  { name: 'b', diespec: '5d4' },
+  { name: 'c', diespec: '5d4+1' },
+  { name: 'd', diespec: '5d4+12' },
+  { name: 'f', diespec: '5d4+123' },
 ];
 
 const platform = 'ios';
@@ -27,8 +27,9 @@ userAgentString.ios = {
 
 
 function initialize(done) {
-  nightmare = Nightmare();
-  // nightmare = Nightmare({ show: true });
+  const nightmareOpts = {};
+  // nightmareOpts.show = true;
+  nightmare = Nightmare(nightmareOpts);
   util.init(nightmare);
 
   return nightmare
@@ -39,11 +40,11 @@ function initialize(done) {
         localStorage.setItem('favorites', JSON.stringify(favorites));
       },
       [
-        { name: 'a', dieSpec: 'd4' },
-        { name: 'b', dieSpec: '5d4' },
-        { name: 'c', dieSpec: '5d4+1' },
-        { name: 'd', dieSpec: '5d4+12' },
-        { name: 'f', dieSpec: '5d4+123' },
+        { name: 'a', diespec: 'd4' },
+        { name: 'b', diespec: '5d4' },
+        { name: 'c', diespec: '5d4+1' },
+        { name: 'd', diespec: '5d4+12' },
+        { name: 'f', diespec: '5d4+123' },
       ]
     )
     .catch(util.logError)
@@ -69,16 +70,16 @@ describe('favorites model', () => {
   });
 
 
-  it('can find by dieSpec', (done) => {
+  it('can find by diespec', (done) => {
     nightmare
       .evaluate(() =>
         JSON.stringify(
-          window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')
+          window.__nightmare.boadFavoritesModel.findByDiespec('5d4+12')
         )
       )
       .then((favoriteString) => {
         expect(favoriteString.toString())
-          .toBe(JSON.stringify({ name: 'd', dieSpec: '5d4+12' }));
+          .toBe(JSON.stringify({ name: 'd', diespec: '5d4+12' }));
       })
       .catch(util.logError)
       .then(done);
@@ -123,7 +124,7 @@ describe('favorites model', () => {
   validateAndSave: _validateAndSave,
 
   delete: _model.delete,
-  findByDieSpec: _model.findByDieSpec,
+  findByDiespec: _model.findByDiespec,
   initialize: _model.initialize,
   nameInUse: _model.nameInUse,
   */
@@ -157,16 +158,16 @@ describe('favorites tab', () => {
     nightmare
       .evaluate(() => {
         const el = $('#favorites .list-block ul').children('li').first();
-        const dieSpec = el.find('.item-subtitle');
+        const diespec = el.find('.item-subtitle');
         return {
           name: el.find('.item-title').text(),
-          dieSpecHtml: dieSpec && dieSpec.html().trim(),
+          diespecHtml: diespec && diespec.html().trim(),
         };
       })
       .then((favoriteObj) => {
         expect(favoriteObj.name).toBe(initialFavorites[0].name);
-        expect(favoriteObj.dieSpecHtml)
-          .toBe(Diespec(initialFavorites[0].dieSpec).toHTML());
+        expect(favoriteObj.diespecHtml)
+          .toBe(Diespec(initialFavorites[0].diespec).toHTML());
       })
       .catch(util.logError)
       .then(done);
@@ -190,7 +191,6 @@ describe('favorites tab', () => {
           .evaluate(() => {
             const y = $('#calculator .display .display-diespec').html();
             const x = y && y.trim();
-            // console.log(`x=${x}`);
             return x;
           });
       })
@@ -267,7 +267,7 @@ describe('favorites tab', () => {
         return favoritesList[1];
       })
       .then((obj) => {
-        expect(obj).toEqual({ name: 'AutoGenned', dieSpec: '5d4+1' });
+        expect(obj).toEqual({ name: 'AutoGenned', diespec: '5d4+1' });
       })
       .catch(util.logError)
       .then(done);
@@ -281,7 +281,7 @@ describe('favorites tab', () => {
       )
       .wait(() => $('#calculator:visible').length > 0)
       .evaluate(() => $('#calculator .display-diespec').text())
-      .then(dieSpec => expect(dieSpec).toBe('d4'))
+      .then(diespec => expect(diespec).toBe('d4'))
       // .then(() => nightmare.wait(10000))
       .catch(util.logError)
       .then(done);

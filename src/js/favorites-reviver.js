@@ -13,9 +13,9 @@ module.exports = (() => {
       // It's an array element.
       result = Favorite();
       result.name = value.name;
-      result.dieSpec = value.dieSpec;
+      result.diespec = value.diespec;
     }
-    else if (key === 'dieSpec') {
+    else if (key === 'diespec') {
       // It's a die spec. Return a die spec object
       result = Diespec(value);
     }

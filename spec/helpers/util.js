@@ -100,12 +100,6 @@ module.exports = (() => {
       .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
         cmp(a, b));
     console.log(propertyList.join('\n')); // eslint-disable-line no-console
-  // console.log(`propertyList.length=${propertyList.length}`);
-  //   console.log(
-  //         `window.__nightmare.boadFavoritesModel.findByDieSpec('5d4+12')=${
-  //     window.__nightmare.boadFavoritesModel
-  //     .findByDieSpec('5d4+12')}`);
-  // // console.log(`localStorage.getItem('favorites')=${localStorage.getItem('favorites')}`);
   }
 
 })();

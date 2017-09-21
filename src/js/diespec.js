@@ -220,7 +220,7 @@ module.exports = ((arg) => {
   }
 
   // Base class for die definitions
-  function DieDef(dieSpec) { this.dieSpec = dieSpec; }
+  function DieDef(diespec) { this.diespec = diespec; }
   DieDef.prototype.sides = function sidesImpl() { return _spec.sides || ''; };
   DieDef.prototype.sidesToString =
     function sidesToStringImpl() { return this.sides().toString(); };
@@ -233,7 +233,7 @@ module.exports = ((arg) => {
   DieDef.prototype.constructor = DieDef;
 
   // Fudge Dice (range of [-1, +1])
-  function DFDef(dieSpec) { DieDef.call(this, dieSpec); }
+  function DFDef(diespec) { DieDef.call(this, diespec); }
   DFDef.prototype = Object.create(DieDef.prototype);
   DFDef.prototype.sidesToString =
     function sidesToStringImpl() { return 'F'; };
@@ -246,8 +246,8 @@ module.exports = ((arg) => {
   //   - % which can be modelled as 2 D10 rolls, concatenated
   //   - d66 where the results of 2d6 are concanated, rather than summed. Lowest
   //     value is 11, highest is 66.
-  function DrepDef(dieSpec, dieCount, actualSides) {
-    DieDef.call(this, dieSpec);
+  function DrepDef(diespec, dieCount, actualSides) {
+    DieDef.call(this, diespec);
     this._dieCount = dieCount;
     this._sides = actualSides;
     this._explodeValue = 0;
@@ -271,19 +271,19 @@ module.exports = ((arg) => {
   DrepDef.prototype.constructor = DrepDef;
 
 
-  function D100Def(dieSpec) { DrepDef.call(this, dieSpec, 2, 10); }
+  function D100Def(diespec) { DrepDef.call(this, diespec, 2, 10); }
   D100Def.prototype = Object.create(DrepDef.prototype);
   D100Def.prototype.sidesToString =
     function sidesToStringImpl() { return '%'; };
   D100Def.prototype.constructor = D100Def;
 
-  function D66Def(dieSpec) { DrepDef.call(this, dieSpec, 2, 6); }
+  function D66Def(diespec) { DrepDef.call(this, diespec, 2, 6); }
   D66Def.prototype = Object.create(DrepDef.prototype);
   D66Def.prototype.sidesToString =
     function sidesToStringImpl() { return '66'; };
   D66Def.prototype.constructor = D66Def;
 
-  function D1000Def(dieSpec) { DrepDef.call(this, dieSpec, 3, 10); }
+  function D1000Def(diespec) { DrepDef.call(this, diespec, 3, 10); }
   D1000Def.prototype = Object.create(DrepDef.prototype);
   D1000Def.prototype.sidesToString =
     function sidesToStringImpl() { return '1000'; };
@@ -339,15 +339,15 @@ module.exports = ((arg) => {
   }
 
   // Initialize
-  function _parse(dieSpecString) {
+  function _parse(diespecString) {
     const state = stateMachine.states;
 
     let currentState = {};
     currentState.state = state.start;
 
     let specpart;
-    for (let i = 0; i < dieSpecString.length; i++) {
-      const char = dieSpecString.charAt(i);
+    for (let i = 0; i < diespecString.length; i++) {
+      const char = diespecString.charAt(i);
       currentState = stateMachine.nextState(currentState, char);
       if (currentState.state === state.error) {
         throw new Error(

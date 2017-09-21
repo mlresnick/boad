@@ -5,18 +5,6 @@
 const Diespec = require('../src/js/diespec.js');
 const Favorite = require('../src/js/favorite.js');
 
-function getArgs(func) {
-  // First match everything inside the function argument parens.
-  const args = func.toString().match(/function\s.*?\(([^)]*)\)/)[1];
-
-  // Split the arguments string into an array comma delimited.
-  return args.split(',')
-    // Ensure no inline comments are parsed and trim the whitespace.
-    .map(arg => arg.replace(/\/\*.*\*\//, '').trim())
-    // Ensure no undefined values are added.
-    .filter(arg => arg);
-}
-
 function objectCompare(obj1, obj2) {
   // Loop through properties in object 1
   for (const p in obj1) {
@@ -67,44 +55,45 @@ describe('Favorite object', () => {
   it('can be restored', () => {
     const favoriteListString =
     '[' +
-      '{ "name": "First", "dieSpec": "d6" }, ' +
-      '{ "name": "Second", "dieSpec": "4d12+2" }, ' +
-      '{ "name": "Third", "dieSpec": "4d6-Lx6" }' +
+      '{ "name": "First", "diespec": "d6" }, ' +
+      '{ "name": "Second", "diespec": "4d12+2" }, ' +
+      '{ "name": "Third", "diespec": "4d6-Lx6" }' +
     ']';
 
     const expectedFavoriteList = [];
     for (const expectedRawValue of [
-      { name: 'First', dieSpec: 'd6' },
-      { name: 'Second', dieSpec: '4d12+2' },
-      { name: 'Third', dieSpec: '4d6-Lx6' },
+      { name: 'First', diespec: 'd6' },
+      { name: 'Second', diespec: '4d12+2' },
+      { name: 'Third', diespec: '4d6-Lx6' },
     ]) {
       const expectedValue = Favorite();
       expectedValue.name = expectedRawValue.name;
-      expectedValue.dieSpec = Diespec(expectedRawValue.dieSpec);
+      expectedValue.diespec = Diespec(expectedRawValue.diespec);
       expectedFavoriteList.push(expectedValue);
     }
     const actualFavoriteList =
       JSON.parse(favoriteListString, Favorites.reviver);
+
     expect(objectCompare(actualFavoriteList, expectedFavoriteList))
       .toBeTruthy();
   });
 
   it('can be serialized', () => {
     const favoriteList = [
-      { name: 'First', dieSpec: Diespec('d6') },
-      { name: 'Second', dieSpec: Diespec('4d12+2') },
-      { name: 'Third', dieSpec: Diespec('4d6-Lx6') },
+      { name: 'First', diespec: Diespec('d6') },
+      { name: 'Second', diespec: Diespec('4d12+2') },
+      { name: 'Third', diespec: Diespec('4d6-Lx6') },
     ];
     const favoriteListString =
     '[' +
-      '{"name":"First","dieSpec":"d6"},' +
-      '{"name":"Second","dieSpec":"4d12+2"},' +
-      '{"name":"Third","dieSpec":"4d6-Lx6"},' +
-      '{"name":"Next","dieSpec":"3d10"}' +
+      '{"name":"First","diespec":"d6"},' +
+      '{"name":"Second","diespec":"4d12+2"},' +
+      '{"name":"Third","diespec":"4d6-Lx6"},' +
+      '{"name":"Next","diespec":"3d10"}' +
     ']';
     const newFavorite = Favorite();
     newFavorite.name = 'Next';
-    newFavorite.dieSpec = Diespec('3d10');
+    newFavorite.diespec = Diespec('3d10');
     favoriteList.push(newFavorite);
     expect(JSON.stringify(favoriteList)).toBe(favoriteListString);
   });

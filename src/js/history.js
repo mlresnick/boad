@@ -1,10 +1,10 @@
 'use strict';
 
-const Util = require('./Util.js');
+const util = require('./util.js');
 const historyModel = require('./history-model');
 
 module.exports = (($) => {
-  const _util = Util.getInstance();
+  const _util = util.getInstance();
 
   let _instance;
 
@@ -24,7 +24,7 @@ module.exports = (($) => {
               <div class="item-content swipeout-content">
                 <div class="item-inner">
                   <div class="item-title">
-                    ${historyEntry.dieSpec}${historyEntry.result}
+                    ${historyEntry.diespec}${historyEntry.result}
                   </div>
                 </div>
               </div>

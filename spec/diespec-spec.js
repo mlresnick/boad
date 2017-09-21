@@ -11,9 +11,9 @@ describe('New Diespec class', () => {
 
   describe('parsing', () => {
 
-    function test(dieSpecString, differentExpected) {
-      expect(Diespec(dieSpecString).toString())
-        .toBe(differentExpected || dieSpecString);
+    function test(diespecString, differentExpected) {
+      expect(Diespec(diespecString).toString())
+        .toBe(differentExpected || diespecString);
     }
 
     it('supports a simple die', () => test('d4'));

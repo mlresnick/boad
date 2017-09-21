@@ -231,7 +231,7 @@ describe('Calculator', () => {
               i.secondRoll = JSON.parse(localStorage.getItem('history'));
               i.newResult = {};
               i.newResult.result = $('.display .display-result')[0].outerHTML;
-              i.newResult.dieSpec =
+              i.newResult.diespec =
                 $('.display > span:not(:last-child)').html();
               return i;
             }, info);
@@ -377,7 +377,7 @@ describe('Calculator', () => {
     return clickButtons(args.buttons)
       .wait(
         subargs => $(subargs.selector).text() === subargs.text,
-        { selector: diespecSelector, text: args.favorite.dieSpec }
+        { selector: diespecSelector, text: args.favorite.diespec }
       )
       .wait(timeout)
       .click('#calculator .favorite-status')
@@ -386,7 +386,7 @@ describe('Calculator', () => {
       .click('.panel.panel-right a.save')
       .wait('.panel.panel-right:not(.active)')
       .evaluate(() => JSON.parse(localStorage.getItem('favorites')).pop())
-      .then((obj) => { expect(obj).toEqual(args.favorite); });
+      .then(obj => expect(obj).toEqual(args.favorite));
   }
 
   it('saves two favorites correctly', (done) => {
@@ -398,7 +398,7 @@ describe('Calculator', () => {
           ['operator--', ''],
           ['keep-L', ''],
         ],
-        favorite: { dieSpec: '4d6-L', name: 'AutoGenned' },
+        favorite: { diespec: '4d6-L', name: 'AutoGenned' },
       },
       {
         buttons: [
@@ -407,7 +407,7 @@ describe('Calculator', () => {
           ['operator-plus', ''],
           ['digit-3', ''],
         ],
-        favorite: { dieSpec: '3d4+3', name: 'AutoGenned-2' },
+        favorite: { diespec: '3d4+3', name: 'AutoGenned-2' },
       },
     ];
 
