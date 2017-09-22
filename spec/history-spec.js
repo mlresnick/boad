@@ -73,16 +73,7 @@ const initialHistory = [
   },
 ];
 
-const platform = 'ios';
-const userAgentString = {
-  ios: {
-    'User-Agent':
-      // eslint-disable-next-line max-len
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-  },
-  android: {},
-};
-
+let platform;
 
 function initialize(done) {
   const nightmareOpts = {};
@@ -104,268 +95,290 @@ function initialize(done) {
     .then(done);
 }
 
-describe('history model', () => {
-  beforeAll(initialize);
+describe('History', () => {
 
-  afterAll(done =>
-    nightmare
-      .end()
-      .catch(testUtil.logError)
-      .then(done)
-  );
+  describe('model', () => {
 
-  beforeEach((done) => {
-    nightmare
-      .goto(testUtil.url, testUtil.userAgentString(platform))
-      .wait('body')
-      .catch(testUtil.logError)
-      .then(done);
+    testUtil.supportedOSList.forEach((os) => {
+
+      describe(`on ${os}`, () => {
+
+        platform = os;
+
+        beforeAll(initialize);
+
+        afterAll(done =>
+          nightmare
+            .end()
+            .catch(testUtil.logError)
+            .then(done)
+        );
+
+        beforeEach((done) => {
+          nightmare
+            .goto(testUtil.url, testUtil.userAgentString(platform))
+            .wait('body')
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        it('can traverse values', (done) => {
+          nightmare
+            .evaluate(() => {
+              const result = { reconstructedList: [] };
+              result.currentList = JSON.parse(localStorage.getItem('history'));
+              window.__nightmare.boadHistoryModel.forEach((entry) => {
+                result.reconstructedList.push(entry);
+              });
+              return result;
+            })
+            .then(result =>
+              expect(result.reconstructedList).toEqual(result.currentList)
+            )
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        it('can add entries', (done) => {
+          const newVals = [
+            {
+              diespec:
+                '<span class="display-die">d6</span>' +
+                '<span class="display-operator">+</span>' +
+                '<span class="display-digit">1</span>',
+              result:
+                '<span class="display-result"> ' +
+                  '⇒ ' +
+                  '<span class="display-result-value">2</span>' +
+                '</span>',
+            },
+            {
+              favoriteName: 'fooFav',
+              diespec:
+                '<span class="display-die">d6</span>' +
+                '<span class="display-operator">+</span>' +
+                '<span class="display-digit">12</span>',
+              result:
+                '<span class="display-result"> ' +
+                  '⇒ ' +
+                  '<span class="display-result-value">8</span>' +
+                '</span>',
+            },
+          ];
+
+          nightmare
+            .evaluate((nvs) => {
+              const result = {};
+              result.before = JSON.parse(localStorage.getItem('history'));
+              nvs.forEach((nv) => {
+                if (Object.prototype.hasOwnProperty.call(nv, 'favoriteName')) {
+                  window.__nightmare.boadHistoryModel.add(
+                    nv.diespec,
+                    nv.result,
+                    nv.favoriteName
+                  );
+                }
+                else {
+                  window
+                    .__nightmare
+                    .boadHistoryModel
+                    .add(nv.diespec, nv.result);
+                }
+              });
+              result.after = localStorage.getItem('history');
+              return result;
+            },
+            newVals)
+            .then((result) => {
+              let fn;
+              const x = result.before;
+              newVals.forEach(nv => x.push(nv));
+              expect(result.after).toEqual(JSON.stringify(x, (key, value) => {
+                let retVal;
+                switch(key) {
+                  case 'favoriteName':
+                    fn = value;
+                    retVal = undefined;
+                    break;
+
+                  case 'diespec':
+                    retVal = value;
+                    if (fn !== undefined) {
+                      retVal = `${fn} - ${retVal}`;
+                      fn = undefined;
+                    }
+                    break;
+
+                  default:
+                    retVal = value;
+                }
+                return retVal;
+              }));
+            })
+            // // .then(() => nightmare.wait(10000))
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        it('can delete entry', (done) => {
+          const indexes = [1, 4].reverse();
+          nightmare
+            .evaluate((idxs) => {
+              const retVal = {};
+              retVal.original = localStorage.getItem('history');
+              idxs.forEach(
+                index => window.__nightmare.boadHistoryModel.delete(index)
+              );
+              retVal.updated = localStorage.getItem('history');
+              return retVal;
+            },
+            indexes)
+            .then((values) => {
+              const expectedValue = JSON.parse(values.original);
+              indexes.forEach(index => expectedValue.splice(index, 1));
+              expect(values.updated).toEqual(JSON.stringify(expectedValue));
+            })
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        it('can clear all entries', (done) => {
+          nightmare
+            .evaluate(() => {
+              window.__nightmare.boadHistoryModel.clear();
+              return localStorage.getItem('history');
+            })
+            .then(result => expect(result).toEqual('[]'))
+            .catch(testUtil.logError)
+            .then(done);
+        });
+      });
+    });
   });
 
-  it('can traverse values', (done) => {
-    nightmare
-      .evaluate(() => {
-        const result = { reconstructedList: [] };
-        result.currentList = JSON.parse(localStorage.getItem('history'));
-        window.__nightmare.boadHistoryModel.forEach((entry/* , index */) => {
-          result.reconstructedList.push(entry);
-        });
-        return result;
-      })
-      .then(result =>
-        expect(result.reconstructedList).toEqual(result.currentList)
-      )
-      .catch(testUtil.logError)
-      .then(done);
-  });
+  describe('tab', () => {
 
-  it('can add entries', (done) => {
-    const newVals = [
-      {
-        diespec:
-          '<span class="display-die">d6</span>' +
-          '<span class="display-operator">+</span>' +
-          '<span class="display-digit">1</span>',
-        result:
-          '<span class="display-result"> ' +
-            '⇒ ' +
-            '<span class="display-result-value">2</span>' +
-          '</span>',
-      },
-      {
-        favoriteName: 'fooFav',
-        diespec:
-          '<span class="display-die">d6</span>' +
-          '<span class="display-operator">+</span>' +
-          '<span class="display-digit">12</span>',
-        result:
-          '<span class="display-result"> ' +
-            '⇒ ' +
-            '<span class="display-result-value">8</span>' +
-          '</span>',
-      },
-    ];
+    testUtil.supportedOSList.forEach((os) => {
 
-    nightmare
-      .evaluate((nvs) => {
-        const result = {};
-        result.before = JSON.parse(localStorage.getItem('history'));
-        nvs.forEach((nv) => {
-          if (Object.prototype.hasOwnProperty.call(nv, 'favoriteName')) {
-            window.__nightmare.boadHistoryModel.add(
-              nv.diespec,
-              nv.result,
-              nv.favoriteName
-            );
-          }
-          else {
-            window.__nightmare.boadHistoryModel.add(nv.diespec, nv.result);
-          }
-        });
-        result.after = localStorage.getItem('history');
-        return result;
-      },
-      newVals)
-      .then((result) => {
-        let fn;
-        const x = result.before;
-        newVals.forEach(nv => x.push(nv));
-        expect(result.after).toEqual(JSON.stringify(x, (key, value) => {
-          let retVal;
-          switch(key) {
-            case 'favoriteName':
-              fn = value;
-              retVal = undefined;
-              break;
+      describe(`on ${os}`, () => {
 
-            case 'diespec':
-              retVal = value;
-              if (fn !== undefined) {
-                retVal = `${fn} - ${retVal}`;
-                fn = undefined;
+        platform = os;
+
+        beforeAll(initialize);
+
+        afterAll(done =>
+          nightmare
+            .end()
+            .catch(testUtil.logError)
+            .then(done)
+        );
+
+        beforeEach(done =>
+          nightmare
+            .goto(testUtil.url, testUtil.userAgentString(platform))
+            .wait('body')
+            .click('a.tab-link[href="#history"]')
+            .wait(() => $('#history:visible').length > 0)
+            .catch(testUtil.logError)
+            .then(done)
+        );
+
+        it('displays history correctly', (done) => {
+          nightmare
+            .evaluate(() => {
+              const els = $('#history .list-block ul > li .item-title');
+              const retVal = { actual: [], expected: [] };
+              els.each((index, el) => {
+                retVal.actual.push(el.innerHTML.trim());
               }
-              break;
+              );
+              JSON
+                .parse(localStorage.getItem('history'))
+                .forEach((elt) => {
+                  retVal.expected.push(elt.diespec + elt.result);
+                });
+              return retVal;
+            })
+            .then((historyList) => {
+              expect(JSON.stringify(historyList.actual))
+                .toBe(JSON.stringify(historyList.expected));
+            })
+            .catch(testUtil.logError)
+            .then(done);
+        });
 
-            default:
-              retVal = value;
-          }
-          return retVal;
-        }));
-      })
-      // // .then(() => nightmare.wait(10000))
-      .catch(testUtil.logError)
-      .then(done);
+      // FIXME: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
+      // fit('does not display more than the set max', (done) => {
+      //   nightmare
+      //     .evaluate(() => {
+      //       const retVal = {};
+      //       retVal.historyLimit =
+      //         JSON.parse(localStorage.getItem('settings')).history.limit;
+      //       retVal.entryCount = $('#history .list-block ul > li').length;
+      //       return retVal;
+      //     })
+      //     .then((info) => {
+      //       expect(info.entryCount).toBeLessThan(info.historyLimit);
+      //       return nightmare
+      //         .click('a.tab-link[href="#calculator"]')
+      //         .wait(() => $('#calculator:visible').length > 0)
+      //         // .then(() => console.log('foo ok'), () => console.log('foo err'))
+      //         .click('#calculator a.key-die-d6')
+      //         .wait(() => $('#window .display-diespec:visible'))
+      //         .then(() => {
+      //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
+      //             nightmare
+      //               .click('#calculator a.key-roll')
+      //               .catch(testUtil.logError)
+      //               .then(done);
+      //           }
+      //           return nightmare
+      //             .evaluate()
+      //         })
+      //         // .wait(10000)
+      //         // .evaluate(() => {
+      //         //   .wait(() => $('#calculator:visible').length > 0)
+      //         //   const retVal = {};
+      //         //   info.historyLimit =
+      //         //     JSON.parse(localStorage.getItem('settings')).history.limit;
+      //         //   return retVal;
+      //         // })
+      //         .catch(testUtil.logError)
+      //         .then(done);
+      //     })
+      //     .catch(testUtil.logError)
+      //     .then(done);
+      // });
+
+      // NOTE: Nightmare doesn't support swipe
+      // it('deletes an entry', (done) => {
+      //
+      //   nightmare
+      //     .click(`#favorites .link.edit.${platform}`)
+      //     .wait(
+      //       '#favorites .page.edit-mode .list-block ul ' +
+      //       'li:nth-of-type(2) .favorite-delete'
+      //     )
+      //     .click(
+      //       '#favorites .page.edit-mode .list-block ul ' +
+      //       'li:nth-of-type(2) .favorite-delete'
+      //     )
+      //     .wait(
+      //       '#favorites .page.edit-mode .list-block ul ' +
+      //       'li:nth-of-type(2).swipeout-opened'
+      //     )
+      //     .click(
+      //       '#favorites .page.edit-mode .list-block ul ' +
+      //       'li:nth-of-type(2).swipeout-opened .swipeout-delete'
+      //     )
+      //     .wait(
+      //       '#favorites .page.edit-mode .list-block ul ' +
+      //       'li:nth-of-type(2):not(swipout-opened)'
+      //     )
+      //     .catch(testUtil.logError)
+      //     .then(done);
+      // });
+      });
+    });
   });
-
-  it('can delete entry', (done) => {
-    const indexes = [1, 4].reverse();
-    nightmare
-      .evaluate((idxs) => {
-        const retVal = {};
-        retVal.original = localStorage.getItem('history');
-        idxs.forEach(
-          index => window.__nightmare.boadHistoryModel.delete(index)
-        );
-        retVal.updated = localStorage.getItem('history');
-        return retVal;
-      },
-      indexes)
-      .then((values) => {
-        const expectedValue = JSON.parse(values.original);
-        indexes.forEach(index => expectedValue.splice(index, 1));
-        expect(values.updated).toEqual(JSON.stringify(expectedValue));
-      })
-      .catch(testUtil.logError)
-      .then(done);
-  });
-
-  it('can clear all entries', (done) => {
-    nightmare
-      .evaluate(() => {
-        window.__nightmare.boadHistoryModel.clear();
-        return localStorage.getItem('history');
-      })
-      .then(result => expect(result).toEqual('[]'))
-      .catch(testUtil.logError)
-      .then(done);
-  });
-});
-
-describe('history tab', () => {
-
-  beforeAll(initialize);
-
-  afterAll(done =>
-    nightmare
-      .end()
-      .catch(testUtil.logError)
-      .then(done)
-  );
-
-  // TODO: modify to test android too
-  beforeEach(done =>
-    nightmare
-      .goto(testUtil.url, testUtil.userAgentString(platform))
-      .wait('body')
-      .click('a.tab-link[href="#history"]')
-      .wait(() => $('#history:visible').length > 0)
-      .catch(testUtil.logError)
-      .then(done)
-  );
-
-  it('displays history correctly', (done) => {
-    nightmare
-      .evaluate(() => {
-        const els = $('#history .list-block ul > li .item-title');
-        const retVal = { actual: [], expected: [] };
-        els.each((index, el) => {
-          retVal.actual.push(el.innerHTML.trim());
-        }
-        );
-        JSON
-          .parse(localStorage.getItem('history'))
-          .forEach((elt) => {
-            retVal.expected.push(elt.diespec + elt.result);
-          });
-        return retVal;
-      })
-      .then((historyList) => {
-        expect(JSON.stringify(historyList.actual))
-          .toBe(JSON.stringify(historyList.expected));
-      })
-      .catch(testUtil.logError)
-      .then(done);
-  });
-
-  // FIXME: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
-  // fit('does not display more than the set max', (done) => {
-  //   nightmare
-  //     .evaluate(() => {
-  //       const retVal = {};
-  //       retVal.historyLimit =
-  //         JSON.parse(localStorage.getItem('settings')).history.limit;
-  //       retVal.entryCount = $('#history .list-block ul > li').length;
-  //       return retVal;
-  //     })
-  //     .then((info) => {
-  //       expect(info.entryCount).toBeLessThan(info.historyLimit);
-  //       return nightmare
-  //         .click('a.tab-link[href="#calculator"]')
-  //         .wait(() => $('#calculator:visible').length > 0)
-  //         // .then(() => console.log('foo ok'), () => console.log('foo err'))
-  //         .click('#calculator a.key-die-d6')
-  //         .wait(() => $('#window .display-diespec:visible'))
-  //         .then(() => {
-  //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
-  //             nightmare
-  //               .click('#calculator a.key-roll')
-  //               .catch(testUtil.logError)
-  //               .then(done);
-  //           }
-  //           return nightmare
-  //             .evaluate()
-  //         })
-  //         // .wait(10000)
-  //         // .evaluate(() => {
-  //         //   .wait(() => $('#calculator:visible').length > 0)
-  //         //   const retVal = {};
-  //         //   info.historyLimit =
-  //         //     JSON.parse(localStorage.getItem('settings')).history.limit;
-  //         //   return retVal;
-  //         // })
-  //         .catch(testUtil.logError)
-  //         .then(done);
-  //     })
-  //     .catch(testUtil.logError)
-  //     .then(done);
-  // });
-
-  // NOTE: Nightmare doesn't support swipe
-  // it('deletes an entry', (done) => {
-  //
-  //   nightmare
-  //     .click(`#favorites .link.edit.${platform}`)
-  //     .wait(
-  //       '#favorites .page.edit-mode .list-block ul ' +
-  //       'li:nth-of-type(2) .favorite-delete'
-  //     )
-  //     .click(
-  //       '#favorites .page.edit-mode .list-block ul ' +
-  //       'li:nth-of-type(2) .favorite-delete'
-  //     )
-  //     .wait(
-  //       '#favorites .page.edit-mode .list-block ul ' +
-  //       'li:nth-of-type(2).swipeout-opened'
-  //     )
-  //     .click(
-  //       '#favorites .page.edit-mode .list-block ul ' +
-  //       'li:nth-of-type(2).swipeout-opened .swipeout-delete'
-  //     )
-  //     .wait(
-  //       '#favorites .page.edit-mode .list-block ul ' +
-  //       'li:nth-of-type(2):not(swipout-opened)'
-  //     )
-  //     .catch(testUtil.logError)
-  //     .then(done);
-  // });
 });
