@@ -8,7 +8,6 @@ const stateMachine = require('./state-machine.js');
 const Favorites = require('./favorites.js');
 const History = require('./history.js');
 
-// TODO: Make internal class members consistent (always use "_" prefix)
 // TODO: Look for commented out code (both "// ..." and "/* ... */") that can be removed.
 module.exports = (($) => {
   let _instance;

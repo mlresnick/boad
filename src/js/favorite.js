@@ -7,28 +7,24 @@
 module.exports = (() => {
   let _name = null;
   let _diespec = null;
-  let pseudoPrototype = null;
+  let _pseudoPrototype = null;
 
   // Returns the object as we'd like it to be serialized.
-  function toJSON() { return { name: _name, diespec: _diespec }; }
+  function _toJSON() { return { name: _name, diespec: _diespec }; }
 
-  function toString() { return JSON.stringify(toJSON()); }
+  function _toString() { return JSON.stringify(_toJSON()); }
 
-  pseudoPrototype = function () {
+  _pseudoPrototype = function () {
     return {
-      // create,
-      // diespec,
       get diespec() { return _diespec; },
       set diespec(d) { _diespec = d; },
-      // name,
       get name() { return _name; },
       set name(n) { _name = n; },
-      // reviver,
-      toJSON,
-      toString,
+      toJSON: _toJSON,
+      toString: _toString(),
     };
   };
 
   // TODO: is this extra layer necessary?
-  return pseudoPrototype();
+  return _pseudoPrototype();
 });

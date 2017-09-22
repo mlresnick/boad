@@ -41,12 +41,12 @@ module.exports = (($) => {
         );
       }
 
-      function findByDiespec(diespec) {
+      function _findByDiespec(diespec) {
         return _favoritesList
           .find(favorite => (favorite.diespec.toString() === `${diespec}`));
       }
 
-      function find(arg) {
+      function _find(arg) {
         let result;
         switch(typeof arg) {
           case 'number':
@@ -72,7 +72,7 @@ module.exports = (($) => {
         _util.updateStorage(_FAVORITES, _favoritesList);
       }
 
-      function setFavorite(name, diespec, currentName) {
+      function _setFavorite(name, diespec, currentName) {
         // Presence of currentName indicates whether this is a new Favorite or
         // an edit.
         if (currentName) {
@@ -90,7 +90,7 @@ module.exports = (($) => {
         _updateStorage();
       }
 
-      function remove(name) {
+      function _remove(name) {
         const index = _findIndexByName(name);
         _favoritesList.splice(index, 1);
         _updateStorage();
@@ -102,58 +102,39 @@ module.exports = (($) => {
         _updateStorage();
       }
 
-      function nameInUse(name) { return _findIndexByName(name) !== -1; }
+      function _nameInUse(name) { return _findIndexByName(name) !== -1; }
 
-      function forEach(cb) { return _favoritesList.forEach(cb); }
+      function _forEach(cb) { return _favoritesList.forEach(cb); }
 
-      function validateName(name) {
+      function _validateName(name) {
         let result = _NAME_OK;
 
         if (!name || (name === '')) {
           result = _NAME_BLANK;
         }
-        else if (nameInUse(name)) {
+        else if (_nameInUse(name)) {
           result = _NAME_IN_USE;
         }
 
         return result;
       }
 
-      const reviver = FavoritesReviver.reviver;
+      const _reviver = FavoritesReviver.reviver;
 
-      // function reviver(key, value) {
-      //   let result = value;
-      //   console.log(`key=${key}`);
-      //   if (key !== ''
-      //       && !Number.isNaN(Number.parseInt(key, 10))
-      //       && (typeof value === 'object')) {
-      //     // It's an array element.
-      //     result = Favorite();
-      //     result.name = value.name;
-      //     result.diespec = value.diespec;
-      //   }
-      //   else if (key === 'diespec') {
-      //     // It's a die spec. Return a die spec object
-      //     result = Diespec(value);
-      //     console.log(`Diespec(${value})=${JSON.stringify(result, null, 2)}`);
-      //   }
-      //   return result;
-      // }
-
-      _favoritesList = _util.getLocalStorage(_FAVORITES, [], reviver);
+      _favoritesList = _util.getLocalStorage(_FAVORITES, [], _reviver);
 
       return {
         // addOrModify: _addOrModify,
-        find,
-        findByDiespec,
-        forEach,
-        _move,
-        nameInUse,
-        remove,
-        reviver,
-        setFavorite,
+        find: _find,
+        findByDiespec: _findByDiespec,
+        forEach: _forEach,
+        move: _move,
+        nameInUse: _nameInUse,
+        remove: _remove,
+        reviver: _reviver,
+        setFavorite: _setFavorite,
         toJSON: () => _favoritesList,
-        validateName,
+        validateName: _validateName,
       };
     })();
 

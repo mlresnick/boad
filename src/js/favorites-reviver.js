@@ -5,7 +5,7 @@ const Favorite = require('./favorite.js');
 
 module.exports = (() => {
 
-  function reviver(key, value) {
+  function _reviver(key, value) {
     let result = value;
     if (key !== ''
         && !Number.isNaN(Number.parseInt(key, 10))
@@ -22,5 +22,5 @@ module.exports = (() => {
     return result;
   }
 
-  return { reviver };
+  return { reviver: _reviver };
 })();

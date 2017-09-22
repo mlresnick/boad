@@ -169,11 +169,8 @@ error:            { /* There's no escape, except to delete */ },
     };
   }
 
-  // function _getInstance() {
   if (!_instance) {
     _instance = _init();
   }
   return _instance;
-  // }
-  // return { getInstance: _getInstance };
 })();

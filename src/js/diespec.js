@@ -162,48 +162,49 @@ module.exports = ((arg) => {
     },
   };
 
-  // const explode = 'explode';
-  const count = 'count';
-  const sides = 'sides';
-  const lowHighCount = 'lowHighCount';
-  const lowHigh = 'lowHigh';
-  const keepCount = 'keepCount';
-  const modifier = 'modifier';
-  const repeats = 'repeats';
+  // const _EXPLODE = 'explode';
+  const _COUNT = 'count';
+  const _SIDES = 'sides';
+  const _LOW_HIGH_COUNT = 'lowHighCount';
+  const _LOW_HIGH = 'lowHigh';
+  const _KEEP_COUNT = 'keepCount';
+  const _MODIFIER = 'modifier';
+  const _REPEATS = 'repeats';
 
   const _partsList = [
-    'count',
-    'sides',
-    'lowHighCount',
-    'lowHigh',
-    'keepCount',
-    'modifier',
-    'repeats',
+    // _EXPLODE,
+    _COUNT,
+    _SIDES,
+    _LOW_HIGH_COUNT,
+    _LOW_HIGH,
+    _KEEP_COUNT,
+    _MODIFIER,
+    _REPEATS,
   ];
 
   const stateToSpecPart = {
     /* eslint-disable key-spacing */
     start:            null,
-    countDigit:       count,
+    countDigit:       _COUNT,
 
     die:              null,
-    dieDigit:         sides,
-    specialDie:       sides,
+    dieDigit:         _SIDES,
+    specialDie:       _SIDES,
 
-    postDieOp:        lowHighCount,
-    postDieDigit:     lowHighCount,
+    postDieOp:        _LOW_HIGH_COUNT,
+    postDieDigit:     _LOW_HIGH_COUNT,
 
     k:                null,
-    kOperator:        keepCount,
-    kDigit:           keepCount,
+    kOperator:        _KEEP_COUNT,
+    kDigit:           _KEEP_COUNT,
 
-    lh:               lowHigh,
+    lh:               _LOW_HIGH,
 
-    modifierOperator: modifier,
-    modifierDigit:    modifier,
+    modifierOperator: _MODIFIER,
+    modifierDigit:    _MODIFIER,
 
     x:                null,
-    xDigit:           repeats,
+    xDigit:           _REPEATS,
 
     roll:             null,
 
@@ -290,17 +291,7 @@ module.exports = ((arg) => {
   D1000Def.prototype.constructor = D1000Def;
 
   function _toString() {
-    return [
-      // TODO: Part of explode (!) implementation
-      // 'explode',
-      'count',
-      'sides',
-      'lowHighCount',
-      'lowHigh',
-      'keepCount',
-      'modifier',
-      'repeats',
-    ].reduce(
+    return _partsList.reduce(
       (partialResult, specPart) => partialResult + _spec.partToString(specPart),
       ''
     );
@@ -454,8 +445,7 @@ module.exports = ((arg) => {
     return results;
   }
 
-  function toJSON() { return _toString(); }
-  // this.toJSON = toJSON;
+  function _toJSON() { return _toString(); }
 
   function Walker() {
     this.partIndex = -1;
@@ -506,7 +496,7 @@ module.exports = ((arg) => {
     roll: _roll,
     setRandom: _setRandom,
     toHTML: _toHTML,
-    toJSON,
+    toJSON: _toJSON,
     toString: _toString,
   };
 });
