@@ -373,8 +373,6 @@ describe('Calculator', () => {
             .catch(testUtil.logError)
             .then(done);
         });
-
-        // TODO: Roll an 'CdxR' diespec
       });
 
       function saveFavorite(args, timeout = 0) {
