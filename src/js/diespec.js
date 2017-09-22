@@ -370,28 +370,9 @@ module.exports = ((arg) => {
       if (Number.isInteger(value)) {
         _spec[propertyName] = value;
       }
-      else {
-        // TODO: See if this can be consolidated (try uncommenting each line - if it breaks something remove it) See what's left and reorganize
-        switch(propertyName) {
-          case 'count':
-          case 'repeats':
-            // this[propertyName] = 1;
-            break;
-
-          case 'sides':
-          case 'lowHigh':
-            // Nothing to do
-            break;
-
-          case 'lowHighCount':
-            if ('+-'.includes(_spec.lowHighCount)) {
-              _spec.lowHighCount = Number(`${_spec[propertyName]}1`);
-            }
-            break;
-
-          default:
-            // this[propertyName] = 0;
-        }
+      else if ((propertyName === 'lowHighCount') &&
+          '+-'.includes(_spec.lowHighCount)) {
+        _spec.lowHighCount = Number(`${_spec[propertyName]}1`);
       }
     });
 
