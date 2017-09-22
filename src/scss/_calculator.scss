@@ -191,12 +191,12 @@
 html.android,
 html.ios {
   .calculator .keypad-container {
-    /*
-     * (1.36em height  + 2 x 1px border) Total height of div.output
-     * 16 px Height of horizontal borders in keypad
-     *   (8 rows x 2 borders/row x 1px borders)
-     * 4px more (not sure where these are from)
-     */
+    //
+    // (1.36em height  + 2 x 1px border) Total height of div.output
+    // 16 px Height of horizontal borders in keypad
+    //   (8 rows x 2 borders/row x 1px borders)
+    // 4px more (not sure where these are from)
+    //
     height: calc(100% - (1.35em + 2px) - 16px - 4px);
   }
 }
