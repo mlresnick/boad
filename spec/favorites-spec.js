@@ -2,7 +2,7 @@
 
 'use strict';
 
-const util = require('./helpers/util.js');
+const testUtil = require('./helpers/util.js');
 
 const Nightmare = require('nightmare');
 const Diespec = require('../src/js/diespec.js');
@@ -18,22 +18,15 @@ const initialFavorites = [
 ];
 
 const platform = 'ios';
-const userAgentString = {};
-userAgentString.ios = {
-  'User-Agent':
-    // eslint-disable-next-line max-len
-    'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-};
-
 
 function initialize(done) {
   const nightmareOpts = {};
   // nightmareOpts.show = true;
   nightmare = Nightmare(nightmareOpts);
-  util.init(nightmare);
+  testUtil.init(nightmare);
 
   return nightmare
-    .goto(util.url, userAgentString[platform])
+    .goto(testUtil.url, testUtil.userAgentString(platform))
     .wait('body')
     .evaluate(
       (favorites) => {
@@ -47,7 +40,7 @@ function initialize(done) {
         { name: 'f', diespec: '5d4+123' },
       ]
     )
-    .catch(util.logError)
+    .catch(testUtil.logError)
     .then(done);
 }
 
@@ -57,15 +50,15 @@ describe('favorites model', () => {
   afterAll(done =>
     nightmare
       .end()
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
   beforeEach((done) => {
     nightmare
-      .goto(util.url, userAgentString[platform])
+      .goto(testUtil.url, testUtil.userAgentString(platform))
       .wait('body')
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -81,7 +74,7 @@ describe('favorites model', () => {
         expect(favoriteString.toString())
           .toBe(JSON.stringify({ name: 'd', diespec: '5d4+12' }));
       })
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -89,7 +82,7 @@ describe('favorites model', () => {
     nightmare
       .evaluate(() => window.__nightmare.boadFavoritesModel.nameInUse('b'))
       .then(result => expect(result).toBe(true))
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -97,7 +90,7 @@ describe('favorites model', () => {
     nightmare
       .evaluate(() => window.__nightmare.boadFavoritesModel.nameInUse('unused'))
       .then(result => expect(result).toBe(false))
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -137,19 +130,18 @@ describe('favorites tab', () => {
   afterAll(done =>
     nightmare
       .end()
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
-  // TODO: Do this (usage of userAgentString) everywhere
   // TODO: modify to test android too
   beforeEach(done =>
     nightmare
-      .goto(util.url, userAgentString[platform])
+      .goto(testUtil.url, testUtil.userAgentString(platform))
       .wait('body')
       .click('a.tab-link[href="#favorites"]')
       .wait(() => $('#favorites:visible').length > 0)
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
@@ -169,7 +161,7 @@ describe('favorites tab', () => {
         expect(favoriteObj.diespecHtml)
           .toBe(Diespec(initialFavorites[0].diespec).toHTML());
       })
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -197,7 +189,7 @@ describe('favorites tab', () => {
       .then(calculatorTabVersion =>
         expect(calculatorTabVersion).toBe(favoritesTabVersion)
       )
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -205,7 +197,7 @@ describe('favorites tab', () => {
     nightmare
       .click(`#favorites .link.edit.${platform}`)
       .wait('#favorites .page.edit-mode')
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -215,7 +207,7 @@ describe('favorites tab', () => {
       .wait('#favorites .page.edit-mode')
       .click(`#favorites .link.done.${platform}`)
       .wait('#favorites .page:not(.edit-mode)')
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -243,7 +235,7 @@ describe('favorites tab', () => {
         '#favorites .page.edit-mode .list-block ul ' +
         'li:nth-of-type(2):not(swipout-opened)'
       )
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -269,7 +261,7 @@ describe('favorites tab', () => {
       .then((obj) => {
         expect(obj).toEqual({ name: 'AutoGenned', diespec: '5d4+1' });
       })
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -283,7 +275,7 @@ describe('favorites tab', () => {
       .evaluate(() => $('#calculator .display-diespec').text())
       .then(diespec => expect(diespec).toBe('d4'))
       // .then(() => nightmare.wait(10000))
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -291,7 +283,7 @@ describe('favorites tab', () => {
   // // NOTE: Nightmare.js doesn't support drag and drop
   // xit('supports the rearrangement of favorites', (done) => {
   //   nightmare
-  //     .catch(util.logError)
+  //     .catch(testUtil.logError)
   //     .then(done);
   // });
 });

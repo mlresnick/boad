@@ -3,11 +3,13 @@
 'use strict';
 
 const Nightmare = require('nightmare');
-const util = require('./helpers/util.js');
+const testUtil = require('./helpers/util.js');
 
 let nightmare;
 
 const diespecSelector = '.display .display-diespec';
+
+const platform = 'ios';
 
 describe('Calculator', () => {
 
@@ -15,22 +17,22 @@ describe('Calculator', () => {
     const nightmareOpts = {};
     // nightmareOpts.show = true;
     nightmare = Nightmare(nightmareOpts);
-    util.init(nightmare);
+    testUtil.init(nightmare);
     nightmare.then(done);
   });
 
   afterAll(done =>
     nightmare
       .end()
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
   beforeEach((done) => {
     nightmare
-      .goto(util.url)
+      .goto(testUtil.url, testUtil.userAgentString(platform))
       .wait('body')
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -80,7 +82,7 @@ describe('Calculator', () => {
         .wait(`${diespecSelector} span`)
         .evaluate(ds => $(`${ds} span`)[0].outerHTML, diespecSelector)
         .then(text => expect(text).toBe(expectedResult(button)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -91,7 +93,7 @@ describe('Calculator', () => {
         .wait(`${diespecSelector} span`)
         .evaluate(ds => $(`${ds} span`)[0].outerHTML, diespecSelector)
         .then(text => expect(text).toBe(expectedResult(button)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -103,7 +105,7 @@ describe('Calculator', () => {
         .wait(`${diespecSelector} span:nth-of-type(${buttons.length})`)
         .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -115,7 +117,7 @@ describe('Calculator', () => {
         .wait(`${diespecSelector} span:nth-of-type(${buttons.length})`)
         .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -133,7 +135,7 @@ describe('Calculator', () => {
         .wait(`${diespecSelector} span:nth-of-type(${buttons.length - 2})`)
         .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -153,7 +155,7 @@ describe('Calculator', () => {
         .wait(ds => $(ds).children().length === 2, diespecSelector)
         .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -172,7 +174,7 @@ describe('Calculator', () => {
         .wait(diespecSelector)
         .evaluate(ds => $(ds).html(), diespecSelector)
         .then(text => expect(text).toBe(expectedResult(buttons)))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -199,7 +201,7 @@ describe('Calculator', () => {
           /^(0|-?[1-9]\d*)(,(0|-?[1-9]\d*))*$/,
           'because the result value is a number'
         ))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -240,7 +242,7 @@ describe('Calculator', () => {
           expect(info.secondRoll[info.secondRoll.length - 1])
             .toEqual(info.newResult);
         })
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -253,7 +255,7 @@ describe('Calculator', () => {
         .then(result => expect(result).toBe('8'))
         //   clickButtons(['digit-8'])
         // })click
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -269,7 +271,7 @@ describe('Calculator', () => {
             .evaluate(() => $('.display').text().trim())
             .then(r => expect(r).toBe('d8-1x2'));
         })
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -315,7 +317,7 @@ describe('Calculator', () => {
           waitCondition: 250,
           expected: 'd12',
         }))
-        .catch(util.logError)
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -342,7 +344,7 @@ describe('Calculator', () => {
     //     //   waitCondition: 250,
     //     //   expected: 'd12+1',
     //     // }))
-    //     .catch(util.logError)
+    //     .catch(testUtil.logError)
     //     .then(done);
     // });
   });
@@ -351,21 +353,21 @@ describe('Calculator', () => {
 
     it('changes to favorites when link is clicked', (done) => {
       nightmare
-        .goto(util.url)
+        .goto(testUtil.url, testUtil.userAgentString(platform))
         .wait('body');
 
-      return util.testTabBarLink(nightmare, 'favorites')
-        .catch(util.logError)
+      return testUtil.testTabBarLink(nightmare, 'favorites')
+        .catch(testUtil.logError)
         .then(done);
     });
 
     it('changes to history when link is clicked', (done) => {
       nightmare
-        .goto(util.url)
+        .goto(testUtil.url, testUtil.userAgentString(platform))
         .wait('body');
 
-      return util.testTabBarLink(nightmare, 'history')
-        .catch(util.logError)
+      return testUtil.testTabBarLink(nightmare, 'history')
+        .catch(testUtil.logError)
         .then(done);
     });
 
@@ -422,7 +424,7 @@ describe('Calculator', () => {
        * star is not seen.
        */
       .then(() => saveFavorite(b[1], 500))
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 

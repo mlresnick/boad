@@ -2,7 +2,7 @@
 
 'use strict';
 
-const util = require('./helpers/util.js');
+const testUtil = require('./helpers/util.js');
 
 const Nightmare = require('nightmare');
 // const History = require('../src/js/History');
@@ -88,10 +88,10 @@ function initialize(done) {
   const nightmareOpts = {};
   // nightmareOpts.show = true;
   nightmare = Nightmare(nightmareOpts);
-  util.init(nightmare);
+  testUtil.init(nightmare);
 
   nightmare
-    .goto(util.url, userAgentString[platform])
+    .goto(testUtil.url, testUtil.userAgentString(platform))
     .wait('body')
     .evaluate(
       (history) => {
@@ -100,7 +100,7 @@ function initialize(done) {
       },
       initialHistory
     )
-    .catch(util.logError)
+    .catch(testUtil.logError)
     .then(done);
 }
 
@@ -110,15 +110,15 @@ describe('history model', () => {
   afterAll(done =>
     nightmare
       .end()
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
   beforeEach((done) => {
     nightmare
-      .goto(util.url, userAgentString[platform])
+      .goto(testUtil.url, testUtil.userAgentString(platform))
       .wait('body')
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -135,7 +135,7 @@ describe('history model', () => {
       .then(result =>
         expect(result.reconstructedList).toEqual(result.currentList)
       )
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -213,7 +213,7 @@ describe('history model', () => {
         }));
       })
       // // .then(() => nightmare.wait(10000))
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -235,7 +235,7 @@ describe('history model', () => {
         indexes.forEach(index => expectedValue.splice(index, 1));
         expect(values.updated).toEqual(JSON.stringify(expectedValue));
       })
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -246,7 +246,7 @@ describe('history model', () => {
         return localStorage.getItem('history');
       })
       .then(result => expect(result).toEqual('[]'))
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 });
@@ -258,18 +258,18 @@ describe('history tab', () => {
   afterAll(done =>
     nightmare
       .end()
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
   // TODO: modify to test android too
   beforeEach(done =>
     nightmare
-      .goto(util.url, userAgentString[platform])
+      .goto(testUtil.url, testUtil.userAgentString(platform))
       .wait('body')
       .click('a.tab-link[href="#history"]')
       .wait(() => $('#history:visible').length > 0)
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done)
   );
 
@@ -293,7 +293,7 @@ describe('history tab', () => {
         expect(JSON.stringify(historyList.actual))
           .toBe(JSON.stringify(historyList.expected));
       })
-      .catch(util.logError)
+      .catch(testUtil.logError)
       .then(done);
   });
 
@@ -319,7 +319,7 @@ describe('history tab', () => {
   //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
   //             nightmare
   //               .click('#calculator a.key-roll')
-  //               .catch(util.logError)
+  //               .catch(testUtil.logError)
   //               .then(done);
   //           }
   //           return nightmare
@@ -333,10 +333,10 @@ describe('history tab', () => {
   //         //     JSON.parse(localStorage.getItem('settings')).history.limit;
   //         //   return retVal;
   //         // })
-  //         .catch(util.logError)
+  //         .catch(testUtil.logError)
   //         .then(done);
   //     })
-  //     .catch(util.logError)
+  //     .catch(testUtil.logError)
   //     .then(done);
   // });
 
@@ -365,7 +365,7 @@ describe('history tab', () => {
   //       '#favorites .page.edit-mode .list-block ul ' +
   //       'li:nth-of-type(2):not(swipout-opened)'
   //     )
-  //     .catch(util.logError)
+  //     .catch(testUtil.logError)
   //     .then(done);
   // });
 });

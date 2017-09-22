@@ -2,8 +2,6 @@
 
 'use strict';
 
-// const util = require('./util.js');
-
 module.exports = (() => {
 
   function _logError(...error) {
@@ -41,6 +39,27 @@ module.exports = (() => {
       .then(done);
   }
 
+  function _userAgentString(os) {
+    const userAgentString = {
+      ios: {
+        'User-Agent':
+          'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) ' +
+            'AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 ' +
+            'Mobile/13B143 Safari/601.1',
+      },
+      android: {
+        'User-Agent':
+          'Mozilla/5.0 (Linux; U; Android 2.3; en-us) AppleWebKit/999+ ' +
+            '(KHTML, like Gecko) Safari/999.9',
+      },
+      desktop: {
+        'User-Agent':
+          '',
+      },
+    };
+    return userAgentString[os];
+  }
+
   return {
     init: _init,
     afterAll: _afterAll,
@@ -48,6 +67,7 @@ module.exports = (() => {
     stringify: _stringify,
     testTabBarLink: _testTabBarLink,
     url: 'http://localhost:8080',
+    userAgentString: _userAgentString,
   };
 
   function dumpObject(object) { // eslint-disable-line no-unused-vars
