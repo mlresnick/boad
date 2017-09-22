@@ -116,7 +116,6 @@ module.exports = (() => {
           /^XMLSerializer/,
           /^XPath/,
           /^XSLTProcessor/,
-          // /^[A-Z]*/,
         ].find(pattern => pattern.test(propertyName)) === undefined)
       .sort((a, b) => /* cmp(a.toLowerCase(), b.toLocaleLowerCase()) || */
         cmp(a, b));

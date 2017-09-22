@@ -66,8 +66,10 @@ module.exports = (($) => {
   function _getInstance() {
     if (!_instance) {
       _instance = _init();
+
+      // The following is for testing
       if (window.__nightmare) {
-        window.__nightmare.boadHistoryModel = // for testing
+        window.__nightmare.boadHistoryModel =
           // eslint-disable-next-line global-require
           require('./history-model').getInstance();
       }

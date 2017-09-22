@@ -39,7 +39,6 @@ describe('Calculator', () => {
       });
 
       function clickButtons(arg) {
-        // let retval;
         const selectorList = (typeof arg === 'string') ? [arg] : arg;
         const retVal = selectorList.reduce((n, selectorListEl) => {
           const selector =
@@ -49,11 +48,6 @@ describe('Calculator', () => {
         },
         nightmare);
         return retVal;
-        // selectors.forEach(function (el) {
-        //   const selector = (typeof el === 'string') ? el : el[0];
-        //   retval = nightmare.click(`.keypad .key-${selector}`);
-        // });
-        // return retval;
       }
 
       function expectedResult(arg) {
@@ -206,7 +200,7 @@ describe('Calculator', () => {
             .then(() =>
               nightmare.evaluate(() => $('.display-result-value').text())
             )
-          // 0, positive/negative, possibly comma separated
+            // 0, positive/negative, possibly comma separated
             .then(text => expect(text).toMatch(
               /^(0|-?[1-9]\d*)(,(0|-?[1-9]\d*))*$/,
               'because the result value is a number'
@@ -264,8 +258,6 @@ describe('Calculator', () => {
             .click('.keypad .key-digit-8')
             .evaluate(() => $('.display').text().trim())
             .then(result => expect(result).toBe('8'))
-            //   clickButtons(['digit-8'])
-            // })click
             .catch(testUtil.logError)
             .then(done);
         });
@@ -286,7 +278,7 @@ describe('Calculator', () => {
             .then(done);
         });
 
-        function enterStuff(args) { // buttons, waitCondition, expected) {
+        function enterStuff(args) {
           return clickButtons(args.buttons)
             .wait(args.waitCondition)
             .evaluate(() => $('.display').text().trim())

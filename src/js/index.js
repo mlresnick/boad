@@ -3,7 +3,7 @@
 const Util = require('./util.js');
 require('./calculator.js').getInstance();
 
-document.addEventListener('DOMContentLoaded', (/* event */) => {
+document.addEventListener('DOMContentLoaded', () => {
   const _util = Util.getInstance();
   const platform = _util.boadApp.device.ios ? 'ios' : 'material';
   const meta = {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', (/* event */) => {
   $('head').append(meta[platform]);
 });
 
-window.addEventListener('load', (/* event */) => {
+window.addEventListener('load', () => {
   const toolbarHeight = $('.toolbar.toolbar-bottom').css('height');
   // Tweak calculator height.
   $('#calculator .page-content').css('padding-bottom', toolbarHeight);

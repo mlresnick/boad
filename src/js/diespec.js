@@ -162,6 +162,7 @@ module.exports = ((arg) => {
     },
   };
 
+  // TODO part of explode (!) implementation
   // const _EXPLODE = 'explode';
   const _COUNT = 'count';
   const _SIDES = 'sides';
@@ -172,6 +173,7 @@ module.exports = ((arg) => {
   const _REPEATS = 'repeats';
 
   const _partsList = [
+    // TODO part of explode (!) implementation
     // _EXPLODE,
     _COUNT,
     _SIDES,
@@ -242,11 +244,13 @@ module.exports = ((arg) => {
   DieDef.prototype.explodeValue = function explodeValueImpl() { return 1; };
   DFDef.prototype.constructor = DFDef;
 
-  // Base class for die definitions where the final value is made up of
-  // the concatenation of repeated rolls. Examples are
-  //   - % which can be modelled as 2 D10 rolls, concatenated
-  //   - d66 where the results of 2d6 are concanated, rather than summed. Lowest
-  //     value is 11, highest is 66.
+  /*
+   * Base class for die definitions where the final value is made up of
+   * the concatenation of repeated rolls. Examples are
+   *   - % which can be modelled as 2 D10 rolls, concatenated
+   *   - d66 where the results of 2d6 are concanated, rather than summed. Lowest
+   *     value is 11, highest is 66.
+   */
   function DrepDef(diespec, dieCount, actualSides) {
     DieDef.call(this, diespec);
     this._dieCount = dieCount;
@@ -349,12 +353,13 @@ module.exports = ((arg) => {
       specpart = stateToSpecPart[currentState.state];
       if (specpart) {
         _spec[specpart] = (_spec[specpart] || '') + String(char);
-        // this[`_${specpart}`] = (this[`_${specpart}`] || '') + String(char);
       }
     }
 
-    // Because there's no look-ahead, if there is no Low/High, the modifier will
-    // put in the wrong place.
+    /*
+     * Because there's no look-ahead, if there is no Low/High, the modifier will
+     * put in the wrong place.
+     */
     if (!_spec.lowHigh && _spec.lowHighCount) {
       _spec.modifier = _spec.lowHighCount;
       _spec.lowHighCount = null;
@@ -366,6 +371,7 @@ module.exports = ((arg) => {
         _spec[propertyName] = value;
       }
       else {
+        // TODO: See if this can be consolidated (try uncommenting each line - if it breaks something remove it) See what's left and reorganize
         switch(propertyName) {
           case 'count':
           case 'repeats':
@@ -374,7 +380,7 @@ module.exports = ((arg) => {
 
           case 'sides':
           case 'lowHigh':
-            /* Nothing to do */
+            // Nothing to do
             break;
 
           case 'lowHighCount':
@@ -458,7 +464,6 @@ module.exports = ((arg) => {
     this.next = () => {
       let result = false;
       let value;
-      // let partName;
 
       while (this.partIndex === -1
             || (this.charIndex === this.partValue.length)) {

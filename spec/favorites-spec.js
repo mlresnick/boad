@@ -128,14 +128,6 @@ describe('Favorites', () => {
         });
       });
     });
-    /*
-    validateAndSave: _validateAndSave,
-
-    delete: _model.delete,
-    findByDiespec: _model.findByDiespec,
-    initialize: _model.initialize,
-    nameInUse: _model.nameInUse,
-    */
   });
 
   describe('tab', () => {
@@ -219,7 +211,6 @@ describe('Favorites', () => {
 
         it('changes to edit mode when "edit" is clicked', (done) => {
           nightmare
-            // .click(`#favorites .link.edit.${platform}`)
             .click(`#favorites .link.edit.${platform}`)
             .wait('#favorites .page.edit-mode')
             .catch(testUtil.logError)
@@ -228,10 +219,8 @@ describe('Favorites', () => {
 
         it('changes back to normal mode when "done" is clicked', (done) => {
           nightmare
-            // .click(`#favorites .link.edit.${platform}`)
             .click(`#favorites .link.edit.${platform}`)
             .wait('#favorites .page.edit-mode')
-            // .click(`#favorites .link.done.${platform}`)
             .click(`#favorites .link.done.${platform}`)
             .wait('#favorites .page:not(.edit-mode)')
             .catch(testUtil.logError)
@@ -241,7 +230,6 @@ describe('Favorites', () => {
         it('deletes an entry', (done) => {
 
           nightmare
-            // .click(`#favorites .link.edit.${platform}`)
             .click(`#favorites .link.edit.${platform}`)
             .wait(
               '#favorites .page.edit-mode .list-block ul ' +
@@ -303,18 +291,23 @@ describe('Favorites', () => {
             .wait(() => $('#calculator:visible').length > 0)
             .evaluate(() => $('#calculator .display-diespec').text())
             .then(diespec => expect(diespec).toBe('d4'))
-            // .then(() => nightmare.wait(10000))
             .catch(testUtil.logError)
             .then(done);
         });
       });
     });
 
-    // // NOTE: Nightmare.js doesn't support drag and drop
-    // xit('supports the rearrangement of favorites', (done) => {
-    //   nightmare
-    //     .catch(testUtil.logError)
-    //     .then(done);
-    // });
+    /*
+     * NOTE: Nightmare.js doesn't support drag and drop
+     *
+
+    it('supports the rearrangement of favorites', (done) => {
+      nightmare
+        .catch(testUtil.logError)
+        .then(done);
+    });
+
+    *
+    */
   });
 });

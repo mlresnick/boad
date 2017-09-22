@@ -2,8 +2,6 @@
 
 // SETTINGS Maybe use list of cards with sections for each page
 
-// TODO: funky casing on purpose, now what was the reason?
-// module.exports = (function fAvOrItE() {
 module.exports = (() => {
   let _name = null;
   let _diespec = null;

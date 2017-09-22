@@ -5,7 +5,6 @@
 const testUtil = require('./helpers/util.js');
 
 const Nightmare = require('nightmare');
-// const History = require('../src/js/History');
 
 let nightmare;
 
@@ -87,7 +86,6 @@ function initialize(done) {
     .evaluate(
       (history) => {
         localStorage.setItem('history', JSON.stringify(history));
-        // window.__nightmare.boadHistoryModel = localStorage.getItem('history');
       },
       initialHistory
     )
@@ -215,7 +213,6 @@ describe('History', () => {
                 return retVal;
               }));
             })
-            // // .then(() => nightmare.wait(10000))
             .catch(testUtil.logError)
             .then(done);
         });
@@ -307,77 +304,82 @@ describe('History', () => {
             .then(done);
         });
 
-      // FIXME: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
-      // fit('does not display more than the set max', (done) => {
-      //   nightmare
-      //     .evaluate(() => {
-      //       const retVal = {};
-      //       retVal.historyLimit =
-      //         JSON.parse(localStorage.getItem('settings')).history.limit;
-      //       retVal.entryCount = $('#history .list-block ul > li').length;
-      //       return retVal;
-      //     })
-      //     .then((info) => {
-      //       expect(info.entryCount).toBeLessThan(info.historyLimit);
-      //       return nightmare
-      //         .click('a.tab-link[href="#calculator"]')
-      //         .wait(() => $('#calculator:visible').length > 0)
-      //         // .then(() => console.log('foo ok'), () => console.log('foo err'))
-      //         .click('#calculator a.key-die-d6')
-      //         .wait(() => $('#window .display-diespec:visible'))
-      //         .then(() => {
-      //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
-      //             nightmare
-      //               .click('#calculator a.key-roll')
-      //               .catch(testUtil.logError)
-      //               .then(done);
-      //           }
-      //           return nightmare
-      //             .evaluate()
-      //         })
-      //         // .wait(10000)
-      //         // .evaluate(() => {
-      //         //   .wait(() => $('#calculator:visible').length > 0)
-      //         //   const retVal = {};
-      //         //   info.historyLimit =
-      //         //     JSON.parse(localStorage.getItem('settings')).history.limit;
-      //         //   return retVal;
-      //         // })
-      //         .catch(testUtil.logError)
-      //         .then(done);
-      //     })
-      //     .catch(testUtil.logError)
-      //     .then(done);
-      // });
+        // FIXME: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
+        // fit('does not display more than the set max', (done) => {
+        //   nightmare
+        //     .evaluate(() => {
+        //       const retVal = {};
+        //       retVal.historyLimit =
+        //         JSON.parse(localStorage.getItem('settings')).history.limit;
+        //       retVal.entryCount = $('#history .list-block ul > li').length;
+        //       return retVal;
+        //     })
+        //     .then((info) => {
+        //       expect(info.entryCount).toBeLessThan(info.historyLimit);
+        //       return nightmare
+        //         .click('a.tab-link[href="#calculator"]')
+        //         .wait(() => $('#calculator:visible').length > 0)
+        //         // .then(() => console.log('foo ok'), () => console.log('foo err'))
+        //         .click('#calculator a.key-die-d6')
+        //         .wait(() => $('#window .display-diespec:visible'))
+        //         .then(() => {
+        //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
+        //             nightmare
+        //               .click('#calculator a.key-roll')
+        //               .catch(testUtil.logError)
+        //               .then(done);
+        //           }
+        //           return nightmare
+        //             .evaluate()
+        //         })
+        //         // .wait(10000)
+        //         // .evaluate(() => {
+        //         //   .wait(() => $('#calculator:visible').length > 0)
+        //         //   const retVal = {};
+        //         //   info.historyLimit =
+        //         //     JSON.parse(localStorage.getItem('settings')).history.limit;
+        //         //   return retVal;
+        //         // })
+        //         .catch(testUtil.logError)
+        //         .then(done);
+        //     })
+        //     .catch(testUtil.logError)
+        //     .then(done);
+        // });
 
-      // NOTE: Nightmare doesn't support swipe
-      // it('deletes an entry', (done) => {
-      //
-      //   nightmare
-      //     .click(`#favorites .link.edit.${platform}`)
-      //     .wait(
-      //       '#favorites .page.edit-mode .list-block ul ' +
-      //       'li:nth-of-type(2) .favorite-delete'
-      //     )
-      //     .click(
-      //       '#favorites .page.edit-mode .list-block ul ' +
-      //       'li:nth-of-type(2) .favorite-delete'
-      //     )
-      //     .wait(
-      //       '#favorites .page.edit-mode .list-block ul ' +
-      //       'li:nth-of-type(2).swipeout-opened'
-      //     )
-      //     .click(
-      //       '#favorites .page.edit-mode .list-block ul ' +
-      //       'li:nth-of-type(2).swipeout-opened .swipeout-delete'
-      //     )
-      //     .wait(
-      //       '#favorites .page.edit-mode .list-block ul ' +
-      //       'li:nth-of-type(2):not(swipout-opened)'
-      //     )
-      //     .catch(testUtil.logError)
-      //     .then(done);
-      // });
+        /*
+         * NOTE: Nightmare doesn't support swipe
+         *
+
+        it('deletes an entry', (done) => {
+          nightmare
+            .click(`#favorites .link.edit.${platform}`)
+            .wait(
+              '#favorites .page.edit-mode .list-block ul ' +
+              'li:nth-of-type(2) .favorite-delete'
+            )
+            .click(
+              '#favorites .page.edit-mode .list-block ul ' +
+              'li:nth-of-type(2) .favorite-delete'
+            )
+            .wait(
+              '#favorites .page.edit-mode .list-block ul ' +
+              'li:nth-of-type(2).swipeout-opened'
+            )
+            .click(
+              '#favorites .page.edit-mode .list-block ul ' +
+              'li:nth-of-type(2).swipeout-opened .swipeout-delete'
+            )
+            .wait(
+              '#favorites .page.edit-mode .list-block ul ' +
+              'li:nth-of-type(2):not(swipout-opened)'
+            )
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        *
+        */
       });
     });
   });

@@ -48,7 +48,8 @@ function objectCompare(obj1, obj2) {
   return true;
 }
 
-const Favorites = {}; // Mock up the object.
+// Mock up the object.
+const Favorites = {};
 Favorites.reviver = require('../src/js/favorites-reviver.js').reviver;
 
 describe('Favorite object', () => {

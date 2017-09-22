@@ -8,7 +8,6 @@ const stateMachine = require('./state-machine.js');
 const Favorites = require('./favorites.js');
 const History = require('./history.js');
 
-// TODO: Look for commented out code (both "// ..." and "/* ... */") that can be removed.
 module.exports = (($) => {
   let _instance;
 
@@ -20,31 +19,31 @@ module.exports = (($) => {
     const _favorites = Favorites.getInstance();
     const _util = Util.getInstance();
 
-    //
-    // [count]die[keep-drop][modifier][repetitions]
-    //
-    // count = a positive integer
-    // die = die-type|dx
-    // keep-drop = (k-spec|lh-spec)
-    // modifier = ('+'|'-')modifier-value
-    // repetitions = 'x'repetition-count
-    //
-    //   die-type = 'd4'|'d6|'d8'|'d10'|'d12'|'d20'|'d%'
-    //   dx = 'dx'side-count
-    //   k-spec = 'k'['-']keep-drop-count
-    //   lh-spec = ('+'|'-')keep-drop-count('L'|'H')
-    //   modifier-value = amount to add or subtract from sum of dice
-    //   repetition-count - number of times to repeat the roll
-    //
-    //     side-count = user defined number of sides
-    //     keep-drop-count = integer number of dice to keep/drop
-    //       ('k'n)  keep highest n
-    //       ('k-'n) drop lowest n
-    //       ('-'n'L') drop lowest n
-    //       ('-'n'H') drop highest n
-    //       ('+'n'L') re-add lowest n
-    //       ('+'n'h') re-add highest-n
-    //
+    /*
+     * [count]die[keep-drop][modifier][repetitions]
+     *
+     * count = a positive integer
+     * die = die-type|dx
+     * keep-drop = (k-spec|lh-spec)
+     * modifier = ('+'|'-')modifier-value
+     * repetitions = 'x'repetition-count
+     *
+     *   die-type = 'd4'|'d6|'d8'|'d10'|'d12'|'d20'|'d%'
+     *   dx = 'dx'side-count
+     *   k-spec = 'k'['-']keep-drop-count
+     *   lh-spec = ('+'|'-')keep-drop-count('L'|'H')
+     *   modifier-value = amount to add or subtract from sum of dice
+     *   repetition-count - number of times to repeat the roll
+     *
+     *     side-count = user defined number of sides
+     *     keep-drop-count = integer number of dice to keep/drop
+     *       ('k'n)  keep highest n
+     *       ('k-'n) drop lowest n
+     *       ('-'n'L') drop lowest n
+     *       ('-'n'H') drop highest n
+     *       ('+'n'L') re-add lowest n
+     *       ('+'n'h') re-add highest-n
+     */
 
     const UndoStack = (() => {
       const _stack = [stateMachine.getInitialState()];
@@ -214,8 +213,10 @@ module.exports = (($) => {
       const currentState = _getCurrentState();
       if (stateMachine.canRoll(currentState)) {
 
-        // If dice were just rolled, remove the old result before creating a new
-        // one
+        /*
+         * If dice were just rolled, remove the old result before creating a new
+         * one
+         */
         if (currentState.state === stateMachine.states.roll) {
           _undoStack.pop();
           _eraseDisplayResult();

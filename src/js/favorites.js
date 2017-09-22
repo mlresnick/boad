@@ -73,8 +73,10 @@ module.exports = (($) => {
       }
 
       function _setFavorite(name, diespec, currentName) {
-        // Presence of currentName indicates whether this is a new Favorite or
-        // an edit.
+        /*
+         * Presence of currentName indicates whether this is a new Favorite or
+         * an edit.
+         */
         if (currentName) {
           // Update
           const index = _findIndexByName(currentName);
@@ -124,7 +126,6 @@ module.exports = (($) => {
       _favoritesList = _util.getLocalStorage(_FAVORITES, [], _reviver);
 
       return {
-        // addOrModify: _addOrModify,
         find: _find,
         findByDiespec: _findByDiespec,
         forEach: _forEach,
@@ -243,8 +244,7 @@ module.exports = (($) => {
         });
 
 
-        // TODO: Refactor part A - can we avoid having to do this for every
-        // refreshTab call
+        // TODO: Refactor part A - can we avoid having to do this for every refreshTab call
         _favoritesList.find('.roll-favorite').on('click', _rollFavorite);
       }
 
@@ -290,9 +290,11 @@ module.exports = (($) => {
 
           const li = _favoritesList.children('li');
 
-          // Under normal circumstances make the whole list item display touch
-          // feedback. However, if there is a swipeout open anywhere, skip the
-          // feedback and close the swipeout.
+          /*
+           * Under normal circumstances make the whole list item display touch
+           * feedback. However, if there is a swipeout open anywhere, skip the
+           * feedback and close the swipeout.
+           */
           li.on('mousedown touchstart', '.item-inner', (event) => {
             if (_favoritesList.children('li.swipeout-opened').length
                 === 0) {
@@ -432,8 +434,10 @@ module.exports = (($) => {
   function _getInstance() {
     if (!_instance) {
       _instance = _init();
+
+      // The following is for testing
       if (window.__nightmare) {
-        window.__nightmare.boadFavoritesModel = _model; // for testing
+        window.__nightmare.boadFavoritesModel = _model;
       }
     }
     return _instance;

@@ -20,8 +20,6 @@ module.exports = (() => {
       1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit', 5: 'digit',
       6: 'digit', 7: 'digit', 8: 'digit', 9: 'digit',
 
-      // d4: 'die', d6: 'die', d8: 'die', d10: 'die', d12: 'die',
-      // d20: 'die', 'd%': 'die',
       d: 'die',
 
       '%': 'die-char', F: 'die-char',
@@ -34,10 +32,11 @@ module.exports = (() => {
       x:    'x',
 
       r:    'roll',
-    }; /* eslint-enable */
+    };
+    /* eslint-enable */
 
-
-    const _states = { /* eslint-disable key-spacing */
+    /* eslint-disable key-spacing */
+    const _states = {
       start:      'start',
       countDigit: 'countDigit',
 
@@ -70,7 +69,8 @@ module.exports = (() => {
         invalidTransition: 'invalidTransition',
       },
 
-    }; /* eslint-enable */
+    };
+    /* eslint-enable */
 
 
     function _getInitialState() { return new _State({ state: 'start' }); }
@@ -101,8 +101,9 @@ xDigit:           { digit: 'xDigit', 0: 'xDigit', roll: 'roll' },
 
 roll:             { digit: 'countDigit', die: 'die', roll: 'roll' },
 
-error:            { /* There's no escape, except to delete */ },
-    }; /* eslint-enable */
+error:            { }, // There is no escape, except to delete
+    };
+    /* eslint-enable */
 
     function _nextState(originalState, chars) {
       let char;
