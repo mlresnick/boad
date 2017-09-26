@@ -113,6 +113,9 @@ module.exports = (($) => {
     }
 
     function _deleteLast() {
+      if (_undoStack.peek().state === stateMachine.states.error) {
+        _undoStack.pop();
+      }
       _undoStack.pop();
 
       // If there's a result remove it. If not, remove the last die spec bit

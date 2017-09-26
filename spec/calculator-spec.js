@@ -308,12 +308,12 @@ describe('Calculator', () => {
           enterStuff({
             buttons,
             waitCondition: '.display > span:nth-of-type(2)',
-            expected: /d12\s+⇒\s+[1-9]\d*/,
+            expected: /d12\s+⇒\s+[1-9]\d*/u,
           })
             .then(() => enterStuff({
               buttons: 'operator-plus',
               waitCondition: 250,
-              expected: /d12\s+⇒\s+[1-9]\d*/,
+              expected: /d12\s+⇒\s+[1-9]\d*/u,
             }))
             .then(() => enterStuff({
               buttons: 'delete',
@@ -324,32 +324,31 @@ describe('Calculator', () => {
             .then(done);
         });
 
-        // FIXME: should handle roll > bad-key > delete > correction
-        // it('should handle Roll > bad-key > delete > correction', (done) => {
-        //   const buttons = ['die-d12', 'roll'];
-        //   enterStuff({
-        //     buttons,
-        //     waitCondition: '.display > span:nth-of-type(2)',
-        //     expected: /d12\s+⇒\s+[1-9]\d*/,
-        //   })
-        //     .then(() => enterStuff({
-        //       buttons: 'operator-plus',
-        //       waitCondition: 250,
-        //       expected: /d12\s+⇒\s+[1-9]\d*/,
-        //     }))
-        //     .then(() => enterStuff({
-        //       buttons: 'delete',
-        //       waitCondition: 250,
-        //       expected: 'd12',
-        //     }))
-        //     // .then(() => enterStuff({
-        //     //   buttons: ['operator-plus', 'digit-1'],
-        //     //   waitCondition: 250,
-        //     //   expected: 'd12+1',
-        //     // }))
-        //     .catch(testUtil.logError)
-        //     .then(done);
-        // });
+        it('should handle Roll > bad-key > delete > correction', (done) => {
+          const buttons = ['die-d12', 'roll'];
+          enterStuff({
+            buttons,
+            waitCondition: '.display > span:nth-of-type(2)',
+            expected: /d12\s+\u21d2\s+[1-9]\d*/u,
+          })
+            .then(() => enterStuff({
+              buttons: 'operator-plus',
+              waitCondition: 250,
+              expected: /d12\s+\u21d2\s+[1-9]\d*/u,
+            }))
+            .then(() => enterStuff({
+              buttons: 'delete',
+              waitCondition: 250,
+              expected: 'd12',
+            }))
+            .then(() => enterStuff({
+              buttons: ['operator-plus', 'digit-1'],
+              waitCondition: 250,
+              expected: 'd12+1',
+            }))
+            .catch(testUtil.logError)
+            .then(done);
+        });
       });
 
       describe('tab bar', () => {
