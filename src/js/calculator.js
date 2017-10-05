@@ -116,6 +116,11 @@ module.exports = (($) => {
       if (_undoStack.peek().state === stateMachine.states.error) {
         _undoStack.pop();
       }
+
+      while (_undoStack.peek().state === stateMachine.states.dieDigit) {
+        _undoStack.pop();
+      }
+
       _undoStack.pop();
 
       // If there's a result remove it. If not, remove the last die spec bit

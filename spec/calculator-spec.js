@@ -349,6 +349,27 @@ describe('Calculator', () => {
             .catch(testUtil.logError)
             .then(done);
         });
+
+        it('should handle d12 > delete > d6', (done) => {
+          enterStuff({
+            buttons: ['die-d12'],
+            waitCondition: '.display .display-diespec .display-die',
+            expected: 'd12',
+          })
+            .then(() => enterStuff({
+              buttons: 'delete',
+              waitCondition: '.display .display-diespec:empty',
+              expected: '',
+            }))
+            .then(() => enterStuff({
+              buttons: ['die-d6'],
+              waitCondition: '.display .display-diespec .display-die',
+              expected: 'd6',
+            }))
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
       });
 
       describe('tab bar', () => {

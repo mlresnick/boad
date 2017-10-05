@@ -295,8 +295,6 @@ describe('History', () => {
             .then(done);
         });
 
-        // FIXME: d12 > delete > d6
-
         it('handles a new entry', (done) => {
           setHistory(done)
             .click('a.tab-link[href="#calculator"]')
