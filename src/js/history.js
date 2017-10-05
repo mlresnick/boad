@@ -20,20 +20,20 @@ module.exports = (($) => {
 
         _model.forEach((historyEntry, index) => {
           _historyListBlockList.append(
-            `<li class="swipeout" data-index="${index}">
-              <div class="item-content swipeout-content">
-                <div class="item-inner">
-                  <div class="item-title">
-                    ${historyEntry.diespec}${historyEntry.result}
-                  </div>
-                </div>
-              </div>
-              <div class="swipeout-actions-right">
-                <a href="#" class="swipeout-delete swipeout-overswipe">
-                  Delete
-                </a>
-              </div>
-            </li>`
+            `<li class="swipeout" data-index="${index}">` +
+              '<div class="item-content swipeout-content">' +
+                '<div class="item-inner">' +
+                  '<div class="item-title">' +
+                    `${historyEntry.diespec}${historyEntry.result}` +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+              '<div class="swipeout-actions-right">' +
+                '<a href="#" class="swipeout-delete swipeout-overswipe">' +
+                  'Delete' +
+                '</a>' +
+              '</div>' +
+            '</li>'
           );
         });
       }

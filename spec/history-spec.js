@@ -8,89 +8,13 @@ const Nightmare = require('nightmare');
 
 let nightmare;
 
-const initialHistory = [
-  {
-    diespec: 'first - <span class="display-die">d4</span>',
-    result:
-      '<span class="display-result"> ' +
-        '⇒ ' +
-        '<span class="display-result-value">2</span>' +
-      '</span>',
-  },
-  {
-    diespec:
-      'second - ' +
-      '<span class="display-digit">5</span>' +
-      '<span class="display-die">d4</span>',
-    result:
-      '<span class="display-result"> ' +
-        '⇒ ' +
-        '<span class="display-result-value">11</span>' +
-      '</span>',
-  },
-  {
-    diespec:
-      'third - ' +
-      '<span class="display-digit">5</span>' +
-      '<span class="display-die">d4</span>' +
-      '<span class="display-operator">+</span>' +
-      '<span class="display-digit">1</span>',
-    result:
-      '<span class="display-result"> ' +
-        '⇒ ' +
-        '<span class="display-result-value">9</span>' +
-      '</span>',
-  },
-  {
-    diespec:
-      'fourth - ' +
-      '<span class="display-digit">5</span>' +
-      '<span class="display-die">d4</span>' +
-      '<span class="display-digit">+</span>' +
-      '<span class="display-digit">1</span>' +
-      '<span class="display-digit">2</span>',
-    result:
-      '<span class="display-result"> ' +
-        '⇒ ' +
-        '<span class="display-result-value">21</span>' +
-      '</span>',
-  },
-  {
-    diespec:
-      'fifth - ' +
-      '<span class="display-digit">5</span>' +
-      '<span class="display-die">d4</span>' +
-      '<span class="display-operator">+</span>' +
-      '<span class="display-digit">1</span>' +
-      '<span class="display-digit">2</span>' +
-      '<span class="display-digit">3</span>',
-    result:
-      '<span class="display-result"> ' +
-        '⇒ ' +
-        '<span class="display-result-value">131</span>' +
-      '</span>',
-  },
-];
-
 let platform;
 
-function initialize(done) {
+function initialize() {
   const nightmareOpts = {};
   // nightmareOpts.show = true;
   nightmare = Nightmare(nightmareOpts);
   testUtil.init(nightmare);
-
-  nightmare
-    .goto(testUtil.url, testUtil.userAgentString(platform))
-    .wait('body')
-    .evaluate(
-      (history) => {
-        localStorage.setItem('history', JSON.stringify(history));
-      },
-      initialHistory
-    )
-    .catch(testUtil.logError)
-    .then(done);
 }
 
 describe('History', () => {
@@ -253,6 +177,8 @@ describe('History', () => {
     });
   });
 
+  let originalInfo;
+
   describe('tab', () => {
 
     testUtil.supportedOSList.forEach((os) => {
@@ -274,21 +200,61 @@ describe('History', () => {
           nightmare
             .goto(testUtil.url, testUtil.userAgentString(platform))
             .wait('body')
-            .click('a.tab-link[href="#history"]')
-            .wait(() => $('#history:visible').length > 0)
             .catch(testUtil.logError)
             .then(done)
         );
 
+
+        function generateHistory(countArg) {
+          const count = countArg || 5;
+          const retVal = [];
+          for (let i = 1; i <= count; i++) {
+
+            const digitString = i.toString(10).split().reduce(
+              (result, digit) =>
+                `${result}<span class="display-digit">${digit}</span>`,
+              ''
+            );
+            const favoriteString = ((i % 3) !== 0) ? '' : `Favorite#${i} - `;
+            const diespecString =
+              `${favoriteString}` +
+              `${digitString}<span class="display-die">d4</span>` +
+              `<span class="display-operator">+</span>${digitString}`;
+            const resultString =
+              '<span class="display-result">' +
+                ' ⇒ ' +
+                `<span class="display-result-value">${i}</span>` +
+              '</span>';
+
+            retVal.push({
+              diespec: diespecString,
+              result: resultString,
+            });
+          }
+          return retVal;
+        }
+
+        function setHistory(done, count) {
+          return nightmare
+            .evaluate(
+              history =>
+                localStorage.setItem('history', JSON.stringify(history)),
+              generateHistory(count)
+            )
+            .goto(testUtil.url, testUtil.userAgentString(platform))
+            .wait('body')
+            .click('a.tab-link[href="#history"]')
+            .wait(() => $('#history:visible').length > 0);
+        }
+
         it('displays history correctly', (done) => {
-          nightmare
+          setHistory(done)
             .evaluate(() => {
               const els = $('#history .list-block ul > li .item-title');
               const retVal = { actual: [], expected: [] };
               els.each((index, el) => {
                 retVal.actual.push(el.innerHTML.trim());
-              }
-              );
+              });
               JSON
                 .parse(localStorage.getItem('history'))
                 .forEach((elt) => {
@@ -304,48 +270,118 @@ describe('History', () => {
             .then(done);
         });
 
-        // FIXME: Finish - make sure limit - 1 and limit are fine, limit + 1 results in limit.
-        // fit('does not display more than the set max', (done) => {
-        //   nightmare
-        //     .evaluate(() => {
-        //       const retVal = {};
-        //       retVal.historyLimit =
-        //         JSON.parse(localStorage.getItem('settings')).history.limit;
-        //       retVal.entryCount = $('#history .list-block ul > li').length;
-        //       return retVal;
-        //     })
-        //     .then((info) => {
-        //       expect(info.entryCount).toBeLessThan(info.historyLimit);
-        //       return nightmare
-        //         .click('a.tab-link[href="#calculator"]')
-        //         .wait(() => $('#calculator:visible').length > 0)
-        //         // .then(() => console.log('foo ok'), () => console.log('foo err'))
-        //         .click('#calculator a.key-die-d6')
-        //         .wait(() => $('#window .display-diespec:visible'))
-        //         .then(() => {
-        //           for (let i = info.entryCount; i < (info.historyLimit - 1); i++) {
-        //             nightmare
-        //               .click('#calculator a.key-roll')
-        //               .catch(testUtil.logError)
-        //               .then(done);
-        //           }
-        //           return nightmare
-        //             .evaluate()
-        //         })
-        //         // .wait(10000)
-        //         // .evaluate(() => {
-        //         //   .wait(() => $('#calculator:visible').length > 0)
-        //         //   const retVal = {};
-        //         //   info.historyLimit =
-        //         //     JSON.parse(localStorage.getItem('settings')).history.limit;
-        //         //   return retVal;
-        //         // })
-        //         .catch(testUtil.logError)
-        //         .then(done);
-        //     })
-        //     .catch(testUtil.logError)
-        //     .then(done);
-        // });
+        it('is internally consistent', (done) => {
+          setHistory(done)
+            .click('a.tab-link[href="#calculator"]')
+            .wait(() => $('#calculator:visible').length > 0)
+            .click('a.tab-link[href="#history"]')
+            .wait(() => $('#history:visible').length > 0)
+            .evaluate(() => {
+              const retVal = {};
+              retVal.historyLimit =
+                JSON.parse(localStorage.getItem('settings')).history.limit;
+              retVal.pageEntryCount = $('#history .list-block ul > li').length;
+              retVal.history = JSON.parse(localStorage.getItem('history'));
+              return retVal;
+            })
+            .then((info) => {
+              // TODO Move this (and the getting of the value) to an outer scope.
+              originalInfo = info;
+              expect(info.pageEntryCount).toBeLessThan(info.historyLimit);
+              // The following is simply a sanity check
+              expect(info.pageEntryCount).toBe(info.history.length);
+            })
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        // FIXME: d12 > delete > d6
+
+        it('handles a new entry', (done) => {
+          setHistory(done)
+            .click('a.tab-link[href="#calculator"]')
+            .click('#calculator a.key-die-d6')
+            .click('#calculator a.key-roll')
+            .click('a.tab-link[href="#history"]')
+            .evaluate(() => {
+              const retVal = {};
+              retVal.pageEntryCount = $('#history .list-block ul > li').length;
+              retVal.history = JSON.parse(localStorage.getItem('history'));
+              return retVal;
+            })
+            .then((info) => {
+              expect(info.pageEntryCount)
+                .toBeLessThan(originalInfo.historyLimit);
+              expect(info.pageEntryCount).toBe(originalInfo.pageEntryCount + 1);
+              expect(info.history.slice(0, -1)).toEqual(originalInfo.history);
+            })
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        it('Can handle limit - 1', (done) => {
+          let historyLimit;
+
+          nightmare
+            .evaluate(
+              () => JSON.parse(localStorage.getItem('settings')).history.limit
+            )
+            .then((limit) => { historyLimit = limit; })
+            .then(() =>
+              setHistory(done, historyLimit - 1)
+                .click('a.tab-link[href="#calculator"]')
+                .click('#calculator a.key-die-d6')
+                .click('#calculator a.key-roll')
+                .click('a.tab-link[href="#history"]')
+                .evaluate(() => {
+                  const retVal = {};
+                  retVal.pageEntryCount =
+                    $('#history .list-block ul > li').length;
+                  retVal.history = JSON.parse(localStorage.getItem('history'));
+                  return retVal;
+                })
+                .then((info) => {
+                  expect(info.pageEntryCount).toBe(historyLimit);
+                  expect(info.history.length).toBe(historyLimit);
+                  expect(info.history.slice(0, -1))
+                    .toEqual(generateHistory(historyLimit - 1));
+                })
+            )
+            .catch(testUtil.logError)
+            .then(done);
+        });
+
+        it('Can handle limit', (done) => {
+          let historyLimit;
+
+          nightmare
+            .evaluate(
+              () => JSON.parse(localStorage.getItem('settings')).history.limit
+            )
+            .then((limit) => { historyLimit = limit; })
+            .then(() =>
+              setHistory(done, historyLimit)
+                .click('a.tab-link[href="#calculator"]')
+                .click('#calculator a.key-die-d6')
+                .click('#calculator a.key-roll')
+                .click('a.tab-link[href="#history"]')
+                .evaluate(() => {
+                  const retVal = {};
+                  retVal.pageEntryCount =
+                    $('#history .list-block ul > li').length;
+                  retVal.history = JSON.parse(localStorage.getItem('history'));
+                  return retVal;
+                })
+                .then((info) => {
+                  expect(info.pageEntryCount).toBe(historyLimit);
+                  expect(info.history.length).toBe(historyLimit);
+                  expect(info.history.slice(0, -1))
+                    .toEqual(generateHistory(historyLimit).slice(1));
+                })
+            )
+            .catch(testUtil.logError)
+            .then(done);
+        });
 
         /*
          * NOTE: Nightmare doesn't support swipe
@@ -384,3 +420,38 @@ describe('History', () => {
     });
   });
 });
+
+
+// /*
+//  * Fake random async work.  Returns (input + i + " ")
+//  */
+// function doTheWork(input, i) {
+//   // normal async work will probably have its own promise, but we need to create our own:
+//   return new Promise((resolve/* , reject */) => {
+//     setTimeout(() => {
+//       const output = `${(input || '')}${i} `;
+//       resolve(output);
+//     }, Math.floor(Math.random() * 200) + 1);
+//   });
+// }
+//
+// /*
+//  * Loops sequentially over async function named doTheWork.  Makes use of array reduce
+//  * function to iterate sequentially and feed previous value into next.
+//  *
+//  * This sequential loop has the advantage of not explicitly using recursion, so it
+//  * may be more memory-efficient than the recursive style.  Arguably it is also more readable.
+//  */
+// function seqLoopReduce(someInput, times) {
+//   const arr = new Array(times);
+//   // we need to populate the array because Array.reduce will ignore empty elements
+//   for (let i = 1; i < times; i++) {
+//     arr[i] = i;
+//   }
+//
+//   // curr = current arr value, val = return val from last iteration
+//   return arr.reduce(
+//     (prev, curr) => prev.then(val => doTheWork(val, curr)),
+//     doTheWork(someInput, 0)
+//   );
+// }
