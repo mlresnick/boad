@@ -177,8 +177,6 @@ describe('History', () => {
     });
   });
 
-  let originalInfo;
-
   describe('tab', () => {
 
     testUtil.supportedOSList.forEach((os) => {
@@ -247,6 +245,17 @@ describe('History', () => {
             .wait(() => $('#history:visible').length > 0);
         }
 
+        function getInfo() {
+          return nightmare.evaluate(() => {
+            const retVal = {};
+            retVal.historyLimit =
+              JSON.parse(localStorage.getItem('settings')).history.limit;
+            retVal.pageEntryCount = $('#history .list-block ul > li').length;
+            retVal.history = JSON.parse(localStorage.getItem('history'));
+            return retVal;
+          });
+        }
+
         it('displays history correctly', (done) => {
           setHistory(done)
             .evaluate(() => {
@@ -276,17 +285,8 @@ describe('History', () => {
             .wait(() => $('#calculator:visible').length > 0)
             .click('a.tab-link[href="#history"]')
             .wait(() => $('#history:visible').length > 0)
-            .evaluate(() => {
-              const retVal = {};
-              retVal.historyLimit =
-                JSON.parse(localStorage.getItem('settings')).history.limit;
-              retVal.pageEntryCount = $('#history .list-block ul > li').length;
-              retVal.history = JSON.parse(localStorage.getItem('history'));
-              return retVal;
-            })
+            .then(getInfo)
             .then((info) => {
-              // TODO Move this (and the getting of the value) to an outer scope.
-              originalInfo = info;
               expect(info.pageEntryCount).toBeLessThan(info.historyLimit);
               // The following is simply a sanity check
               expect(info.pageEntryCount).toBe(info.history.length);
@@ -296,53 +296,47 @@ describe('History', () => {
         });
 
         it('handles a new entry', (done) => {
+          let initialInfo;
+
           setHistory(done)
-            .click('a.tab-link[href="#calculator"]')
-            .click('#calculator a.key-die-d6')
-            .click('#calculator a.key-roll')
-            .click('a.tab-link[href="#history"]')
-            .evaluate(() => {
-              const retVal = {};
-              retVal.pageEntryCount = $('#history .list-block ul > li').length;
-              retVal.history = JSON.parse(localStorage.getItem('history'));
-              return retVal;
-            })
+            .then(getInfo)
             .then((info) => {
+              initialInfo = info;
+              return nightmare
+                .click('a.tab-link[href="#calculator"]')
+                .click('#calculator a.key-die-d6')
+                .click('#calculator a.key-roll')
+                .click('a.tab-link[href="#history"]');
+            })
+            .then(getInfo)
+            .then((info) => {
+              expect(info.pageEntryCount).toBeLessThan(info.historyLimit);
               expect(info.pageEntryCount)
-                .toBeLessThan(originalInfo.historyLimit);
-              expect(info.pageEntryCount).toBe(originalInfo.pageEntryCount + 1);
-              expect(info.history.slice(0, -1)).toEqual(originalInfo.history);
+                .toBe(initialInfo.pageEntryCount + 1);
+              expect(info.history.slice(0, -1))
+                .toEqual(initialInfo.history);
             })
             .catch(testUtil.logError)
             .then(done);
         });
 
         it('Can handle limit - 1', (done) => {
-          let historyLimit;
+          let initialInfo;
 
-          nightmare
-            .evaluate(
-              () => JSON.parse(localStorage.getItem('settings')).history.limit
-            )
-            .then((limit) => { historyLimit = limit; })
+          getInfo()
+            .then((info) => { initialInfo = info; })
             .then(() =>
-              setHistory(done, historyLimit - 1)
+              setHistory(done, initialInfo.historyLimit - 1)
                 .click('a.tab-link[href="#calculator"]')
                 .click('#calculator a.key-die-d6')
                 .click('#calculator a.key-roll')
                 .click('a.tab-link[href="#history"]')
-                .evaluate(() => {
-                  const retVal = {};
-                  retVal.pageEntryCount =
-                    $('#history .list-block ul > li').length;
-                  retVal.history = JSON.parse(localStorage.getItem('history'));
-                  return retVal;
-                })
+                .then(getInfo)
                 .then((info) => {
-                  expect(info.pageEntryCount).toBe(historyLimit);
-                  expect(info.history.length).toBe(historyLimit);
+                  expect(info.pageEntryCount).toBe(initialInfo.historyLimit);
+                  expect(info.history.length).toBe(initialInfo.historyLimit);
                   expect(info.history.slice(0, -1))
-                    .toEqual(generateHistory(historyLimit - 1));
+                    .toEqual(generateHistory(initialInfo.historyLimit - 1));
                 })
             )
             .catch(testUtil.logError)
@@ -350,31 +344,24 @@ describe('History', () => {
         });
 
         it('Can handle limit', (done) => {
-          let historyLimit;
+          let initialInfo;
 
-          nightmare
-            .evaluate(
-              () => JSON.parse(localStorage.getItem('settings')).history.limit
-            )
-            .then((limit) => { historyLimit = limit; })
+          getInfo()
+            .then((info) => { initialInfo = info; })
             .then(() =>
-              setHistory(done, historyLimit)
+              setHistory(done, initialInfo.historyLimit)
                 .click('a.tab-link[href="#calculator"]')
                 .click('#calculator a.key-die-d6')
                 .click('#calculator a.key-roll')
                 .click('a.tab-link[href="#history"]')
-                .evaluate(() => {
-                  const retVal = {};
-                  retVal.pageEntryCount =
-                    $('#history .list-block ul > li').length;
-                  retVal.history = JSON.parse(localStorage.getItem('history'));
-                  return retVal;
-                })
+                .then(getInfo)
                 .then((info) => {
-                  expect(info.pageEntryCount).toBe(historyLimit);
-                  expect(info.history.length).toBe(historyLimit);
+                  expect(info.pageEntryCount).toBe(initialInfo.historyLimit);
+                  expect(info.history.length).toBe(initialInfo.historyLimit);
                   expect(info.history.slice(0, -1))
-                    .toEqual(generateHistory(historyLimit).slice(1));
+                    .toEqual(
+                      generateHistory(initialInfo.historyLimit).slice(1)
+                    );
                 })
             )
             .catch(testUtil.logError)
