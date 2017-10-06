@@ -62,16 +62,15 @@ describe('Favorite object', () => {
     ']';
 
     const expectedFavoriteList = [];
-    for (const expectedRawValue of [
-      { name: 'First', diespec: 'd6' },
-      { name: 'Second', diespec: '4d12+2' },
-      { name: 'Third', diespec: '4d6-Lx6' },
-    ]) {
-      const expectedValue = Favorite();
-      expectedValue.name = expectedRawValue.name;
-      expectedValue.diespec = Diespec(expectedRawValue.diespec);
-      expectedFavoriteList.push(expectedValue);
-    }
+    JSON
+      .parse(favoriteListString)
+      .forEach(simpleObject =>
+        expectedFavoriteList.push(Favorite({
+          name: simpleObject.name,
+          diespec: Diespec(simpleObject.diespec),
+        }))
+      );
+
     const actualFavoriteList =
       JSON.parse(favoriteListString, Favorites.reviver);
 

@@ -11,9 +11,7 @@ module.exports = (() => {
         && !Number.isNaN(Number.parseInt(key, 10))
         && (typeof value === 'object')) {
       // It's an array element.
-      result = Favorite();
-      result.name = value.name;
-      result.diespec = value.diespec;
+      result = Favorite(value);
     }
     else if (key === 'diespec') {
       // It's a die spec. Return a die spec object
