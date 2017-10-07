@@ -10,7 +10,7 @@ const Diespec = require('../src/js/diespec.js');
 let nightmare;
 
 const initialFavorites = [
-  { name: 'a', diespec: 'd4' },
+  { name: 'a', diespec: '2d4' },
   { name: 'b', diespec: '5d4' },
   { name: 'c', diespec: '5d4+1' },
   { name: 'd', diespec: '5d4+12' },
@@ -34,7 +34,7 @@ describe('Favorites', () => {
           localStorage.setItem('favorites', JSON.stringify(favorites));
         },
         [
-          { name: 'a', diespec: 'd4' },
+          { name: 'a', diespec: '2d4' },
           { name: 'b', diespec: '5d4' },
           { name: 'c', diespec: '5d4+1' },
           { name: 'd', diespec: '5d4+12' },
@@ -290,7 +290,7 @@ describe('Favorites', () => {
             )
             .wait(() => $('#calculator:visible').length > 0)
             .evaluate(() => $('#calculator .display-diespec').text())
-            .then(diespec => expect(diespec).toBe('d4'))
+            .then(diespec => expect(diespec).toBe('2d4'))
             .catch(testUtil.logError)
             .then(done);
         });

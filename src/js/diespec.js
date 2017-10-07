@@ -21,7 +21,7 @@ module.exports = ((arg) => {
       switch(specPart) {
         case 'count':
           if ((this.count !== null) && (this.count > 1)) {
-            result = this.count;
+            result = this.count.toString();
           }
           break;
 
