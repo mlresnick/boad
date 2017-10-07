@@ -64,7 +64,11 @@ module.exports = (() => {
     init: _init,
     afterAll: _afterAll,
     logError: _logError,
-    supportedOSList: ['ios', 'android'/* , 'desktop' */],
+    supportedOSList: [
+      'ios',
+      'android',
+      // 'desktop',
+    ],
     stringify: _stringify,
     testTabBarLink: _testTabBarLink,
     url: 'http://localhost:8080',
