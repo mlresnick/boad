@@ -212,9 +212,13 @@ module.exports = (($) => {
       }
 
       function _rollFavorite(event) {
-        const name = $(event.currentTarget).closest('li').data('name');
-        _util.boadApp.showTab('#calculator');
-        _getCalculator().roll(_model.find(name));
+        // In edit mode this link will not exist. Only roll if in normal mode
+        const rollFavoriteLink = $(event.target).closest('.roll-favorite');
+        if (rollFavoriteLink.length) {
+          const name = rollFavoriteLink.closest('li').data('name');
+          _util.boadApp.showTab('#calculator');
+          _getCalculator().roll(_model.find(name));
+        }
       }
 
       function _refreshTab() {
@@ -242,10 +246,6 @@ module.exports = (($) => {
             </li>`
           );
         });
-
-
-        // TODO: Refactor part A - can we avoid having to do this for every refreshTab call
-        _favoritesList.find('.roll-favorite').on('click', _rollFavorite);
       }
 
       function _reportNameError(reason, name) {
@@ -370,8 +370,6 @@ module.exports = (($) => {
           _favoritesList
             .find('li')
             .wrapInner('<a href="#" class="item-link roll-favorite"></a>');
-          // TODO Refactor Part B
-          _favoritesList.find('.roll-favorite').on('click', _rollFavorite);
         }
       });
 
@@ -397,6 +395,8 @@ module.exports = (($) => {
           'sortable:sort',
           event => _model.move(event.detail.startIndex, event.detail.newIndex)
         );
+
+      _favoritesList.on('click', _rollFavorite);
 
       // Delete event
       _favoritesList
