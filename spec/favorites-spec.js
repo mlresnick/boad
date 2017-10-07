@@ -36,7 +36,7 @@ describe('Favorites', () => {
         [
           { name: 'a', diespec: '2d4' },
           { name: 'b', diespec: '5d4' },
-          { name: 'c', diespec: '5d4+1' },
+          { name: 'c', diespec: '5d4-2L+1x2' },
           { name: 'd', diespec: '5d4+12' },
           { name: 'f', diespec: '5d4+123' },
         ]
@@ -175,8 +175,7 @@ describe('Favorites', () => {
           nightmare
             .evaluate(() => {
               const h =
-                $('#favorites .list-block li')
-                  .first()
+                $('#favorites .list-block li:nth-of-type(3)')
                   .find('.item-subtitle')
                   .html();
               return h && h.trim();
@@ -184,7 +183,7 @@ describe('Favorites', () => {
             .then((html) => {
               favoritesTabVersion = html;
               return nightmare
-                .click('#favorites .list-block li a')
+                .click('#favorites .list-block li:nth-of-type(3) a')
                 .wait(() => $('#calculator:visible').length !== 0)
                 .evaluate(() => {
                   const y = $('#calculator .display .display-diespec').html();
@@ -298,7 +297,8 @@ describe('Favorites', () => {
               return favoritesList[1];
             })
             .then((obj) => {
-              expect(obj).toEqual({ name: 'AutoGenned', diespec: '5d4+1' });
+              expect(obj)
+                .toEqual({ name: 'AutoGenned', diespec: '5d4-2L+1x2' });
             })
             .catch(testUtil.logError)
             .then(done);

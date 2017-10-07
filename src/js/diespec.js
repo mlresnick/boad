@@ -445,6 +445,7 @@ module.exports = ((arg) => {
     this.next = () => {
       let result = false;
       let value;
+      let type;
 
       while (this.partIndex === -1
             || (this.charIndex === this.partValue.length)) {
@@ -464,11 +465,18 @@ module.exports = ((arg) => {
         else {
           value = this.partValue.charAt(this.charIndex);
         }
-        this.value = {
-          type: _partToDisplayClassMap[this.partName],
-          value,
-        };
-        this.charIndex += this.partValue.length;
+        if (
+          ['lowHighCount', 'keepCount', 'modifier', 'repeats']
+            .includes(this.partName)
+          && '+-x'.includes(value)
+        ) {
+          type = 'operator';
+        }
+        else {
+          type = _partToDisplayClassMap[this.partName];
+        }
+        this.value = { type, value };
+        this.charIndex += value.length;
         result = true;
       }
       return result;
