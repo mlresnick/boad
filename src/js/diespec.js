@@ -7,6 +7,7 @@ module.exports = ((arg) => {
   let _random = Math.random;
 
   const _spec = {
+    explode: false,
     count: null,
     sides: null,
     lowHighCount: null,
@@ -19,6 +20,12 @@ module.exports = ((arg) => {
       let result = '';
 
       switch(specPart) {
+        case 'explode':
+          if (this.explode) {
+            result = '!';
+          }
+          break;
+
         case 'count':
           if ((this.count !== null) && (this.count > 1)) {
             result = this.count.toString();
@@ -121,14 +128,14 @@ module.exports = ((arg) => {
       return result;
     },
 
-    getDropRange: function _getDropRange() {
+    getDropRange: function _getDropRange(result) {
       let dropRange = null;
       if (this.keepCount) {
         if (this.keepCount < 0) {
           dropRange = { start: 0, end: -this.keepCount };
         }
         else {
-          dropRange = { start: 0, end: (this.count - this.keepCount) };
+          dropRange = { start: 0, end: (result.rolls.length - this.keepCount) };
         }
       }
       else if (this.lowHighCount < 0) {
@@ -137,15 +144,15 @@ module.exports = ((arg) => {
         }
         else {
           dropRange = {
-            start: (this.count + this.lowHighCount),
-            end: this.count,
+            start: (result.rolls.length + this.lowHighCount),
+            end: result.rolls.length,
           };
         }
       }
       return dropRange;
     },
 
-    getAddRange: function _getAddRange() {
+    getAddRange: function _getAddRange(result) {
       let addRange = null;
       if (this.lowHighCount > 0) {
         if (this.lowHigh === 'L') {
@@ -153,8 +160,8 @@ module.exports = ((arg) => {
         }
         else {
           addRange = {
-            start: (this.count - this.lowHighCount),
-            end: this.count,
+            start: (result.rolls.length - this.lowHighCount),
+            end: result.rolls.length,
           };
         }
       }
@@ -162,8 +169,7 @@ module.exports = ((arg) => {
     },
   };
 
-  // TODO part of explode (!) implementation
-  // const _EXPLODE = 'explode';
+  const _EXPLODE = 'explode';
   const _COUNT = 'count';
   const _SIDES = 'sides';
   const _LOW_HIGH_COUNT = 'lowHighCount';
@@ -173,8 +179,7 @@ module.exports = ((arg) => {
   const _REPEATS = 'repeats';
 
   const _partsList = [
-    // TODO part of explode (!) implementation
-    // _EXPLODE,
+    _EXPLODE,
     _COUNT,
     _SIDES,
     _LOW_HIGH_COUNT,
@@ -187,6 +192,7 @@ module.exports = ((arg) => {
   const stateToSpecPart = {
     /* eslint-disable key-spacing */
     start:            null,
+    explode:          _EXPLODE,
     countDigit:       _COUNT,
 
     die:              null,
@@ -302,6 +308,7 @@ module.exports = ((arg) => {
   }
 
   const _partToDisplayClassMap = {
+    explode: 'explode',
     count: 'digit',
     sides: 'die',
     lowHighCount: 'digit',
@@ -314,8 +321,7 @@ module.exports = ((arg) => {
   function _toHTML(wrapIndividual = false) {
     return [
       /* eslint-disable no-multi-spaces */
-      // TODO: Part of explode (!) implementation
-      // { specPart: 'explode',      displayClass: 'explode' },
+      { specPart: 'explode',      displayClass: 'explode' },
       { specPart: 'count',        displayClass: 'digit'   },
       { specPart: 'sides',        displayClass: 'die'     },
       { specPart: 'lowHighCount', displayClass: 'digit'   },
@@ -357,8 +363,8 @@ module.exports = ((arg) => {
     }
 
     /*
-     * Because there's no look-ahead, if there is no Low/High, the modifier will
-     * put in the wrong place.
+     * Because there's no look-ahead, if there is no Low/High, the modifier be
+     * will put in the wrong place.
      */
     if (!_spec.lowHigh && _spec.lowHighCount) {
       _spec.modifier = _spec.lowHighCount;
@@ -385,6 +391,11 @@ module.exports = ((arg) => {
     }
   }
 
+  /*
+   * Create a work array with pointers into the result array. The work array
+   * is sorted to determine what should be adjusted (either added or removed).
+   * This keeps the list of rolls in order.
+   */
   function _adjust(result, adjustRange, adjustment) {
     if (adjustRange) {
       const workArray = [];
@@ -399,8 +410,10 @@ module.exports = ((arg) => {
     }
   }
 
-  function _dropDice(result) { _adjust(result, _spec.getDropRange(), -1); }
-  function _addDice(result) { _adjust(result, _spec.getAddRange(), +1); }
+  function _dropDice(result) {
+    _adjust(result, _spec.getDropRange(result), -1);
+  }
+  function _addDice(result) { _adjust(result, _spec.getAddRange(result), +1); }
 
   function _roll() {
     const results = [];
@@ -414,13 +427,20 @@ module.exports = ((arg) => {
       const result = { rolls: [], result: 0 };
 
       for (let dieIndex = 0; dieIndex < (_spec.count || 1); dieIndex++) {
-        result.rolls[dieIndex] = { roll: _die.roll(), adjust: 0 };
+        result.rolls.push({ roll: _die.roll(), adjust: 0 });
+        while (_spec.explode
+               && (result.rolls[result.rolls.length - 1].roll
+                   === _spec.sides)) {
+          result.rolls.push({ roll: _die.roll(), adjust: 0 });
+        }
       }
 
       _dropDice(result);
 
       _addDice(result);
 
+      // TODO this seems overly complicated - maybe _drop/_addDice should just
+      // splice the result array.
       result.result = result.rolls.reduce((total, dieRoll) =>
         total + dieRoll.roll + (dieRoll.roll * dieRoll.adjust),
       0);

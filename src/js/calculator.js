@@ -262,7 +262,7 @@ module.exports = (($) => {
       }
     }
 
-    $('.key-die, .key-digit, .key-keep, .key-operator')
+    $('.key-die, .key-digit, .key-keep, .key-operator,  .key-explode')
       .on('click', _enterNew);
     $('.key-delete').on('click', _deleteLast);
     $('.key-roll').on('click', _roll);

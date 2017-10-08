@@ -58,6 +58,12 @@ describe('New Diespec class', () => {
       test('4d%-2L+3x2');
       test('4dF-2L+3x2');
     });
+
+    it('supports !', () => {
+      test('!4d6');
+      test('!1d4', '!d4');
+      test('!4d6k3+4x2');
+    });
   });
 
   describe('can roll', () => {
@@ -448,6 +454,297 @@ describe('New Diespec class', () => {
         ]);
       });
     });
+
+    describe('exploding dice', () => {
+      beforeEach(() =>
+        spyOn(mockRandomizer, 'random').and.returnValues(
+          (3 / 6),
+          (5 / 6), (1 / 6),
+          (0 / 6),
+          (5 / 6), (5 / 6), (4 / 6),
+
+          (2 / 6),
+          (4 / 6),
+          (5 / 6), (0 / 6),
+          (4 / 6),
+
+          (1 / 6),
+          (3 / 6),
+          (4 / 6),
+          (3 / 6)
+        )
+      );
+
+      it('(!4d6)', () => {
+        const diespec = Diespec('!4d6');
+        diespec.setRandom(mockRandomizer.random);
+        expect(diespec.roll()).toEqual([{
+          rolls: [
+            { roll: 4, adjust: 0 },
+            { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+            { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+            { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+          ],
+          result: 30,
+        }]);
+      });
+
+      describe('with modifier', () => {
+
+        it('(!4d6+2)', () => {
+          const diespec = Diespec('!4d6+2');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 32,
+          }]);
+        });
+
+        it('(!4d6-1)', () => {
+          const diespec = Diespec('!4d6-1');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 29,
+          }]);
+        });
+      });
+
+      describe('with "k"', () => {
+
+        it('(!4d6k3)', () => {
+          const diespec = Diespec('!4d6k3');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: -1 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: -1 },
+              { roll: 1, adjust: -1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: -1 },
+            ],
+            result: 18,
+          }]);
+        });
+
+        it('(!4d6k-1)', () => {
+          const diespec = Diespec('!4d6k-1');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: -1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 29,
+          }]);
+        });
+
+      });
+
+      describe('with "-L/-H"', () => {
+
+        it('(!4d6-L)', () => {
+          const diespec = Diespec('!4d6-L');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: -1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 29,
+          }]);
+        });
+
+        it('(4d12-2L)', () => {
+          const diespec = Diespec('!4d6-2L');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: -1 },
+              { roll: 1, adjust: -1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 27,
+          }]);
+        });
+
+        it('(!4d6-H)', () => {
+          const diespec = Diespec('!4d6-H');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: -1 }, { roll: 5, adjust: 0 },
+            ],
+            result: 24,
+          }]);
+        });
+
+        it('(!4d6-2H)', () => {
+          const diespec = Diespec('!4d6-2H');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: -1 }, { roll: 6, adjust: -1 }, { roll: 5, adjust: 0 },
+            ],
+            result: 18,
+          }]);
+        });
+
+      });
+
+      describe('with "+L/+H"', () => {
+
+        it('(!4d6+L)', () => {
+          const diespec = Diespec('!4d6+L');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 31,
+          }]);
+        });
+
+        it('(!4d6+3L)', () => {
+          const diespec = Diespec('!4d6+3L');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 1 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 1 },
+              { roll: 1, adjust: 1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 37,
+          }]);
+        });
+
+        it('(!4d6+H)', () => {
+          const diespec = Diespec('!4d6+H');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 1 }, { roll: 5, adjust: 0 },
+            ],
+            result: 36,
+          }]);
+        });
+
+        it('(!4d6+3H)', () => {
+          const diespec = Diespec('!4d6+3H');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 1 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 1 }, { roll: 6, adjust: 1 }, { roll: 5, adjust: 0 },
+            ],
+            result: 48,
+          }]);
+        });
+
+      });
+
+      describe('with "x"', () => {
+
+        it('(!4d6x3)', () => {
+          const diespec = Diespec('!4d6x3');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: 0 },
+              { roll: 1, adjust: 0 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: 0 },
+            ],
+            result: 30,
+          },
+          {
+            rolls: [
+              { roll: 3, adjust: 0 },
+              { roll: 5, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 1, adjust: 0 },
+              { roll: 5, adjust: 0 },
+            ],
+            result: 20,
+          },
+          {
+            rolls: [
+              { roll: 2, adjust: 0 },
+              { roll: 4, adjust: 0 },
+              { roll: 5, adjust: 0 },
+              { roll: 4, adjust: 0 },
+            ],
+            result: 15,
+          }]);
+        });
+
+      });
+
+      describe('complex specifications', () => {
+
+        it('(!4d6k3x3)', () => {
+          const diespec = Diespec('!4d6k3x3');
+          diespec.setRandom(mockRandomizer.random);
+          expect(diespec.roll()).toEqual([{
+            rolls: [
+              { roll: 4, adjust: -1 },
+              { roll: 6, adjust: 0 }, { roll: 2, adjust: -1 },
+              { roll: 1, adjust: -1 }, // eslint-disable-next-line max-len
+              { roll: 6, adjust: 0 }, { roll: 6, adjust: 0 }, { roll: 5, adjust: -1 },
+            ],
+            result: 18,
+          },
+          {
+            rolls: [
+              { roll: 3, adjust: -1 },
+              { roll: 5, adjust: 0 },
+              { roll: 6, adjust: 0 }, { roll: 1, adjust: -1 },
+              { roll: 5, adjust: 0 },
+            ],
+            result: 16,
+          },
+          {
+            rolls: [
+              { roll: 2, adjust: -1 },
+              { roll: 4, adjust: 0 },
+              { roll: 5, adjust: 0 },
+              { roll: 4, adjust: 0 },
+            ],
+            result: 13,
+          }]);
+        });
+      });
+
+    });
+
   });
 
   describe('correctly generates HTML for', () => {
@@ -511,13 +808,22 @@ describe('New Diespec class', () => {
         );
 
     });
+
+    it('exploding dice', () => {
+      expect(Diespec('!10d20').toHTML())
+        .toBe(
+          '<span class="display-explode">!</span>' +
+          '<span class="display-digit">10</span>' +
+          '<span class="display-die">d20</span>'
+        );
+    });
   });
 
   describe('correctly generates HTML for the calculator display with', () => {
     it(
       'a simple die',
       () =>
-        expect(Diespec('d4').toHTML())
+        expect(Diespec('d4').toHTML(true))
           .toBe('<span class="display-die">d4</span>')
     );
 
@@ -567,6 +873,16 @@ describe('New Diespec class', () => {
           '<span class="display-operator">x</span>' +
           '<span class="display-digit">3</span>' +
           '<span class="display-digit">2</span>'
+        );
+    });
+
+    it('exploding dice', () => {
+      expect(Diespec('!10d20').toHTML(true))
+        .toBe(
+          '<span class="display-explode">!</span>' +
+          '<span class="display-digit">1</span>' +
+          '<span class="display-digit">0</span>' +
+          '<span class="display-die">d20</span>'
         );
     });
   });

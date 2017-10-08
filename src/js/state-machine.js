@@ -15,6 +15,8 @@ module.exports = (() => {
 
     /* eslint-disable object-property-newline, key-spacing */
     const _category = {
+      '!': 'explode',
+
       0: '0',
 
       1: 'digit', 2: 'digit', 3: 'digit', 4: 'digit', 5: 'digit',
@@ -38,6 +40,9 @@ module.exports = (() => {
     /* eslint-disable key-spacing */
     const _states = {
       start:      'start',
+
+      explode: 'explode',
+
       countDigit: 'countDigit',
 
       die:          'die',
@@ -77,7 +82,10 @@ module.exports = (() => {
 
     /* eslint-disable indent, key-spacing, no-multi-spaces, max-len */
     const _stateTable = {
-start:            { digit: 'countDigit',                  die: 'die' },
+start:            { digit: 'countDigit',                  die: 'die', explode: 'explode' },
+
+explode:          { digit: 'countDigit' },
+
 countDigit:       { digit: 'countDigit', 0: 'countDigit', die: 'die' },
 
 die:              { digit: 'dieDigit',                'die-char': 'specialDie',                               x: 'dieDigit'              },
@@ -104,6 +112,8 @@ roll:             { digit: 'countDigit', die: 'die', roll: 'roll' },
 error:            { }, // There is no escape, except to delete
     };
     /* eslint-enable */
+
+    // FIXME 4 > d20 > d4 > Roll should roll a 4d20. 4 > d20 > d4 > + should work too.
 
     function _nextState(originalState, chars) {
       let char;
