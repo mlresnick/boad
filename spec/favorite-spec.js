@@ -53,6 +53,7 @@ const Favorites = {};
 Favorites.reviver = require('../src/js/favorites-reviver.js').reviver;
 
 describe('Favorite object', () => {
+
   it('can be restored', () => {
     const favoriteListString =
     '[' +
@@ -97,4 +98,5 @@ describe('Favorite object', () => {
     favoriteList.push(newFavorite);
     expect(JSON.stringify(favoriteList)).toBe(favoriteListString);
   });
+
 });

@@ -395,6 +395,7 @@ describe('Calculator', () => {
         .catch(testUtil.logError)
         .then(done);
     });
+
   });
 
   describe('tab bar', () => {
@@ -418,6 +419,7 @@ describe('Calculator', () => {
         .catch(testUtil.logError)
         .then(done);
     });
+
   });
 
   function saveFavorite(args, timeout = 0) {
@@ -473,4 +475,5 @@ describe('Calculator', () => {
       .catch(testUtil.logError)
       .then(done);
   });
+
 });

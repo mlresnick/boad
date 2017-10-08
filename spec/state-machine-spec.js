@@ -40,6 +40,7 @@ describe('State machine', () => {
       expect(stateMachine.nextState(startState, '4d6'))
         .toEqual(expectedState);
     });
+
   });
 
   describe('fails properly when it', () => {
@@ -78,5 +79,7 @@ describe('State machine', () => {
       expect(stateMachine.nextState(startState, '+'))
         .toEqual(expectedState);
     });
+
   });
+
 });

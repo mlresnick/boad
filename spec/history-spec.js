@@ -167,6 +167,7 @@ describe('History', () => {
         .catch(testUtil.logError)
         .then(done);
     });
+
   });
 
   describe('tab', () => {
@@ -354,6 +355,7 @@ describe('History', () => {
           .catch(testUtil.logError)
           .then(done);
       });
+
     });
 
     /*
@@ -403,40 +405,7 @@ describe('History', () => {
 
         *
         */
+
   });
+
 });
-
-
-// /*
-//  * Fake random async work.  Returns (input + i + " ")
-//  */
-// function doTheWork(input, i) {
-//   // normal async work will probably have its own promise, but we need to create our own:
-//   return new Promise((resolve/* , reject */) => {
-//     setTimeout(() => {
-//       const output = `${(input || '')}${i} `;
-//       resolve(output);
-//     }, Math.floor(Math.random() * 200) + 1);
-//   });
-// }
-//
-// /*
-//  * Loops sequentially over async function named doTheWork.  Makes use of array reduce
-//  * function to iterate sequentially and feed previous value into next.
-//  *
-//  * This sequential loop has the advantage of not explicitly using recursion, so it
-//  * may be more memory-efficient than the recursive style.  Arguably it is also more readable.
-//  */
-// function seqLoopReduce(someInput, times) {
-//   const arr = new Array(times);
-//   // we need to populate the array because Array.reduce will ignore empty elements
-//   for (let i = 1; i < times; i++) {
-//     arr[i] = i;
-//   }
-//
-//   // curr = current arr value, val = return val from last iteration
-//   return arr.reduce(
-//     (prev, curr) => prev.then(val => doTheWork(val, curr)),
-//     doTheWork(someInput, 0)
-//   );
-// }

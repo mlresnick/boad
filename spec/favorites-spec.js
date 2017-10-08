@@ -303,7 +303,9 @@ describe('Favorites', () => {
             .catch(testUtil.logError)
             .then(done);
         });
+
       });
+
     });
 
     /*
@@ -318,5 +320,7 @@ describe('Favorites', () => {
 
     *
     */
+
   });
+
 });

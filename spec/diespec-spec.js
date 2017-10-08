@@ -5,6 +5,7 @@
 const Diespec = require('../src/js/diespec.js');
 
 describe('New Diespec class', () => {
+
   it('can be referenced as a module', () => {
     expect(Diespec).toBeDefined();
   });
@@ -64,6 +65,7 @@ describe('New Diespec class', () => {
       test('!1d4', '!d4');
       test('!4d6k3+4x2');
     });
+
   });
 
   describe('can roll', () => {
@@ -76,6 +78,7 @@ describe('New Diespec class', () => {
     };
 
     describe('a simple die', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValue(1 / 4);
       });
@@ -88,9 +91,11 @@ describe('New Diespec class', () => {
           result: 2,
         }]);
       });
+
     });
 
     describe('multple dice', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
           (1 / 6), (4 / 6), (5 / 6)
@@ -109,9 +114,11 @@ describe('New Diespec class', () => {
           result: 13,
         }]);
       });
+
     });
 
     describe('multple dice with modifier', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
           (7 / 8), (3 / 8), (2 / 8)
@@ -146,9 +153,11 @@ describe('New Diespec class', () => {
           result: 5,
         }]);
       });
+
     });
 
     describe('dice with "k"', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
           (3 / 6), (1 / 6), (0 / 6), (5 / 6)
@@ -185,6 +194,7 @@ describe('New Diespec class', () => {
     });
 
     describe('dice with "-L/-H"', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
           (3 / 12), (1 / 12), (0 / 12), (5 / 12), (2 / 12)
@@ -199,6 +209,7 @@ describe('New Diespec class', () => {
           (16 / 20), (4 / 20), (1 / 20), (14 / 20), (9 / 20)
         );
       });
+
       it('(5d12-L)', () => {
         const diespec = Diespec('5d12-L');
         diespec.setRandom(mockRandomizer.random);
@@ -258,9 +269,11 @@ describe('New Diespec class', () => {
           result: 17,
         }]);
       });
+
     });
 
     describe('dice with "+L/+H"', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
           (16 / 20), (4 / 20), (1 / 20), (14 / 20), (9 / 20)
@@ -332,6 +345,7 @@ describe('New Diespec class', () => {
     });
 
     describe('dice with "x"', () => {
+
       beforeEach(() => {
         spyOn(mockRandomizer, 'random').and.returnValues(
           (16 / 20), (4 / 20), (1 / 20), (14 / 20), (9 / 20), (8 / 20)
@@ -380,9 +394,11 @@ describe('New Diespec class', () => {
           result: 19,
         }]);
       });
+
     });
 
     describe('complex die specifications', () => {
+
       beforeEach(() =>
         spyOn(mockRandomizer, 'random').and.returnValues(
           (3 / 6), (5 / 6), (0 / 6), (5 / 6),
@@ -453,9 +469,11 @@ describe('New Diespec class', () => {
         },
         ]);
       });
+
     });
 
     describe('exploding dice', () => {
+
       beforeEach(() =>
         spyOn(mockRandomizer, 'random').and.returnValues(
           (3 / 6),
@@ -487,6 +505,7 @@ describe('New Diespec class', () => {
           ],
           result: 30,
         }]);
+
       });
 
       describe('with modifier', () => {
@@ -518,6 +537,7 @@ describe('New Diespec class', () => {
             result: 29,
           }]);
         });
+
       });
 
       describe('with "k"', () => {
@@ -748,11 +768,9 @@ describe('New Diespec class', () => {
   });
 
   describe('correctly generates HTML for', () => {
-    it(
-      'a simple die',
-      () =>
-        expect(Diespec('d4').toHTML())
-          .toBe('<span class="display-die">d4</span>')
+
+    it('a simple die', () =>
+      expect(Diespec('d4').toHTML()).toBe('<span class="display-die">d4</span>')
     );
 
     it('a count', () =>
@@ -764,7 +782,6 @@ describe('New Diespec class', () => {
     );
 
     it('a modifier', () => {
-
       expect(Diespec('d8+2').toHTML())
         .toBe(
           '<span class="display-die">d8</span>' +
@@ -782,7 +799,6 @@ describe('New Diespec class', () => {
     });
 
     it('a complex spec', () => {
-
       expect(Diespec('4d6-L+2x3').toHTML())
         .toBe(
           '<span class="display-digit">4</span>' +
@@ -806,7 +822,6 @@ describe('New Diespec class', () => {
           '<span class="display-operator">x</span>' +
           '<span class="display-digit">6</span>'
         );
-
     });
 
     it('exploding dice', () => {
@@ -817,14 +832,14 @@ describe('New Diespec class', () => {
           '<span class="display-die">d20</span>'
         );
     });
+
   });
 
   describe('correctly generates HTML for the calculator display with', () => {
-    it(
-      'a simple die',
-      () =>
-        expect(Diespec('d4').toHTML(true))
-          .toBe('<span class="display-die">d4</span>')
+
+    it('a simple die', () =>
+      expect(Diespec('d4').toHTML(true))
+        .toBe('<span class="display-die">d4</span>')
     );
 
     it('a count', () =>
@@ -837,7 +852,6 @@ describe('New Diespec class', () => {
     );
 
     it('a modifier', () => {
-
       expect(Diespec('d8+23').toHTML(true))
         .toBe(
           '<span class="display-die">d8</span>' +
@@ -857,7 +871,6 @@ describe('New Diespec class', () => {
     });
 
     it('a complex spec', () => {
-
       expect(Diespec('41d6-10L+20x32').toHTML(true))
         .toBe(
           '<span class="display-digit">4</span>' +
@@ -885,6 +898,7 @@ describe('New Diespec class', () => {
           '<span class="display-die">d20</span>'
         );
     });
+
   });
 
 });
