@@ -309,15 +309,14 @@ describe('Favorites', () => {
     });
 
     /*
-     * TODO: Nightmare doesn't support drag and drop - can favorite reordering be emulated?
+     * NOTE: Nightmare doesn't support drag and drop
      *
-
     it('supports the rearrangement of favorites', (done) => {
       nightmare
         .catch(testUtil.logError)
         .then(done);
     });
-
+    *
     *
     */
 

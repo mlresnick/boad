@@ -439,8 +439,6 @@ module.exports = ((arg) => {
 
       _addDice(result);
 
-      // TODO this seems overly complicated - maybe _drop/_addDice should just
-      // splice the result array.
       result.result = result.rolls.reduce((total, dieRoll) =>
         total + dieRoll.roll + (dieRoll.roll * dieRoll.adjust),
       0);

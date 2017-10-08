@@ -359,9 +359,8 @@ describe('History', () => {
     });
 
     /*
-     * TODO: Nightmare doesn't support swipe - can delete history be emulated?
+     * NOTE: Nightmare doesn't support swipe
      *
-
     testUtil.supportedOSList.forEach((os) => {
 
       describe(`on ${os}`, () => {
@@ -402,7 +401,7 @@ describe('History', () => {
             .catch(testUtil.logError)
             .then(done);
         });
-
+        *
         *
         */
 
