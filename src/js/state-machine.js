@@ -113,8 +113,6 @@ error:            { }, // There is no escape, except to delete
     };
     /* eslint-enable */
 
-    // FIXME 4 > d20 > d4 > Roll should roll a 4d20. 4 > d20 > d4 > + should work too.
-
     function _nextState(originalState, chars) {
       let char;
       let charClass;

@@ -366,6 +366,48 @@ describe('Calculator', () => {
         .then(done);
     });
 
+    it('should handle 4 > d20 > d4 > +', (done) => {
+      // This sequqnce contains an error (d4), but should be able to continue
+      enterStuff({
+        buttons: ['digit-4', 'die-d20'],
+        waitCondition: '.display .display-diespec .display-die',
+        expected: '4d20',
+      })
+        .then(() => enterStuff({
+          buttons: ['die-d4'],
+          waitCondition: '.display .display-diespec .display-die',
+          expected: '4d20',
+        }))
+        .then(() => enterStuff({
+          buttons: 'operator-plus',
+          waitCondition: '.display .display-operator',
+          expected: '4d20+',
+        }))
+        .catch(testUtil.logError)
+        .then(done);
+    });
+
+    it('should handle 4 > d20 > d4 > roll', (done) => {
+      // This sequqnce contains an error (d4), but should be able to continue
+      enterStuff({
+        buttons: ['digit-4', 'die-d20'],
+        waitCondition: '.display .display-diespec .display-die',
+        expected: '4d20',
+      })
+        .then(() => enterStuff({
+          buttons: ['die-d4'],
+          waitCondition: '.display .display-diespec .display-die',
+          expected: '4d20',
+        }))
+        .then(() => enterStuff({
+          buttons: 'roll',
+          waitCondition: '.display .display-result',
+          expected: /4d20\s+\u21d2\s+[1-9]\d*/u,
+        }))
+        .catch(testUtil.logError)
+        .then(done);
+    });
+
     it('should allow explode', (done) => {
       enterStuff({
         buttons: 'explode',

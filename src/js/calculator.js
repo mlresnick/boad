@@ -145,7 +145,8 @@ module.exports = (($) => {
             && (oldState !== stateMachine.states.die
                 || c !== 'x')) {
           newState = stateMachine.nextState(oldState, c);
-          if (newState !== undefined) {
+          if ((newState !== undefined)
+              && (newState.state !== stateMachine.states.error)) {
             _undoStack.push(newState);
           }
         }
