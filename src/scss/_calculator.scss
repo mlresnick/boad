@@ -132,38 +132,6 @@
     height: calc(100% / 8.6075 * 2);
   }
 
-  // .key-favorite {
-  //   &.key-favorite-set {
-  //     position: relative;
-  //
-  //     display: block;
-  //
-  //     text-align: center;
-  //
-  //     i {
-  //       &.ion-ios-star {
-  //         @extend %stacked;
-  //
-  //         font-size: $star-fs;
-  //
-  //         margin-top: -3px;
-  //       }
-  //
-  //       &.icon.ion-plus {
-  //         @extend %stacked;
-  //
-  //         font-size: 0.75em;
-  //
-  //         margin-left: 12px;
-  //       }
-  //     }
-  //   }
-  //
-  //   &.key-favorite-get i.ion-ios-star {
-  //     font-size: $star-fs;
-  //   }
-  // }
-
   .variable {
     font:  {
       family: serif;
