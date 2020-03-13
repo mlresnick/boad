@@ -54,7 +54,7 @@
     "webpage": "^0.3.0"
   },
   "dependencies": {
-    "acorn": "^6.2.0",
+    "acorn": "^6.4.1",
     "ajv": "^5.5.2",
     "anymatch": "^3.0.3",
     "bl": "^2.2.0",
