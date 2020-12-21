@@ -46,7 +46,7 @@
     "jasmine-core": "^2.99.1",
     "jasmine-spec-reporter": "^4.2.1",
     "nightmare": "^3.0.2",
-    "node-notifier": "^5.4.3",
+    "node-notifier": "^8.0.1",
     "stream-browserify": "^2.0.2",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^1.1.2",
